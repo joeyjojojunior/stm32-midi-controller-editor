@@ -1,0 +1,337 @@
+<style>
+    body {
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+    }
+
+    .container {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid white;
+        padding: 2px;
+    }
+
+    .editDiv {
+        font-size: 16;
+        background-color: black;
+        color: black;
+        padding: 2px;
+    }
+
+    table {
+        font-size: 14;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: white;
+        padding: 2px;
+    }
+
+    thead {
+        font-weight: bold;
+        font-size: 24;
+    }
+
+    td {
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+    }
+
+    .inputField {
+        width: 135px;
+    }
+
+    .grid {
+        position: relative;
+        display: inline-block;
+    }
+
+    .item {
+        display: block;
+        position: absolute;
+        width: 100px;
+        height: 50px;
+        margin: 4px;
+        z-index: 1;
+        background: #000;
+        color: #fff;
+        border: solid 1px white;
+    }
+
+    .item.item.muuri-item-dragging {
+        border: 1px solid red;
+    }
+
+    .item.muuri-item-dragging {
+        z-index: 3;
+    }
+
+    .item.muuri-item-releasing {
+        z-index: 2;
+    }
+
+    .item.muuri-item-hidden {
+        z-index: 0;
+    }
+
+    .item-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+
+    <head>
+    </head>
+    <div class="container">
+        <div class="editDiv"></div>
+        <div class="grid" id="knobGrid"></div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="jquery.fittext.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/muuri@0.9.5/dist/muuri.min.js"></script>
+</body>
+
+<script>
+    var MAX_LABEL_CHARS = 14;
+    var NUM_COLS = 16;
+    var NUM_ROWS = 8;
+    var NUM_KNOBS = 128;
+    var isDragging = false;
+    var knobs = new Array(NUM_KNOBS);
+
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        gridDiv = document.getElementById("knobGrid");
+
+        gridItem = document.createElement("div");
+        gridItem.className = "item";
+        gridItem.id = `gridItem${i}`;
+        gridItem.addEventListener("mouseup", displayKnobInfo, false);
+
+        gridItemContent = document.createElement("div");
+        gridItemContent.className = "item-content";
+        gridItemContent.id = `gridItemContent${i}`;
+
+        gridKnobContent = document.createElement("div");
+        gridKnobContent.className = "knobContent";
+        gridKnobContent.id = `knobContent${i}`;
+
+        gridKnobContent.innerHTML += `${i + 1}<br>THISIS14CHARS!`
+
+        gridItemContent.appendChild(gridKnobContent);
+        gridItem.appendChild(gridItemContent);
+
+        knobs[i] = gridItem;
+    }
+
+
+
+    function createKnobDivSettings() {
+        var editDiv = document.getElementsByClassName("editDiv");
+
+        for (var i = 0; i < NUM_KNOBS; i++) {
+            var knobDivSettings = document.createElement("div");
+            knobDivSettings.className = "knobDivSettings";
+            knobDivSettings.id = `knobDivSettings${i}`;
+            knobDivSettings.style.display = "none";
+
+            var knobTableSettings = createKnobTableSettings(i);
+            knobDivSettings.appendChild(knobTableSettings);
+
+            editDiv[0].appendChild(knobDivSettings);
+        }
+    }
+
+    function createKnobTableSettings(knobID) {
+        var tbl = document.createElement("table");
+
+        var thead = document.createElement("thead");
+        var trHead = document.createElement("tr");
+        var tdHead = document.createElement("td");
+        tdHead.innerHTML += `Knob ${knobID + 1}`;
+        tdHead.colSpan = "2";
+
+        trHead.appendChild(tdHead);
+        thead.appendChild(trHead);
+        tbl.appendChild(thead);
+
+        var tbdy = document.createElement("tbody");
+        var inputLabels = ["Label", "Channel", "CC", "Init Value", "Max Values", "Max Range", "Locked"];
+        var knobInputFields = createKnobInputFields(knobID);
+
+        for (var i = 0; i < knobInputFields.length; i++) {
+            var tr = document.createElement("tr");
+
+            var tdInputLabel = document.createElement("td");
+            tdInputLabel.innerHTML = inputLabels[i];
+
+            var tdInputField = document.createElement("td");
+            tdInputField.appendChild(knobInputFields[i]);
+
+            tr.appendChild(tdInputLabel);
+            tr.appendChild(tdInputField);
+            tbdy.appendChild(tr);
+        }
+
+        tbl.appendChild(tbdy);
+
+        return tbl;
+
+    }
+
+    function createKnobInputFields(knobID) {
+        var label = document.createElement("input");
+        var channel = document.createElement("input");
+        var cc = document.createElement("input");
+        var initValue = document.createElement("input");
+        var maxValues = document.createElement("input");
+        var maxRange = document.createElement("input");
+        var isLocked = document.createElement("input");
+
+        label.className = "inputField";
+        label.id = `inputLabel${knobID}`;
+
+        channel.className = `inputField`;
+        channel.id = `inputChannel${knobID}`;
+
+        cc.className = `inputField`;
+        cc.id = `inputCC${knobID}`;
+
+        initValue.className = `inputField`;
+        initValue.id = `inputInitValue${knobID}`;
+
+        maxValues.className = `inputField`;
+        maxValues.id = `inputMaxValues${knobID}`;
+
+        maxRange.className = `inputField`;
+        maxRange.id = `inputMaxRange${knobID}`;
+
+        isLocked.className = `inputField`;
+        isLocked.id = `inputIsLocked${knobID}`;
+
+        var labels = [label, channel, cc, initValue, maxValues, maxRange, isLocked];
+
+        for (var i = 0; i < labels.length; i++) {
+            labels[i].maxLength = MAX_LABEL_CHARS;
+        }
+
+        return labels;
+
+    }
+
+    function displayKnobInfo(e) {
+        if (isDragging) return;
+
+        var knobIDString = e.target.id;
+        var knobID = (knobIDString.match(/\d+/g) || []).map(n => parseInt(n))[0];
+        var knobDivSettings = document.getElementById(`knobDivSettings${knobID}`);
+        showKnobDivSettings(knobDivSettings);
+    }
+
+    function hideKnobDivSettings(s) {
+        s.style.display = "none";
+
+    }
+
+    function showKnobDivSettings(s) {
+
+        hideKnobDivSettingsAll();
+        s.style.display = "block";
+    }
+
+    function hideKnobDivSettingsAll() {
+        var knobDivSettingsAll = document.getElementsByClassName("knobDivSettings");
+        for (var i = 0; i < knobDivSettingsAll.length; i++) {
+            knobDivSettingsAll[i].style.display = "none";
+        }
+    }
+
+    var grid = new Muuri('.grid', {
+        items: knobs,
+        dragEnabled: true,
+        dragSortHeuristics: {
+            sortInterval: 300,
+            minDragDistance: 30,
+            minBounceBackAngle: 1
+        },
+        dragSortPredicate: {
+            threshold: 55,
+            action: 'swap',
+            migrateAction: 'move'
+        },
+        layout: function (grid, layoutId, items, width, height, callback) {
+            var layout = {
+                id: layoutId,
+                items: items,
+                slots: [],
+                styles: {},
+            };
+
+            // Calculate the slots asynchronously. Note that the timeout is here only
+            // as an example and does not help at all in the calculations. You should
+            // offload the calculations to web workers if you want real benefits.
+            // Also note that doing asynchronous layout is completely optional and you
+            // can call the callback function synchronously also.
+            var timerId = window.setTimeout(function () {
+                var item,
+                    m,
+                    x = 0,
+                    y = 0,
+                    w = 0,
+                    h = 0;
+
+                for (var i = 0; i < items.length; i++) {
+                    item = items[i];
+                    x += w;
+                    if (i % NUM_COLS == 0) {
+                        x = 0;
+                        y += h;
+                    }
+                    m = item.getMargin();
+                    w = item.getWidth() + m.left +
+                        m.right;
+                    h = item.getHeight() + m.top + m.bottom;
+                    layout.slots.push(x, y);
+                }
+                w += x;
+                h += y;
+
+                // Set the CSS styles that should be applied to the grid element.
+                layout.styles.width = w + 'px';
+                layout.styles.height = h + 'px';
+
+                // When the layout is fully computed let 's call the callback function and 
+                // provide the layout object as it's argument.
+                callback(layout);
+            }, 200);
+
+            // If you are doing an async layout you _can_ (if you want to) return a 
+            // function that cancels this specific layout calculations if it 's still 
+            // processing/queueing when the next layout is requested.
+            return function () {
+                window.clearTimeout(timerId);
+            };
+        },
+    });
+
+
+    function eventDragStart() {
+        isDragging = true;
+    }
+
+    function eventMouseUp() {
+        isDragging = false;
+    }
+
+    document.body.addEventListener("dragstart", eventDragStart, false);
+    document.body.addEventListener("mouseUp", eventMouseUp, false);
+
+    createKnobDivSettings();
+    showKnobDivSettings(document.getElementById('knobDivSettings0'));
+    jQuery(".knobContent").fitText(0.8);
+</script>

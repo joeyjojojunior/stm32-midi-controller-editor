@@ -20,36 +20,21 @@
     }
 
     .editDiv {
-        position: relative;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: flex-start;
         font-size: 16;
         background-color: black;
         color: black;
         padding-bottom: 15px;
     }
 
-    .knobDivSettings {
-        opacity: 0.1;
-        clear: both;
-        height: 0;
-        padding: 0px;
-        overflow: hidden;
-        transition: all 300ms ease-in-out 100ms;
-    }
-
-    .knobDivSettings.active {
-        opacity: 1;
-        height: auto;
-    }
-
-
-    .knobSettingsHeader {
-        color: white;
-    }
-
     table {
         font-size: 14;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: white;
+        color: 40C0FF;
+
     }
 
     thead {
@@ -65,34 +50,45 @@
 
     .inputField {
         width: 135px;
-        border-radius: 3px;
-        box-shadow: blue;
-
+        border-radius: 2px;
+        border: none;
     }
 
-    .listSubLabelsDiv {
-        background-color: white;
-        color: black;
-        font-size: 12;
-        width: 100%;
-        padding: 4px;
+    .listDivSublabels {
+        margin-top: 38px;
+        margin-left: 10px;
     }
 
-    .listSubLabels {
+    .listDivSublabelsLabel {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14;
+        padding-bottom: 2px;
+
+        background-color: black;
+        color: 40C0FF;
+    }
+
+    .listSublabels {
         list-style-type: none;
-        margin: 0;
+        height: 264px;
+        margin: 0px;
         padding: 0px;
+
     }
 
-    .listSubLabelItem {
-        padding-top: 1px;
-        padding-bottom: 1px;
+    .listSublabelItem {
+        padding: 6px;
+        background-color: #000080;
+        color: white;
+        border: 1px solid white;
+        margin-bottom: 10px;
     }
 
     .grid {
         position: relative;
         display: inline-block;
     }
+
 
     .item {
         display: block;
@@ -102,8 +98,9 @@
         margin: 4px;
         z-index: 1;
         background: #000;
-        color: #fff;
-        border: solid 1px white;
+        color: #40C0FF;
+        font-family: monospace;
+        border: solid 1px #40C0FF;
     }
 
     .item:hover {
@@ -154,11 +151,11 @@
 
 <script>
     var MAX_LABEL_CHARS = 14;
+    var MAX_SL_PER_COL = 12;
     var NUM_COLS = 16;
     var NUM_ROWS = 8;
     var NUM_KNOBS = 128;
-    var isDragging = false;
-    var currentKnob = 0;
+    var currKnob = 0;
     var knobs = new Array(NUM_KNOBS);
 
     for (var i = 0; i < NUM_KNOBS; i++) {
@@ -167,7 +164,6 @@
         gridItem = document.createElement("div");
         gridItem.className = "item";
         gridItem.id = `gridItem${i}`;
-        gridItem.addEventListener("click", testClick, false);
         gridItem.addEventListener("mouseup", eventClickGridItem, false);
 
         gridItemContent = document.createElement("div");
@@ -177,8 +173,7 @@
         gridKnobContent = document.createElement("div");
         gridKnobContent.className = "knobContent";
         gridKnobContent.id = `knobContent${i}`;
-
-        gridKnobContent.innerHTML += `${i + 1}<br>THISIS14CHARS!`
+        gridKnobContent.innerHTML += `${i + 1}<br>THIS IS 14 CHR`
 
         gridItemContent.appendChild(gridKnobContent);
         gridItem.appendChild(gridItemContent);
@@ -186,22 +181,48 @@
         knobs[i] = gridItem;
     }
 
-
-    function testClick(e) {}
-
     function createKnobDivSettings() {
-        var editDiv = document.getElementsByClassName("editDiv");
+        var editDiv = document.querySelector(".editDiv");
 
         for (var i = 0; i < NUM_KNOBS; i++) {
             var knobDivSettings = document.createElement("div");
             knobDivSettings.className = "knobDivSettings";
             knobDivSettings.id = `knobDivSettings${i}`;
-
-            var knobTableSettings = createKnobTableSettings(i);
-            knobDivSettings.appendChild(knobTableSettings);
-
-            editDiv[0].appendChild(knobDivSettings);
+            knobDivSettings.style.display = "none";
+            knobDivSettings.appendChild(createKnobTableSettings(i));
+            editDiv.appendChild(knobDivSettings);
+            editDiv.appendChild(createKnobDivSublabels(i));
         }
+    }
+
+    function createKnobDivSublabels(knobID) {
+        var listDivSublabels = document.createElement("div");
+        listDivSublabels.className = "listDivSublabels";
+        listDivSublabels.id = `listDivSublabels${knobID}`;
+
+        var labelDiv = document.createElement("div");
+        labelDiv.className = "listDivSublabelsLabel";
+        labelDiv.innerHTML = "Sub Labels"
+
+        var listSublabels = document.createElement("ul");
+        listSublabels.className = "listSublabels";
+        listSublabels.id = `listSublabels${knobID}`;
+
+        var labels = new Array(Math.floor(Math.random() * (128 - 1 + 1)) + 1);
+        for (var i = 0; i < labels.length; i++) {
+            var subLabel = document.createElement("li");
+            subLabel.innerHTML += `Knob ${knobID} SBL ${i}`;
+            subLabel.className = 'listSublabelItem'
+            listSublabels.appendChild(subLabel);
+        }
+
+        var test = labels.length / MAX_SL_PER_COL;
+        listSublabels.style.columnCount = Math.floor(labels.length / MAX_SL_PER_COL);
+
+        listDivSublabels.appendChild(labelDiv);
+        listDivSublabels.appendChild(listSublabels);
+        listDivSublabels.style.display = "none";
+        return listDivSublabels
     }
 
     function createKnobTableSettings(knobID) {
@@ -218,11 +239,10 @@
         tbl.appendChild(thead);
 
         var tbdy = document.createElement("tbody");
-        var inputLabels = ["Label", "Sub Labels", "Channel", "CC", "Init Value", "Max Values", "Max Range", "Locked"];
+        var inputLabels = ["Label", "Channel", "CC", "Init Value", "Max Values", "Max Range", "Locked"];
         var knobInputFields = createKnobInputFields(knobID);
 
         for (var i = 0; i < knobInputFields.length; i++) {
-            if (i == 1) continue;
             var tr = document.createElement("tr");
 
             var tdInputLabel = document.createElement("td");
@@ -255,24 +275,6 @@
         label.className = "inputField";
         label.id = `inputLabel${knobID}`;
 
-        // TODO: Move this later
-        var listSubLabelsDiv = document.createElement("div");
-        listSubLabelsDiv.className = "listSubLabelsDiv";
-
-        var listSubLabels = document.createElement("ul");
-        listSubLabels.className = "listSublabels";
-        listSubLabels.id = `listSubLabels${knobID}`;
-
-        var labels = new Array(40);
-        for (var i = 0; i < labels.length; i++) {
-            var subLabel = document.createElement("li");
-            subLabel.innerHTML += `Sublabelchars${i}`;
-            subLabel.className = 'listSubLabelItem'
-            listSubLabels.appendChild(subLabel);
-        }
-
-        listSubLabelsDiv.appendChild(listSubLabels);
-
         channel.className = `inputField`;
         channel.id = `inputChannel${knobID}`;
 
@@ -291,40 +293,47 @@
         isLocked.className = `inputField`;
         isLocked.id = `inputIsLocked${knobID}`;
 
-        var labels = [label, listSubLabelsDiv, channel, cc, initValue, maxValues, maxRange, isLocked];
+        var inputs = [label, channel, cc, initValue, maxValues, maxRange, isLocked];
 
-        for (var i = 0; i < labels.length; i++) {
-            labels[i].maxLength = MAX_LABEL_CHARS;
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].maxLength = MAX_LABEL_CHARS;
         }
 
-        return labels;
-
+        return inputs;
     }
 
     function eventClickGridItem(e) {
-        if (isDragging) return;
-
-
-
         var editDiv = document.querySelector(".editDiv");
         var knobIDString = e.target.id;
         var knobID = (knobIDString.match(/\d+/g) || []).map(n => parseInt(n))[0];
         var knobDivSettings = document.getElementById(`knobDivSettings${knobID}`);
+        var listDivSublabels = document.getElementById(`listDivSublabels${knobID}`);
 
-        hideKnobDivSettingsAll();
-        knobDivSettings.classList.add("active");
+        var sl = document.getElementById(`listSublabels${knobID}`);
+        console.log(sl);
 
+        if (!drag) {
+            hideKnobDivSettingsAll();
+            knobDivSettings.style.display = "block";
+            listDivSublabels.style.display = "block";
+        }
+        currKnob = knobID;
     }
 
-    function showKnobDivSettings(s) {
-        s.classList.add("active");
+    function showKnobDivSettings(knobID) {
+        var knobDivSettings = document.getElementById(`knobDivSettings${knobID}`);
+        var listDivSublabels = document.getElementById(`listDivSublabels${knobID}`);
+
+        knobDivSettings.style.display = "block";
+        listDivSublabels.style.display = "block";
     }
 
     function hideKnobDivSettingsAll() {
         var knobDivSettingsAll = document.getElementsByClassName("knobDivSettings");
-
+        var listDivSublabelsAll = document.getElementsByClassName("listDivSublabels");
         for (var i = 0; i < knobDivSettingsAll.length; i++) {
-            knobDivSettingsAll[i].classList.remove("active");
+            knobDivSettingsAll[i].style.display = "none";
+            listDivSublabelsAll[i].style.display = "none";
         }
     }
 
@@ -396,25 +405,25 @@
         },
     });
 
+    let drag = false;
+    document.addEventListener(
+        'mousedown', () => drag = false);
 
-    function eventDragStart() {
-        isDragging = true;
-    }
+    document.addEventListener(
+        'mousemove', () => drag = true);
 
-    function eventMouseUp() {
-        isDragging = false;
-    }
-
-    document.body.addEventListener("dragstart", eventDragStart, false);
-    document.body.addEventListener("mouseUp", eventMouseUp, false);
+    document.addEventListener(
+        'mouseup', () => drag ? 'drag' : 'click');
 
     createKnobDivSettings();
-    showKnobDivSettings(document.getElementById('knobDivSettings0'));
+    showKnobDivSettings("0");
 
-    jQuery(".knobContent").fitText(0.8);
+    // Keeps grid item text in its container
+    jQuery(".knobContent").fitText(0.87);
 
+    // Allows moving sub labels around
     $(function () {
-        $(".listSubLabels").sortable();
-        $(".listSubLabels").disableSelection();
+        $(".listSublabels").sortable();
+        $(".listSublabels").disableSelection();
     });
 </script>

@@ -8,7 +8,7 @@
     .container {
         display: inline-flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         border: 1px solid white;
         padding: 2px;
@@ -19,6 +19,10 @@
         background-color: black;
         color: black;
         padding: 2px;
+    }
+
+    .knobSettingsHeader {
+        color: white;
     }
 
     table {
@@ -42,6 +46,25 @@
     .inputField {
         width: 135px;
     }
+
+    .listSubLabelsDiv {
+        background-color: white;
+        color: black;
+        width: 100%;
+        padding: 4px;
+    }
+
+    .listSubLabels {
+        list-style-type: none;
+        margin: 0;
+        padding: 0px;
+    }
+
+    .listSubLabelItem {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
 
     .grid {
         position: relative;
@@ -92,7 +115,10 @@
         <div class="grid" id="knobGrid"></div>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="jquery.fittext.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/muuri@0.9.5/dist/muuri.min.js"></script>
 </body>
@@ -161,7 +187,7 @@
         tbl.appendChild(thead);
 
         var tbdy = document.createElement("tbody");
-        var inputLabels = ["Label", "Channel", "CC", "Init Value", "Max Values", "Max Range", "Locked"];
+        var inputLabels = ["Label", "Sub Labels", "Channel", "CC", "Init Value", "Max Values", "Max Range", "Locked"];
         var knobInputFields = createKnobInputFields(knobID);
 
         for (var i = 0; i < knobInputFields.length; i++) {
@@ -186,6 +212,7 @@
 
     function createKnobInputFields(knobID) {
         var label = document.createElement("input");
+        var subLabels = document.createElement("select");
         var channel = document.createElement("input");
         var cc = document.createElement("input");
         var initValue = document.createElement("input");
@@ -195,6 +222,28 @@
 
         label.className = "inputField";
         label.id = `inputLabel${knobID}`;
+
+        // TODO: Move this later
+        var listSubLabelsDiv = document.createElement("div");
+        listSubLabelsDiv.className = "listSubLabelsDiv";
+        var listSubLabels = document.createElement("ul");
+        listSubLabels.className = "listSublabels";
+        listSubLabels.id = `listSubLabels${knobID}`;
+        var label1 = document.createElement("li");
+        label1.className = 'listSubLabelItem'
+        label1.innerHTML += "Sublabel 1";
+        var label2 = document.createElement("li");
+        label2.className = 'listSubLabelItem'
+        label2.innerHTML += "Sublabel 2";
+        var label3 = document.createElement("li");
+        label3.className = 'listSubLabelItem'
+
+        label3.innerHTML += "Sublabel 3";
+        listSubLabels.appendChild(label1);
+        listSubLabels.appendChild(label2);
+        listSubLabels.appendChild(label3);
+
+        listSubLabelsDiv.appendChild(listSubLabels);
 
         channel.className = `inputField`;
         channel.id = `inputChannel${knobID}`;
@@ -214,7 +263,7 @@
         isLocked.className = `inputField`;
         isLocked.id = `inputIsLocked${knobID}`;
 
-        var labels = [label, channel, cc, initValue, maxValues, maxRange, isLocked];
+        var labels = [label, listSubLabelsDiv, channel, cc, initValue, maxValues, maxRange, isLocked];
 
         for (var i = 0; i < labels.length; i++) {
             labels[i].maxLength = MAX_LABEL_CHARS;
@@ -333,5 +382,11 @@
 
     createKnobDivSettings();
     showKnobDivSettings(document.getElementById('knobDivSettings0'));
+
     jQuery(".knobContent").fitText(0.8);
+
+    $(function () {
+        $(".listSubLabels").sortable();
+        $(".listSubLabels").disableSelection();
+    });
 </script>

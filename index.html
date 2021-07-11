@@ -1,25 +1,48 @@
 <style>
     body {
-        height: 100%;
-        overflow: hidden;
+
         background-color: black;
     }
 
+    .mainDiv {
+        width: 100%;
+        display: inline-flex;
+        justify-content: center;
+    }
+
+
     .container {
         display: inline-flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: flex-start;
         justify-content: center;
-        border: 1px solid white;
-        padding: 2px;
     }
 
     .editDiv {
         font-size: 16;
         background-color: black;
         color: black;
-        padding: 2px;
+        padding-bottom: 15px;
+
+
     }
+
+    .editDiv.active {}
+
+    .knobDivSettings {
+        opacity: 0.1;
+        clear: both;
+        height: 0;
+        padding: 0px;
+        overflow: hidden;
+        transition: all 300ms ease-in-out 100ms;
+    }
+
+    .knobDivSettings.active {
+        opacity: 1;
+        height: auto;
+    }
+
 
     .knobSettingsHeader {
         color: white;
@@ -29,7 +52,6 @@
         font-size: 14;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: white;
-        padding: 2px;
     }
 
     thead {
@@ -50,6 +72,7 @@
     .listSubLabelsDiv {
         background-color: white;
         color: black;
+        font-size: 12;
         width: 100%;
         padding: 4px;
     }
@@ -65,7 +88,6 @@
         padding-bottom: 1px;
     }
 
-
     .grid {
         position: relative;
         display: inline-block;
@@ -74,13 +96,17 @@
     .item {
         display: block;
         position: absolute;
-        width: 100px;
-        height: 50px;
+        width: 108px;
+        height: 54px;
         margin: 4px;
         z-index: 1;
         background: #000;
         color: #fff;
         border: solid 1px white;
+    }
+
+    .item:hover {
+        border: 1px solid red;
     }
 
     .item.item.muuri-item-dragging {
@@ -99,7 +125,7 @@
         z-index: 0;
     }
 
-    .item-content {
+    .item.mu .item-content {
         position: relative;
         width: 100%;
         height: 100%;
@@ -110,15 +136,17 @@
 
     <head>
     </head>
-    <div class="container">
-        <div class="editDiv"></div>
-        <div class="grid" id="knobGrid"></div>
+    <div class="mainDiv">
+        <div class="container">
+            <div class="editDiv"></div>
+            <div class="grid" id="knobGrid"></div>
+        </div>
     </div>
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="jquery.fittext.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/web-animations-js@2.3.2/web-animations.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/muuri@0.9.5/dist/muuri.min.js"></script>
 </body>
@@ -129,6 +157,7 @@
     var NUM_ROWS = 8;
     var NUM_KNOBS = 128;
     var isDragging = false;
+    var currentKnob = 0;
     var knobs = new Array(NUM_KNOBS);
 
     for (var i = 0; i < NUM_KNOBS; i++) {
@@ -137,7 +166,8 @@
         gridItem = document.createElement("div");
         gridItem.className = "item";
         gridItem.id = `gridItem${i}`;
-        gridItem.addEventListener("mouseup", displayKnobInfo, false);
+        gridItem.addEventListener("click", testClick, false);
+        gridItem.addEventListener("mouseup", eventClickGridItem, false);
 
         gridItemContent = document.createElement("div");
         gridItemContent.className = "item-content";
@@ -156,6 +186,7 @@
     }
 
 
+    function testClick(e) {}
 
     function createKnobDivSettings() {
         var editDiv = document.getElementsByClassName("editDiv");
@@ -164,7 +195,6 @@
             var knobDivSettings = document.createElement("div");
             knobDivSettings.className = "knobDivSettings";
             knobDivSettings.id = `knobDivSettings${i}`;
-            knobDivSettings.style.display = "none";
 
             var knobTableSettings = createKnobTableSettings(i);
             knobDivSettings.appendChild(knobTableSettings);
@@ -191,6 +221,7 @@
         var knobInputFields = createKnobInputFields(knobID);
 
         for (var i = 0; i < knobInputFields.length; i++) {
+            if (i == 1) continue;
             var tr = document.createElement("tr");
 
             var tdInputLabel = document.createElement("td");
@@ -226,22 +257,18 @@
         // TODO: Move this later
         var listSubLabelsDiv = document.createElement("div");
         listSubLabelsDiv.className = "listSubLabelsDiv";
+
         var listSubLabels = document.createElement("ul");
         listSubLabels.className = "listSublabels";
         listSubLabels.id = `listSubLabels${knobID}`;
-        var label1 = document.createElement("li");
-        label1.className = 'listSubLabelItem'
-        label1.innerHTML += "Sublabel 1";
-        var label2 = document.createElement("li");
-        label2.className = 'listSubLabelItem'
-        label2.innerHTML += "Sublabel 2";
-        var label3 = document.createElement("li");
-        label3.className = 'listSubLabelItem'
 
-        label3.innerHTML += "Sublabel 3";
-        listSubLabels.appendChild(label1);
-        listSubLabels.appendChild(label2);
-        listSubLabels.appendChild(label3);
+        var labels = new Array(40);
+        for (var i = 0; i < labels.length; i++) {
+            var subLabel = document.createElement("li");
+            subLabel.innerHTML += `Sublabelchars${i}`;
+            subLabel.className = 'listSubLabelItem'
+            listSubLabels.appendChild(subLabel);
+        }
 
         listSubLabelsDiv.appendChild(listSubLabels);
 
@@ -273,30 +300,30 @@
 
     }
 
-    function displayKnobInfo(e) {
+    function eventClickGridItem(e) {
         if (isDragging) return;
 
+
+
+        var editDiv = document.querySelector(".editDiv");
         var knobIDString = e.target.id;
         var knobID = (knobIDString.match(/\d+/g) || []).map(n => parseInt(n))[0];
         var knobDivSettings = document.getElementById(`knobDivSettings${knobID}`);
-        showKnobDivSettings(knobDivSettings);
-    }
 
-    function hideKnobDivSettings(s) {
-        s.style.display = "none";
+        hideKnobDivSettingsAll();
+        knobDivSettings.classList.add("active");
 
     }
 
     function showKnobDivSettings(s) {
-
-        hideKnobDivSettingsAll();
-        s.style.display = "block";
+        s.classList.add("active");
     }
 
     function hideKnobDivSettingsAll() {
         var knobDivSettingsAll = document.getElementsByClassName("knobDivSettings");
+
         for (var i = 0; i < knobDivSettingsAll.length; i++) {
-            knobDivSettingsAll[i].style.display = "none";
+            knobDivSettingsAll[i].classList.remove("active");
         }
     }
 
@@ -304,12 +331,12 @@
         items: knobs,
         dragEnabled: true,
         dragSortHeuristics: {
-            sortInterval: 300,
-            minDragDistance: 30,
+            sortInterval: 200,
+            minDragDistance: 20,
             minBounceBackAngle: 1
         },
         dragSortPredicate: {
-            threshold: 55,
+            threshold: 50,
             action: 'swap',
             migrateAction: 'move'
         },

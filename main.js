@@ -8,41 +8,37 @@ const {
 } = require('electron')
 const path = require('path')
 
-
 function createWindow() {
-
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     resizable: false,
     useContentSize: true,
-    //fullscreen: true,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      //useContentSize: true,
       preload: path.join(__dirname, 'preload.js'),
     }
   });
 
-
-  // and load the index.html of the app.
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.on('did-finish-load', () => {
+    // Open the window on the display with the cursor and maximize
     let cursor = screen.getCursorScreenPoint();
     let currentScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
     mainWindow.setBounds(currentScreen.bounds)
+    mainWindow.maximize();
 
+    //
+    mainWindow.webContents.send('windowLoaded', currentScreen.bounds.height);
 
+    // Scale the content zoom for the current resolution
     mainWindow.webContents.send('scale', currentScreen.bounds.width, currentScreen.bounds.height);
 
+    // If the display has changed after moving, set its new bounds and scale accordingly
     mainWindow.on('moved', () => {
-      console.log("moved");
-
       let newScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
-      console.log(newScreen);
 
       if (newScreen.id !== currentScreen.id) {
         mainWindow.setBounds(newScreen.bounds)
@@ -50,14 +46,37 @@ function createWindow() {
         currentScreen = newScreen;
       }
 
+      console.log("moved");
     });
 
+    mainWindow.webContents.on('resize', () => {
+      console.log("mainresize");
+    });
 
-    mainWindow.maximize();
+    ipcMain.on('zoomChanged', (event, height) => {
+      if (height === 2160) {
+        console.log("2160");
+        mainWindow.setBounds({
+          width: 3840,
+          height: 2160
+        });
+      } else if (height === 1440) {
+        console.log("1440");
+        mainWindow.setBounds({
+          width: 2560,
+          height: 1440
+        });
+      } else if (height === 1080) {
+        console.log("1080");
+        mainWindow.setBounds({
+          width: 1920,
+          height: 1080
+        });
 
+      }
+    });
 
   });
-
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

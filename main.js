@@ -3,40 +3,61 @@ const {
   app,
   BrowserWindow,
   webFrame,
-  screen,
-  ipcMain
+  ipcMain,
+  screen
 } = require('electron')
 const path = require('path')
 
+
 function createWindow() {
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1920,
-    height: 975,
+    height: 1080,
+    resizable: false,
+    useContentSize: true,
+    //fullscreen: true,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      useContentSize: true,
+      //useContentSize: true,
       preload: path.join(__dirname, 'preload.js'),
     }
   });
+
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.on('did-finish-load', () => {
+    let cursor = screen.getCursorScreenPoint();
+    let currentScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    mainWindow.setBounds(currentScreen.bounds)
 
-    mainWindow.setMenuBarVisibility(false)
-    mainWindow.on('maximize', () => {
-      mainWindow.webContents.send('maximize');
 
-    })
+    mainWindow.webContents.send('scale', currentScreen.bounds.width, currentScreen.bounds.height);
 
-    mainWindow.on('unmaximize', () => {
-      mainWindow.webContents.send('unmaximize');
-      mainWindow.reload();
-    })
+    mainWindow.on('moved', () => {
+      console.log("moved");
+
+      let newScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+      console.log(newScreen);
+
+      if (newScreen.id !== currentScreen.id) {
+        mainWindow.setBounds(newScreen.bounds)
+        mainWindow.webContents.send('scale', newScreen.bounds.width, newScreen.bounds.height);
+        currentScreen = newScreen;
+      }
+
+    });
+
+
+    mainWindow.maximize();
+
+
   });
+
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

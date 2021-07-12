@@ -16,10 +16,20 @@ const {
 delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-ipcRenderer.on('maximize', (event, arg) => {
-    webFrame.setZoomFactor(2);
+
+
+ipcRenderer.on('scale', (event, width, height) => {
+    console.log(`${width}, ${height}`);
+
+    if (width === 3840) {
+        webFrame.setZoomFactor(2);
+    } else if (width === 1920) {
+        webFrame.setZoomFactor(1);
+    }
 });
 
+/*
 ipcRenderer.on('unmaximize', (event, arg) => {
     webFrame.setZoomFactor(1)
 });
+*/

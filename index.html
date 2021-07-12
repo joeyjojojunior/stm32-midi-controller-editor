@@ -555,15 +555,18 @@
     });
 
     window.addEventListener('load', (event) => {
+        /*
         if (isFirstRun) {
             //webFrame.setZoomFactor(1);
             isFirstRun = false;
         }
 
         isWindowLoaded = true;
+        */
     });
 
     window.addEventListener('resize', (event) => {
+        /*
         if (!isWindowLoaded) return;
         var currZoomFactor = webFrame.getZoomFactor();
         if (currZoomFactor - zoomFactor > 0) {
@@ -573,6 +576,7 @@
                 -window.innerHeight * zoomFactor / 13);
         }
         zoomFactor = currZoomFactor;
+        */
     });
 
     window.onkeydown = zoomDisable;

@@ -8,7 +8,6 @@
         justify-content: center;
     }
 
-
     .container {
         display: inline-flex;
         flex-direction: column;
@@ -17,7 +16,7 @@
         overflow: auto;
     }
 
-    .editDiv {
+    .settingsDiv {
         display: inline-flex;
         flex-direction: row;
         align-items: flex-start;
@@ -104,13 +103,13 @@
         text-align: center;
     }
 
-    .listDivSublabels {
-        margin-top: 38px;
+    .divSublabels {
+
         margin-left: 8px;
         cursor: default;
     }
 
-    .listDivSublabelsLabel {
+    .divSublabelsLabel {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 15;
         padding-bottom: 2px;

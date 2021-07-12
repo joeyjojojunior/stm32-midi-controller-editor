@@ -1,0 +1,27 @@
+{
+  "name": "stm32-midi-controller-editor",
+  "version": "1.0.0",
+  "description": "preset editor for an stm32 midi controller",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-joeyjojojunior:joeyjojojunior/stm32-midi-controller-editor.git"
+  },
+  "keywords": [
+    "midi",
+    "controller",
+    "stm32"
+  ],
+  "author": "joeyjojojunior",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^13.1.6"
+  },
+  "dependencies": {
+    "electron-packager": "^15.2.0"
+  }
+}

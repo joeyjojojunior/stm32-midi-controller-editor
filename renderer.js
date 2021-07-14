@@ -31,7 +31,6 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 ipcRenderer.on('windowLoaded', (event, height) => {
     displayHeight = height;
-    console.log("windowLoaded");
 });
 
 // Scale the content according to resolution height

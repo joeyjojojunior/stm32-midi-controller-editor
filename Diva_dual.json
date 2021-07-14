@@ -1,0 +1,122 @@
+{
+	"name": "Diva",
+	"sub_label": "Patch 01",
+	"index": "0",
+	"knobs": [{
+			"row": "0",
+			"col": "0",
+			"label": "Cutoff",
+			"sub_labels": [],
+			"channel": "1",
+			"cc": "17",
+			"init_value": "63",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "1",
+			"col": "0",
+			"label": "Resonance",
+			"sub_labels": [],
+			"channel": "1",
+			"cc": "18",
+			"init_value": "0",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "2",
+			"col": "0",
+			"label": "Filter Env",
+			"sub_labels": [],
+			"channel": "1",
+			"cc": "19",
+			"init_value": "0",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "3",
+			"col": "0",
+			"label": "Env 1",
+			"sub_labels": [
+				"Decay"
+			],
+			"channel": "1",
+			"cc": "20",
+			"init_value": "30",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "0",
+			"col": "1",
+			"label": "Osc 1 Wave",
+			"sub_labels": [
+				"Multisaw",
+				"TriSaw",
+				"Noise",
+				"Feedback",
+				"Pulse",
+				"Saw",
+				"Triangle"
+			],
+			"channel": "1",
+			"cc": "21",
+			"init_value": "0",
+			"max_values": "7",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "1",
+			"col": "1",
+			"label": "Osc 2 Wave",
+			"sub_labels": [
+				"Multisaw",
+				"TriSaw",
+				"Noise",
+				"Feedback",
+				"Pulse",
+				"Saw",
+				"Triangle"
+			],
+			"channel": "1",
+			"cc": "22",
+			"init_value": "0",
+			"max_values": "7",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "2",
+			"col": "1",
+			"label": "Osc FM",
+			"sub_labels": [],
+			"channel": "1",
+			"cc": "23",
+			"init_value": "0",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		},
+		{
+			"row": "3",
+			"col": "1",
+			"label": "Filter FM",
+			"sub_labels": [
+				"Osc 1"
+			],
+			"channel": "1",
+			"cc": "24",
+			"init_value": "0",
+			"max_values": "128",
+			"max_range": "127",
+			"isLocked": "0"
+		}
+	]
+}

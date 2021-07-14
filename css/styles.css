@@ -2,6 +2,11 @@
         background-color: black;
     }
 
+    @font-face {
+        font-family: Hack;
+        src: url(./font/Hack-Regular.ttf);
+    }
+
     .mainDiv {
         width: 100%;
         display: inline-flex;
@@ -16,11 +21,20 @@
         overflow: auto;
     }
 
-    .settingsDiv {
+    .settings {
         display: inline-flex;
         flex-direction: row;
         align-items: flex-start;
         background-color: black;
+    }
+
+    .title {
+        display: flex;
+
+        font-family: Hack;
+        font-weight: bold;
+        font-size: 24px;
+        color: #A7C7E7;
     }
 
     table {
@@ -39,6 +53,11 @@
         white-space: nowrap;
         display: flex;
         align-items: center;
+    }
+
+    .divIsLocked {
+        display: flex;
+        align-items: flex-end;
     }
 
     .inputSubLabel {
@@ -104,8 +123,9 @@
     }
 
     .divSublabels {
-
         margin-left: 8px;
+        margin-top: 3px;
+        padding: 0px;
         cursor: default;
     }
 
@@ -122,9 +142,10 @@
         flex-direction: column;
         flex-wrap: wrap;
         list-style-type: none;
-        height: 300px;
+        height: 270px;
         padding: 0px;
         margin: 0 auto;
+        margin-top: -5px;
     }
 
     .listSublabelItem {
@@ -184,6 +205,7 @@
     .item.muuri-item-hidden {
         z-index: 0;
     }
+
 
     .item.mu .item-content {
         position: relative;

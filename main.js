@@ -10,6 +10,7 @@ const path = require('path')
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
+    title: "STM32 MIDI Controller Editor",
     width: 1920,
     height: 1080,
     resizable: false,
@@ -30,7 +31,6 @@ function createWindow() {
     mainWindow.setBounds(currentScreen.bounds)
     mainWindow.maximize();
 
-    //
     mainWindow.webContents.send('windowLoaded', currentScreen.bounds.height);
 
     // Scale the content zoom for the current resolution

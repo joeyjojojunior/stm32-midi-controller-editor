@@ -2,92 +2,112 @@ const {
     read
 } = require("original-fs");
 
-var MAX_LABEL_CHARS = 14;
-var NUM_COLS = 16;
-var NUM_ROWS = 8;
-var NUM_KNOBS = 128;
-var knobs = new Array(NUM_KNOBS);
-var presetNum = 0;
-var drag = false;
+// Global variables
+const MAX_LABEL_CHARS = 14;
+const NUM_COLS = 16;
+const NUM_ROWS = 8;
+const NUM_KNOBS = 128;
 
-// Initializes all the UI divs for a preset
+var currKnobID = 0;
+var drag = false;
+var jsonString = "";
+var json = "";
+var knobContent = new Array(NUM_KNOBS);
+var knobSettings = new Array(NUM_KNOBS);
+
+for (var i = 0; i < knobSettings.length; i++) {
+    knobSettings[i] = {
+        label: "",
+        channel: "",
+        cc: "",
+        initValue: "",
+        maxRange: "",
+        isLocked: "false",
+        sublabels: [""]
+    }
+}
+
+knobSettings[0] = {
+    label: "Cutoff",
+    channel: "3",
+    cc: "18",
+    initValue: "34",
+    maxRange: "128",
+    isLocked: "true",
+    sublabels: [
+        "Label 1",
+        "Label 2",
+        "Label 3"
+    ]
+}
+knobSettings[1] = {
+    label: "Resonance",
+    channel: "1",
+    cc: "33",
+    initValue: "0",
+    maxRange: "16",
+    isLocked: "false",
+    sublabels: [
+        "Boo 1",
+        "Boo 2",
+        "Boo 3",
+        "Boo 4",
+        "Boo 5"
+    ]
+}
+
+// Title Divs
+var title = document.querySelector(".title");
+var knob = document.querySelector(".knob");
+var preset = document.querySelector(".preset");
+var channel = document.querySelector(".channel");
+var menu = document.querySelector(".menu");
+
+// Settings Divs
+var settings = document.querySelector(".settings");
+var mainSettings = document.querySelector(".main-settings");
+var sublabels = document.querySelector(".sublabels");
+var slLabel = document.querySelector(".sl-label");
+var grid = document.querySelector(".grid");
+
+
 function init() {
+    createTitle();
+    mainSettings.appendChild(createTableSettings());
     createGridItems();
     createGrid();
-    createSettings();
-    createTitle(0);
-    showSettings("0");
+    showKnob(currKnobID);
+
+    const fileInput = document.getElementById("file");
+    fileInput.addEventListener("change", loadFile, false);
 
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
 
     // Allows moving sub labels around
     $(function () {
-        $(".listSublabels").sortable();
-        $(".listSublabels").disableSelection();
+        $(".slList").sortable();
+        $(".slList").disableSelection();
     });
 }
 
-function createTitle(KnobID) {
-    var title = document.querySelector(".title");
-
-    var divTitleKnob = document.createElement("div");
-    divTitleKnob.className = "divTitleKnob";
-
-    var divTitlePreset = document.createElement("div");
-    divTitlePreset.className = "divTitlePreset";
-    divTitlePreset.innerHTML = `Preset ${presetNum}`;
-
-    title.appendChild(divTitleKnob);
-    title.appendChild(divTitlePreset);
+function createTitle() {
 
 }
 
-function updateTitle(KnobID) {
-    var divTitleKnob = document.querySelector(".divTitleKnob");
-    divTitleKnob.innerHTML = `Knob ${KnobID}`;
+function updateTitle(knobID) {
+    var knobLabel = document.querySelector(".knob");
+    knob.innerHTML = `Knob ${knobID + 1}`;
 }
 
-// Create a div for each knob that contains all of its settings/sublabels
-//   .class  divSettings
-//   #id     divSettings${knobID}
-function createSettings() {
-    var settings = document.querySelector(".settings");
-
-    for (var i = 0; i < NUM_KNOBS; i++) {
-        var divSettings = document.createElement("div");
-        divSettings.className = "divSettings";
-        divSettings.id = `divSettings${i}`;
-        divSettings.style.display = "none";
-        divSettings.appendChild(createTableSettings(i));
-        settings.appendChild(divSettings);
-        settings.appendChild(createSublabels(i));
-    }
-}
-
-// Create a table that contains all the settings for a single knob
-//   knobID  knob index
-//   return  table  
-//   .class  N/A
-//   #id     N/A
-function createTableSettings(knobID) {
+function createTableSettings() {
     var tbl = document.createElement("table");
-
-    //var thead = document.createElement("thead");
-    //var trHead = document.createElement("tr");
-    //var tdHead = document.createElement("td");
-    //tdHead.innerHTML += `Knob ${knobID + 1}`;
-    //tdHead.colSpan = "2";
-
-    //trHead.appendChild(tdHead);
-    //thead.appendChild(trHead);
-    //tbl.appendChild(thead);
 
     var tbdy = document.createElement("tbody");
     var inputLabels = ["Label", "Channel", "CC", "Init Value", "Max Range", "Locked"];
 
     // Create the input fields for this knob
-    var knobInputFields = createInputSettings(knobID);
+    var knobInputFields = createInputSettings();
 
     // Add the labels/fields to the table
     for (var i = 0; i < inputLabels.length - 1; i++) {
@@ -121,26 +141,12 @@ function createTableSettings(knobID) {
 
     tbdy.appendChild(tr);
 
-
     tbl.appendChild(tbdy);
 
     return tbl;
 }
 
-
-
-// Create all the input elements in the divSettings div
-//   knobID  knob index
-//   return  array of input fields and a checkbox  
-//   .class  inputField
-//           inputCheckbox
-//   #id     inputLabel${knobID}      
-//           inputChannel{$knobID}    
-//           inputCC${knobID}        
-//           inputInitValue${knobID}
-//           inputMaxRange${knobID}
-//           inputIsLocked${knobID}
-function createInputSettings(knobID) {
+function createInputSettings() {
     var label = document.createElement("input");
     var channel = document.createElement("input");
     var cc = document.createElement("input");
@@ -149,27 +155,27 @@ function createInputSettings(knobID) {
     var isLocked = document.createElement("input");
 
     label.className = "inputField";
-    label.id = `inputLabel${knobID}`;
+    label.id = `inputLabel`;
     label.maxLength = MAX_LABEL_CHARS;
 
     channel.className = `inputField`;
-    channel.id = `inputChannel${knobID}`;
+    channel.id = `inputChannel`;
     channel.maxLength = 2;
 
     cc.className = `inputField`;
-    cc.id = `inputCC${knobID}`;
+    cc.id = `inputCC`;
     cc.maxLength = 3;
 
     initValue.className = `inputField`;
-    initValue.id = `inputInitValue${knobID}`;
+    initValue.id = `inputInitValue`;
     initValue.maxLength = 3;
 
     maxRange.className = `inputField`;
-    maxRange.id = `inputMaxRange${knobID}`;
+    maxRange.id = `inputMaxRange`;
     maxRange.maxLength = 3;
 
     isLocked.className = `inputCheckbox`;
-    isLocked.id = `inputIsLocked${knobID}`;
+    isLocked.id = `inputIsLocked`;
     isLocked.type = "checkbox";
 
     var inputs = [label, channel, cc, initValue, maxRange, isLocked];
@@ -181,74 +187,76 @@ function createInputSettings(knobID) {
     return inputs;
 }
 
-// Create a div that contains all the sublabels for a single knob
-//   knobID  knob index
-//   .class  divSublabels
-//   #id     divSublabels${knobID}
 function createSublabels(knobID) {
-    // Create the main .divSublabels div
-    var divSublabels = document.createElement("div");
-    divSublabels.className = "divSublabels";
-    divSublabels.id = `divSublabels${knobID}`;
-
-    // Create the label for the sublabels section
-    var labelDiv = document.createElement("div");
-    labelDiv.className = "divSublabelsLabel";
-    labelDiv.innerHTML = "Sub Labels"
+    var oldList = document.getElementsByClassName("sl-list").item(0);
+    if (typeof (oldList) != "undefined" && oldList != null) {
+        oldList.parentNode.removeChild(oldList);
+    }
 
     // Create the un-ordererd list for the sublabels
-    var listSublabels = document.createElement("ul");
-    listSublabels.className = "listSublabels";
-    listSublabels.id = `listSublabels${knobID}`;
+    var slList = document.createElement("ul");
+    slList.className = "sl-list";
+
+    console.log(knobSettings[knobID].sublabels.length);
+
+    for (var i = 0; i < knobSettings[knobID].sublabels.length; i++) {
+        var subLabel = document.createElement("li");
+        subLabel.className = "sl-list-item"
+
+        var input = document.createElement("input");
+        input.className = "sl-list-input";
+        input.id = `sl-list-input${i}`
+        input.maxLength = MAX_LABEL_CHARS;
+        input.spellcheck = false;
+        input.value = knobSettings[knobID].sublabels[i];
+
+        var slDragHandle = document.createElement("div");
+        slDragHandle.className = "sl-drag-handle";
+
+        var img = document.createElement("img");
+        img.src = "./img/dragIcon.png";
+        img.className = "sl-drag-icon";
+        slDragHandle.appendChild(img);
+
+        subLabel.appendChild(slDragHandle);
+        subLabel.appendChild(input);
+        slList.appendChild(subLabel);
+    }
 
     // Create test labels
+    /*
     var labels = new Array(Math.floor(Math.random() * (30 - 1 + 1)) + 1);
     var labels = new Array(128);
     for (var i = 0; i < labels.length; i++) {
         var subLabel = document.createElement("li");
-        subLabel.className = 'listSublabelItem'
+        subLabel.className = "sl-list-item"
 
         var input = document.createElement("input");
-        input.className = "inputSubLabel";
-        input.id = `inputSubLabel${knobID}`
+        input.className = "sl-list-input";
+        input.id = `sl-list-input${i}`
         input.maxLength = MAX_LABEL_CHARS;
         input.spellcheck = false;
 
-        var dragHandle = document.createElement("div");
-        dragHandle.className = "dragHandle";
+        var slDragHandle = document.createElement("div");
+        slDragHandle.className = "sl-drag-handle";
 
         var img = document.createElement("img");
         img.src = "./img/dragIcon.png";
-        img.className = "dragIcon";
-        dragHandle.appendChild(img);
+        img.className = "sl-drag-icon";
+        slDragHandle.appendChild(img);
 
-        subLabel.appendChild(dragHandle);
+        subLabel.appendChild(slDragHandle);
         subLabel.appendChild(input);
-        listSublabels.appendChild(subLabel);
+        slList.appendChild(subLabel);
     }
-
-    // Hide the div and return in
-    divSublabels.appendChild(labelDiv);
-    divSublabels.appendChild(listSublabels);
-    divSublabels.style.display = "none";
-
-    return divSublabels
-}
-
-// Hides all the divSettings divs by setting display to "none"
-function hideSettingsAll() {
-    var divSettingsAll = document.getElementsByClassName("divSettings");
-    var divSublabelsAll = document.getElementsByClassName("divSublabels");
-    for (var i = 0; i < divSettingsAll.length; i++) {
-        divSettingsAll[i].style.display = "none";
-        divSublabelsAll[i].style.display = "none";
-    }
+    */
+    sublabels.appendChild(slList);
 }
 
 // Creates the Muuri grid
 function createGrid() {
     var grid = new Muuri('.grid', {
-        items: knobs,
+        items: knobContent,
         dragEnabled: true,
         dragSortHeuristics: {
             sortInterval: 200,
@@ -310,7 +318,7 @@ function createGrid() {
     });
 }
 
-// Creates all the Muuri grid items for the knobs
+// Creates all the Muuri grid items for the knobContent
 function createGridItems() {
     for (var i = 0; i < NUM_KNOBS; i++) {
         gridDiv = document.getElementById("knobGrid");
@@ -332,7 +340,58 @@ function createGridItems() {
         gridItemContent.appendChild(gridKnobContent);
         gridItem.appendChild(gridItemContent);
 
-        knobs[i] = gridItem;
+        knobContent[i] = gridItem;
+    }
+}
+
+function showKnob(knobID) {
+    var inputLabel = document.getElementById("inputLabel");
+    var inputChannel = document.getElementById("inputChannel");
+    var inputCC = document.getElementById("inputCC");
+    var inputInitValue = document.getElementById("inputInitValue");
+    var inputMaxRange = document.getElementById("inputMaxRange");
+    var inputIsLocked = document.getElementById("inputIsLocked");
+
+    // Update values for newly selected knob
+    inputLabel.value = knobSettings[knobID].label;
+    inputChannel.value = knobSettings[knobID].channel;
+    inputCC.value = knobSettings[knobID].cc;
+    inputInitValue.value = knobSettings[knobID].initValue;
+    inputMaxRange.value = knobSettings[knobID].maxRange;
+    inputIsLocked.checked = (knobSettings[knobID].isLocked === "true");
+    createSublabels(knobID);
+}
+
+function cacheKnob(knobID) {
+    var inputLabel = document.getElementById("inputLabel");
+    var inputChannel = document.getElementById("inputChannel");
+    var inputCC = document.getElementById("inputCC");
+    var inputInitValue = document.getElementById("inputInitValue");
+    var inputMaxRange = document.getElementById("inputMaxRange");
+    var inputIsLocked = document.getElementById("inputIsLocked");
+
+    // Cache existing knob
+    var label = inputLabel.value;
+    var channel = inputChannel.value;
+    var cc = inputCC.value
+    var initValue = inputInitValue.value;
+    var maxRange = inputMaxRange.value;
+    var isLocked = inputIsLocked.checked.toString();
+    var slInputs = document.getElementsByClassName('sl-list-input');
+
+    var slArray = new Array();
+    for (var i = 0; i < slInputs.length; i++) {
+        slArray[i] = slInputs[i].value;
+    }
+
+    knobSettings[knobID] = {
+        label: label,
+        channel: channel,
+        cc: cc,
+        initValue: initValue,
+        maxRange: maxRange,
+        isLocked: isLocked,
+        sublabels: slArray
     }
 }
 
@@ -343,53 +402,23 @@ function createGridItems() {
 // will be visible at a time. Modify to keep track of the current knob
 // and only hide that one.
 function eventClickGridItem(e) {
-    var settings = document.querySelector(".settings");
-    var knobIDString = e.target.id;
-    var knobID = (knobIDString.match(/\d+/g) || []).map(n => parseInt(n))[0];
-    var divSettings = document.getElementById(`divSettings${knobID}`);
-    var divSublabels = document.getElementById(`divSublabels${knobID}`);
-
-    var sl = document.getElementById(`listSublabels${knobID}`);
-
+    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
     if (!drag) {
-        //hideSettingsAll();
-        hideSettings(presetNum);
-        showSettings(knobID);
-        //divSettings.style.display = "block";
-        //divSublabels.style.display = "block";
+        cacheKnob(currKnobID);
+        currKnobID = newKnobID;
+        showKnob(currKnobID);
     }
-
-
-}
-
-// Unhides a divSettings div for a knob by setting display to "block"
-function showSettings(knobID) {
-    var divSettings = document.getElementById(`divSettings${knobID}`);
-    var divSublabels = document.getElementById(`divSublabels${knobID}`);
-    divSettings.style.display = "block";
-    divSublabels.style.display = "block";
-    presetNum = knobID;
-    updateTitle(knobID);
-}
-
-function hideSettings(knobID) {
-    var divSettings = document.getElementById(`divSettings${knobID}`);
-    var divSublabels = document.getElementById(`divSublabels${knobID}`);
-    divSettings.style.display = "none";
-    divSublabels.style.display = "none";
 }
 
 // Disables zoom by disabling the Ctrl key
+/*
 function zoomDisable(e) {
     if (e.ctrlKey) {
         return false;
     }
 }
+*/
 
-const fileInput = document.getElementById("file");
-fileInput.addEventListener("change", loadFile, false);
-var jsonString = "";
-var json = "";
 
 function loadFile() {
     var file = document.getElementById("file").files[0];
@@ -430,7 +459,6 @@ window.onload = () => {
 }
 
 init();
-
 
 /*
     var mainDiv = document.querySelector(".mainDiv");

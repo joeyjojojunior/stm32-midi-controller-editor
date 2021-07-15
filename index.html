@@ -8,12 +8,20 @@
 
 <body>
     <div class="mainDiv">
-        <div class="container">
-            <div class="title"></div>
-            <div class="settings"></div>
-            <div class="grid" id="knobGrid"></div>
-            <input type="file" id="file">
+        <div class="title">
+            <div class="knob"></div>
+            <div class="preset"></div>
+            <div class="channel"></div>
+            <div class="menu"></div>
         </div>
+        <div class="settings">
+            <div class="main-settings"></div>
+            <div class="sublabels">
+                <div class="sl-label">Sub Labels</div>
+            </div>
+        </div>
+        <div class="grid" id="knobGrid"></div>
+        <input type="file" id="file">
     </div>
 
     <script src="./node_modules/web-animations-js/web-animations.min.js"></script>
@@ -22,7 +30,7 @@
     <script src="./lib/jquery-ui-1.12.1.js"></script>
     <script src="./lib/fittext-1.2.js"></script>
     <script src="./lib/muuri-0.9.5.js"></script>
-    <script src="./renderer.js"></script>-
+    <script src="./renderer.js"></script>
     <script src="./index.js"></script>
 </body>
 

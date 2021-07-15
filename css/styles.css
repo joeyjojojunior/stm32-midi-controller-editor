@@ -2,39 +2,36 @@
         background-color: black;
     }
 
-    @font-face {
-        font-family: Hack;
-        src: url(./font/Hack-Regular.ttf);
-    }
-
+    /*
+     * Main Container
+     */
     .mainDiv {
         width: 100%;
-        display: inline-flex;
-        justify-content: center;
-    }
-
-    .container {
-        display: inline-flex;
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        overflow: auto;
     }
 
-    .settings {
-        display: inline-flex;
-        flex-direction: row;
-        align-items: flex-start;
-        background-color: black;
-    }
-
+    /*
+     * Title
+     */
     .title {
         display: flex;
-
+        flex-direction: row;
+        /*
+        display: flex;
         font-family: Hack;
         font-weight: bold;
         font-size: 24px;
         color: #A7C7E7;
+        */
+    }
+
+    /*
+     * Main Settings
+     */
+    .settings {
+        display: flex;
+        flex-direction: row;
     }
 
     table {
@@ -43,49 +40,10 @@
         color: #C0C0C0;
     }
 
-    thead {
-        font-weight: bold;
-        font-size: 24;
-        color: #A7C7E7;
-    }
-
     td {
         white-space: nowrap;
         display: flex;
         align-items: center;
-    }
-
-    .divIsLocked {
-        display: flex;
-        align-items: flex-end;
-    }
-
-    .inputSubLabel {
-        width: 115px;
-        border: none;
-        background-color: white;
-        border: 1px solid white;
-        padding-top: 0px;
-        padding-bottom: 0px;
-
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 15;
-    }
-
-    .inputSubLabel:focus {
-        outline-width: 0;
-    }
-
-    .dragHandle {
-        margin: auto 0;
-        background-color: white;
-        padding-right: 3px;
-    }
-
-    .dragIcon {
-        width: 10px;
-        height: auto;
-        margin-right: 4px;
     }
 
     .inputField {
@@ -101,35 +59,22 @@
         outline-width: 0;
     }
 
-    .radioBtnDiv {
-        width: 100%;
-        margin: 0 auto;
-        text-align: center;
+    .divIsLocked {
+        display: flex;
+        align-items: flex-end;
     }
 
-    .radioBtnSubDiv {
-        display: inline-block;
-        width: 48%;
-        margin: 0 auto;
-    }
-
-    .radioBtnLabel {
-        display: block;
-    }
-
-    .tdLocked {
-        margin: auto 0;
-        text-align: center;
-    }
-
-    .divSublabels {
+    /*
+     * Sub-labels
+     */
+    .sublabels {
         margin-left: 8px;
         margin-top: 3px;
         padding: 0px;
         cursor: default;
     }
 
-    .divSublabelsLabel {
+    .sl-label {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 15;
         padding-bottom: 2px;
@@ -137,7 +82,7 @@
         color: #C0C0C0;
     }
 
-    .listSublabels {
+    .sl-list {
         display: inline-flex;
         flex-direction: column;
         flex-wrap: wrap;
@@ -148,7 +93,7 @@
         margin-top: -5px;
     }
 
-    .listSublabelItem {
+    .sl-list-item {
         background-color: white;
         border: 1px solid black;
         padding-left: 5px;
@@ -165,9 +110,39 @@
         justify-content: start;
         align-items: center;
         border-radius: 3px;
-
     }
 
+    .sl-list-input {
+        width: 115px;
+        border: none;
+        background-color: white;
+        border: 1px solid white;
+        padding-top: 0px;
+        padding-bottom: 0px;
+
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 15;
+    }
+
+    .sl-list-input:focus {
+        outline-width: 0;
+    }
+
+    .sl-drag-handle {
+        margin: auto 0;
+        background-color: white;
+        padding-right: 3px;
+    }
+
+    .sl-drag-icon {
+        width: 10px;
+        height: auto;
+        margin-right: 4px;
+    }
+
+    /*
+     * Grid 
+     */
     .grid {
         position: relative;
         display: inline-block;
@@ -206,9 +181,16 @@
         z-index: 0;
     }
 
-
     .item.mu .item-content {
         position: relative;
         width: 100%;
         height: 100%;
+    }
+
+    /*
+     * Custom Fonts
+     */
+    @font-face {
+        font-family: Hack;
+        src: url(./font/Hack-Regular.ttf);
     }

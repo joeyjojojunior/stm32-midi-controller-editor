@@ -100,24 +100,24 @@ function init() {
 function createTitle() {
     knob.innerHTML = "Knob XXX";
 
-    preset.innerHTML = "Preset "
+    preset.innerHTML = "Preset"
     var inputPresetLabel = document.createElement("input");
-    inputPresetLabel.className = "inputField inputFieldLarge";
+    inputPresetLabel.className = "inputFieldLarge";
     inputPresetLabel.id = "inputPresetLabel";
     inputPresetLabel.maxLength = MAX_LABEL_CHARS;
 
     var inputPresetSublabel = document.createElement("input");
-    inputPresetSublabel.className = "inputField inputFieldLarge";
+    inputPresetSublabel.className = "inputFieldLarge";
     inputPresetSublabel.id = "inputPresetSublabel";
     inputPresetSublabel.maxLength = MAX_LABEL_CHARS;
 
     preset.appendChild(inputPresetLabel);
     preset.appendChild(inputPresetSublabel);
 
-    channel.innerHTML = "Channel ";
+    channel.innerHTML = "Channel";
 
     var inputPresetChannel = document.createElement("input");
-    inputPresetChannel.className = "inputField inputFieldLarge";
+    inputPresetChannel.className = "inputFieldLarge";
     inputPresetChannel.id = "inputPresetChannel";
     inputPresetChannel.maxLength = 2;
 

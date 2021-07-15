@@ -30,6 +30,8 @@
     .top-left {
         display: flex;
         flex-direction: column;
+        /* align with top-right */
+        padding-top: 8px;
     }
 
     .top-right {
@@ -38,20 +40,21 @@
         flex-grow: 1;
     }
 
+    .settings {
+        padding-top: 5px;
+        padding-right: 5px;
+
+    }
+
     .menu {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
-        padding: 0px;
-        margin: 0px;
     }
 
     .preset-channel-container {
         display: flex;
         flex-direction: row;
-        padding: 0px;
-        margin: 0px;
     }
 
     .buttons {
@@ -65,15 +68,40 @@
         color: #A7C7E7;
     }
 
-    .knob {
-        padding-top: 1px;
+    .inputFieldLarge {
+        width: 215px;
+        border: 0px;
+        border-radius: 3px;
+        font-size: 24px;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        margin: 7px;
     }
+
+    .inputFieldLarge:focus {
+        outline-width: 0;
+    }
+
+    .inputField {
+        width: 110px;
+        border-radius: 3px;
+        border: none;
+        font-size: 15;
+    }
+
+    .inputField:focus {
+        outline-width: 0;
+    }
+
+    #inputPresetChannel {
+        width: 40px;
+        text-align: center;
+    }
+
 
     .preset {}
 
     .channel {}
-
-
 
     .btn {
         background-color: black;
@@ -110,30 +138,6 @@
         white-space: nowrap;
         display: flex;
         align-items: center;
-    }
-
-    .inputField {
-        width: 110px;
-        border-radius: 3px;
-        border: none;
-        font-size: 15;
-        text-align: center;
-
-    }
-
-    #inputPresetChannel {
-        width: 30px;
-        text-align: center;
-    }
-
-    .inputFieldLarge {
-        margin-right: 5px;
-        text-align: center;
-
-    }
-
-    .inputField:focus {
-        outline-width: 0;
     }
 
     .divIsLocked {

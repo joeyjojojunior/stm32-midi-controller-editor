@@ -17,11 +17,12 @@
     .title {
         display: flex;
         flex-direction: row;
-        /*
-        display: flex;
-        font-family: Hack;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: bold;
         font-size: 24px;
+        color: #A7C7E7;
+        /*
+        display: flex;
         color: #A7C7E7;
         */
     }

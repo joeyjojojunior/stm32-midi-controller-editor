@@ -13,7 +13,7 @@ function createWindow() {
     title: "STM32 MIDI Controller Editor",
     width: 1920,
     height: 1080,
-    resizable: false,
+    //resizable: false,
     useContentSize: true,
     webPreferences: {
       contextIsolation: false,

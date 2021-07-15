@@ -20,10 +20,10 @@ for (var i = 0; i < knobSettings.length; i++) {
         label: "",
         channel: "",
         cc: "",
-        initValue: "",
-        maxRange: "",
+        init_value: "",
+        max_range: "",
         isLocked: "false",
-        sublabels: [""]
+        sub_labels: [""]
     }
 }
 
@@ -31,23 +31,35 @@ knobSettings[0] = {
     label: "Cutoff",
     channel: "3",
     cc: "18",
-    initValue: "34",
-    maxRange: "128",
+    init_value: "34",
+    max_range: "128",
     isLocked: "true",
-    sublabels: [
+    sub_labels: [
         "Label 1",
         "Label 2",
-        "Label 3"
+        "Label 3",
+        "Label 4",
+        "Label 5",
+        "Label 6",
+        "Label 7",
+        "Label 8",
+        "Label 9",
+        "Label 10",
+        "Label 11",
+        "Label 12",
+        "Label 13",
+        "Label 14",
+        "Label 15"
     ]
 }
 knobSettings[1] = {
     label: "Resonance",
     channel: "1",
     cc: "33",
-    initValue: "0",
-    maxRange: "16",
+    init_value: "0",
+    max_range: "16",
     isLocked: "false",
-    sublabels: [
+    sub_labels: [
         "Boo 1",
         "Boo 2",
         "Boo 3",
@@ -83,16 +95,61 @@ function init() {
 
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
-
-    // Allows moving sub labels around
-    $(function () {
-        $(".slList").sortable();
-        $(".slList").disableSelection();
-    });
 }
 
 function createTitle() {
+    knob.innerHMTL = "Knob XXX"
 
+    preset.innerHTML = "Preset "
+    var inputPresetLabel = document.createElement("input");
+    inputPresetLabel.className = "inputField";
+    inputPresetLabel.id = "inputPresetLabel";
+
+    var inputPresetSublabel = document.createElement("input");
+    inputPresetSublabel.className = "inputField";
+    inputPresetSublabel.id = "inputPresetSublabel";
+
+    preset.appendChild(inputPresetLabel);
+    preset.appendChild(inputPresetSublabel);
+
+    channel.innerHTML = "CH ";
+
+    var inputPresetChannel = document.createElement("input");
+    inputPresetChannel.className = "inputField";
+    inputPresetChannel.id = "inputPresetChannel";
+
+    channel.appendChild(inputPresetChannel);
+
+    var btnSave = document.createElement("button");
+    btnSave.className = "btn";
+    btnSave.id = "btnSave";
+    btnSave.innerHTML = "Save";
+
+    var btnSaveAs = document.createElement("button");
+    btnSaveAs.className = "btn";
+    btnSaveAs.id = "btnSaveAs";
+    btnSaveAs.innerHTML = "Save As";
+
+    var btnLoad = document.createElement("button");
+    btnLoad.className = "btn";
+    btnLoad.id = "btnLoad";
+    btnLoad.innerHTML = "Load";
+
+    var btnReset = document.createElement("button");
+    btnReset.className = "btn";
+    btnReset.id = "btnReset";
+    btnReset.innerHTML = "Reset";
+
+    var btnQuit = document.createElement("button");
+    btnQuit.className = "btn";
+    btnQuit.id = "btnQuit";
+    btnQuit.innerHTML = "Quit";
+
+    menu.appendChild(btnSave);
+    menu.appendChild(btnSaveAs);
+    menu.appendChild(btnLoad);
+    menu.appendChild(btnReset);
+    menu.appendChild(btnQuit);
 }
 
 function updateTitle(knobID) {
@@ -197,9 +254,7 @@ function createSublabels(knobID) {
     var slList = document.createElement("ul");
     slList.className = "sl-list";
 
-    console.log(knobSettings[knobID].sublabels.length);
-
-    for (var i = 0; i < knobSettings[knobID].sublabels.length; i++) {
+    for (var i = 0; i < knobSettings[knobID].sub_labels.length; i++) {
         var subLabel = document.createElement("li");
         subLabel.className = "sl-list-item"
 
@@ -208,7 +263,7 @@ function createSublabels(knobID) {
         input.id = `sl-list-input${i}`
         input.maxLength = MAX_LABEL_CHARS;
         input.spellcheck = false;
-        input.value = knobSettings[knobID].sublabels[i];
+        input.value = knobSettings[knobID].sub_labels[i];
 
         var slDragHandle = document.createElement("div");
         slDragHandle.className = "sl-drag-handle";
@@ -222,6 +277,7 @@ function createSublabels(knobID) {
         subLabel.appendChild(input);
         slList.appendChild(subLabel);
     }
+
 
     // Create test labels
     /*
@@ -251,6 +307,12 @@ function createSublabels(knobID) {
     }
     */
     sublabels.appendChild(slList);
+
+    // Allows moving sub labels around
+    $(function () {
+        $(".sl-list").sortable();
+        $(".sl-list").disableSelection();
+    });
 }
 
 // Creates the Muuri grid
@@ -268,6 +330,7 @@ function createGrid() {
             action: 'swap',
             migrateAction: 'move'
         },
+        /*
         layout: function (grid, layoutId, items, width, height, callback) {
             var layout = {
                 id: layoutId,
@@ -314,7 +377,7 @@ function createGrid() {
             return function () {
                 window.clearTimeout(timerId);
             };
-        },
+        },*/
     });
 }
 
@@ -356,8 +419,8 @@ function showKnob(knobID) {
     inputLabel.value = knobSettings[knobID].label;
     inputChannel.value = knobSettings[knobID].channel;
     inputCC.value = knobSettings[knobID].cc;
-    inputInitValue.value = knobSettings[knobID].initValue;
-    inputMaxRange.value = knobSettings[knobID].maxRange;
+    inputInitValue.value = knobSettings[knobID].init_value;
+    inputMaxRange.value = knobSettings[knobID].max_range;
     inputIsLocked.checked = (knobSettings[knobID].isLocked === "true");
     createSublabels(knobID);
 }
@@ -388,10 +451,10 @@ function cacheKnob(knobID) {
         label: label,
         channel: channel,
         cc: cc,
-        initValue: initValue,
-        maxRange: maxRange,
+        init_value: initValue,
+        max_range: maxRange,
         isLocked: isLocked,
-        sublabels: slArray
+        sub_labels: slArray
     }
 }
 

@@ -69,23 +69,23 @@ knobSettings[1] = {
 }
 
 // Title Divs
-var title = document.querySelector(".title");
+var topLeft = document.querySelector(".top-left");
 var knob = document.querySelector(".knob");
+var settings = document.querySelector(".settings");
+
+var topRight = document.querySelector(".top-right");
+var menu = document.querySelector(".menu");
 var preset = document.querySelector(".preset");
 var channel = document.querySelector(".channel");
-var menu = document.querySelector(".menu");
-
-// Settings Divs
-var settings = document.querySelector(".settings");
-var mainSettings = document.querySelector(".main-settings");
+var buttons = document.querySelector(".buttons");
 var sublabels = document.querySelector(".sublabels");
 var slLabel = document.querySelector(".sl-label");
-var grid = document.querySelector(".grid");
 
+var grid = document.querySelector(".grid");
 
 function init() {
     createTitle();
-    mainSettings.appendChild(createTableSettings());
+    settings.appendChild(createTableSettings());
     createGridItems();
     createGrid();
     showKnob(currKnobID);
@@ -98,27 +98,35 @@ function init() {
 }
 
 function createTitle() {
-    knob.innerHMTL = "Knob XXX"
+    knob.innerHTML = "Knob XXX";
 
     preset.innerHTML = "Preset "
     var inputPresetLabel = document.createElement("input");
-    inputPresetLabel.className = "inputField";
+    inputPresetLabel.className = "inputField inputFieldLarge";
     inputPresetLabel.id = "inputPresetLabel";
+    inputPresetLabel.maxLength = MAX_LABEL_CHARS;
 
     var inputPresetSublabel = document.createElement("input");
-    inputPresetSublabel.className = "inputField";
+    inputPresetSublabel.className = "inputField inputFieldLarge";
     inputPresetSublabel.id = "inputPresetSublabel";
+    inputPresetSublabel.maxLength = MAX_LABEL_CHARS;
 
     preset.appendChild(inputPresetLabel);
     preset.appendChild(inputPresetSublabel);
 
-    channel.innerHTML = "CH ";
+    channel.innerHTML = "Channel ";
 
     var inputPresetChannel = document.createElement("input");
-    inputPresetChannel.className = "inputField";
+    inputPresetChannel.className = "inputField inputFieldLarge";
     inputPresetChannel.id = "inputPresetChannel";
+    inputPresetChannel.maxLength = 2;
 
     channel.appendChild(inputPresetChannel);
+
+    var btnPresets = document.createElement("button");
+    btnPresets.className = "btn";
+    btnPresets.id = "btnPresets";
+    btnPresets.innerHTML = "Presets";
 
     var btnSave = document.createElement("button");
     btnSave.className = "btn";
@@ -145,11 +153,12 @@ function createTitle() {
     btnQuit.id = "btnQuit";
     btnQuit.innerHTML = "Quit";
 
-    menu.appendChild(btnSave);
-    menu.appendChild(btnSaveAs);
-    menu.appendChild(btnLoad);
-    menu.appendChild(btnReset);
-    menu.appendChild(btnQuit);
+    buttons.appendChild(btnPresets);
+    buttons.appendChild(btnSave);
+    buttons.appendChild(btnSaveAs);
+    buttons.appendChild(btnLoad);
+    buttons.appendChild(btnReset);
+    buttons.appendChild(btnQuit);
 }
 
 function updateTitle(knobID) {
@@ -195,9 +204,7 @@ function createTableSettings() {
     divIsLocked.appendChild(tdInputLabel);
     divIsLocked.appendChild(tdInputField);
     tr.appendChild(divIsLocked)
-
     tbdy.appendChild(tr);
-
     tbl.appendChild(tbdy);
 
     return tbl;
@@ -330,6 +337,114 @@ function createGrid() {
             action: 'swap',
             migrateAction: 'move'
         },
+        layout: function (grid, layoutId, items, width, height, callback) {
+
+            var layout = {
+                id: layoutId,
+                items: items,
+                slots: [],
+                styles: {},
+            };
+
+            var item;
+            var m;
+            var x = 0;
+            var y = 0;
+            var w = 0;
+            var h = 0;
+
+            var maxW = width / 2;
+            var currentW = 0;
+            var currentRowH = 0;
+            var currentRowW = 0;
+            var rowSizes = [];
+            var rowFixes = [];
+
+            var xPre, yPre, wPre, hPre;
+            var numToFix = 0;
+
+            for (var i = 0; i < items.length; i++) {
+                item = items[i];
+
+                m = item.getMargin();
+                wPre = item.getWidth() + m.left + m.right;
+                hPre = item.getHeight() + m.top + m.bottom;
+                xPre += wPre;
+
+                if (hPre > currentRowH) {
+                    currentRowH = hPre;
+                }
+
+                if (w < currentRowW) {
+                    currentRowW = wPre;
+                }
+
+                rowSizes.push(width / 2);
+                numToFix++;
+                currentW += wPre;
+
+                var k = 0;
+
+                for (var j = 0; j < numToFix; j++) {
+                    rowSizes[i - j] -= wPre / 2;
+                }
+
+                if (numToFix > 1) {
+                    rowSizes[i] -= (wPre / 2) * (numToFix - 1);
+                    k += (wPre / 2);
+                }
+
+                currentW -= k;
+                rowFixes.push(k);
+
+                if (currentW >= maxW) {
+                    yPre += currentRowH;
+                    currentRowH = 0;
+                    xPre = 0;
+                    numToFix -= 1;
+                    currentW = 0;
+                    numToFix = 0;
+                    k = 0;
+                }
+            }
+
+            maxW = width / 2;
+            currentW = 0;
+            currentRowH = 0;
+            currentRowW = 0;
+
+            for (var i = 0; i < items.length; i++) {
+                item = items[i];
+                x += w;
+
+                if (h > currentRowH) {
+                    currentRowH = h;
+                }
+
+                if (w < currentRowW) {
+                    currentRowW = w;
+                }
+
+                currentW += w - rowFixes[i];
+
+                if (currentW >= maxW) {
+                    y += currentRowH;
+                    currentRowH = 0;
+                    x = 0;
+                    currentW = 0;
+                }
+
+                m = item.getMargin();
+                w = item.getWidth() + m.left + m.right;
+                h = item.getHeight() + m.top + m.bottom;
+                layout.slots.push(x + rowSizes[i], y);
+            }
+
+            layout.styles.width = '100%';
+            layout.styles.height = y + h + 1 + 'px';
+
+            callback(layout);
+        }
         /*
         layout: function (grid, layoutId, items, width, height, callback) {
             var layout = {
@@ -423,6 +538,7 @@ function showKnob(knobID) {
     inputMaxRange.value = knobSettings[knobID].max_range;
     inputIsLocked.checked = (knobSettings[knobID].isLocked === "true");
     createSublabels(knobID);
+    knob.innerHTML = `Knob ${knobID + 1}`;
 }
 
 function cacheKnob(knobID) {

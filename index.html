@@ -8,20 +8,27 @@
 
 <body>
     <div class="mainDiv">
-        <div class="title">
-            <div class="knob"></div>
-            <div class="preset"></div>
-            <div class="channel"></div>
-            <div class="menu"></div>
-        </div>
-        <div class="settings">
-            <div class="main-settings"></div>
-            <div class="sublabels">
-                <div class="sl-label">Sub Labels</div>
+        <div class="top">
+            <div class="top-left">
+                <div class="knob header"></div>
+                <div class="settings"></div>
+            </div>
+            <div class="top-right">
+                <div class="menu">
+                    <div class="preset-channel-container">
+                        <div class="preset header"></div>
+                        <div class="channel header"></div>
+                    </div>
+                    <div class="buttons header"></div>
+                </div>
+                <div class="sublabels">
+                    <div class="sl-label">Sub Labels</div>
+                </div>
             </div>
         </div>
-        <div class="grid" id="knobGrid"></div>
-        <input type="file" id="file">
+    </div>
+    <div class="grid" id="knobGrid"></div>
+    <input type="file" id="file">
     </div>
 
     <script src="./node_modules/web-animations-js/web-animations.min.js"></script>

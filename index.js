@@ -204,14 +204,13 @@ function createSublabels(knobID) {
     // Create the un-ordererd list for the sublabels
     var slList = document.createElement("ul");
     slList.className = "sl-list";
-
+    console.log(`Knob: ${knobID}, ${knobSettings[knobID].sub_labels.length}`);
     for (var i = 0; i < knobSettings[knobID].sub_labels.length; i++) {
         var subLabel = document.createElement("li");
         subLabel.className = "sl-list-item"
 
         var input = document.createElement("input");
         input.className = "sl-list-input";
-        input.id = `sl-list-input${i}`
         input.maxLength = MAX_LABEL_CHARS;
         input.spellcheck = false;
         input.value = knobSettings[knobID].sub_labels[i];
@@ -243,6 +242,7 @@ function createSublabels(knobID) {
     input.className = "sl-list-input sl-list-input-dummy";
     input.maxLength = MAX_LABEL_CHARS;
     input.placeholder = "Add Sub Label ";
+    input.disabled = "true";
 
     var slDragHandle = document.createElement("div");
     slDragHandle.className = "sl-drag-handle sl-drag-handle-dummy";
@@ -252,14 +252,14 @@ function createSublabels(knobID) {
     img.className = "sl-drag-icon";
     slDragHandle.appendChild(img);
 
-    var closeBtn = document.createElement("button");
-    closeBtn.className = "close btnAdd";
-    closeBtn.innerHTML = "&plus;";
-    closeBtn.addEventListener("click", eventClickSublabelDelete, false);
+    var addBtn = document.createElement("button");
+    addBtn.className = "close btnAdd";
+    addBtn.innerHTML = "&plus;";
+    addBtn.addEventListener("click", eventClickSublabelAdd, false);
 
     subLabel.appendChild(slDragHandle);
     subLabel.appendChild(input);
-    subLabel.appendChild(closeBtn);
+    subLabel.appendChild(addBtn);
     slList.appendChild(subLabel);
 
     sublabels.appendChild(slList);
@@ -269,6 +269,45 @@ function createSublabels(knobID) {
         $(".sl-list").sortable();
         $(".sl-list").disableSelection();
     });
+}
+
+function eventClickSublabelDelete(e) {
+    var parentLI = e.target.parentNode;
+    parentLI.parentNode.removeChild(parentLI);
+}
+
+function eventClickSublabelAdd(e) {
+    var dummyLI = e.target.parentNode;
+    var parentUL = e.target.parentNode.parentNode;
+
+    var subLabel = document.createElement("li");
+    subLabel.className = "sl-list-item"
+
+    var input = document.createElement("input");
+    input.className = "sl-list-input";
+    input.maxLength = MAX_LABEL_CHARS;
+    input.spellcheck = false;
+    input.value = "";
+
+    var slDragHandle = document.createElement("div");
+    slDragHandle.className = "sl-drag-handle";
+
+    var img = document.createElement("img");
+    img.src = "./img/dragIcon.svg";
+    img.className = "sl-drag-icon";
+    slDragHandle.appendChild(img);
+
+    var closeBtn = document.createElement("button");
+    closeBtn.className = "close btnDelete";
+    closeBtn.innerHTML = "&times;";
+    closeBtn.addEventListener("click", eventClickSublabelDelete, false);
+
+    subLabel.appendChild(slDragHandle);
+    subLabel.appendChild(input);
+    subLabel.appendChild(closeBtn);
+
+    parentUL.insertBefore(subLabel, dummyLI);
+
 }
 
 // Creates the Muuri grid
@@ -394,55 +433,22 @@ function createGrid() {
 
             callback(layout);
         }
-        /*
-        layout: function (grid, layoutId, items, width, height, callback) {
-            var layout = {
-                id: layoutId,
-                items: items,
-                slots: [],
-                styles: {},
-            };
-
-            var timerId = window.setTimeout(function () {
-                var item, m, x = 0,
-                    y = 0,
-                    w = 0,
-                    h = 0;
-
-                for (var i = 0; i < items.length; i++) {
-                    item = items[i];
-                    x += w;
-                    if (i % NUM_COLS == 0) {
-                        x = 0;
-                        y += h;
-                    }
-                    m = item.getMargin();
-                    w = item.getWidth() + m.left +
-                        m.right;
-                    h = item.getHeight() + m.top + m.bottom;
-                    layout.slots.push(x, y);
-                }
-
-                w += x;
-                h += y;
-
-                // Set the CSS styles that should be applied to the grid element.
-                layout.styles.width = w + 'px';
-                layout.styles.height = h + 'px';
-
-                // When the layout is fully computed let 's call the callback function and 
-                // provide the layout object as it's argument.
-                callback(layout);
-            }, 200);
-
-            // If you are doing an async layout you _can_ (if you want to) return a 
-            // function that cancels this specific layout calculations if it 's still 
-            // processing/queueing when the next layout is requested.
-            return function () {
-                window.clearTimeout(timerId);
-            };
-        },*/
     });
+}
+
+// Event handler for clicking on a grid item. Shows the settings for
+// a knob by unhiding its divSettings div and hiding all the others
+//
+// TODO: No reason to hide EVERY knob after init since only one
+// will be visible at a time. Modify to keep track of the current knob
+// and only hide that one.
+function eventClickGridItem(e) {
+    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
+    if (!drag && currKnobID !== newKnobID) {
+        cacheKnob(currKnobID);
+        currKnobID = newKnobID;
+        showKnob(currKnobID);
+    }
 }
 
 // Creates all the Muuri grid items for the knobContent
@@ -505,10 +511,14 @@ function cacheKnob(knobID) {
     var initValue = inputInitValue.value;
     var maxRange = inputMaxRange.value;
     var isLocked = inputIsLocked.checked.toString();
-    var slInputs = document.getElementsByClassName('sl-list-input');
+    var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
 
     var slArray = new Array();
     for (var i = 0; i < slInputs.length; i++) {
+        if (slInputs[i].disabled === "true") {
+            console.log(`cacheKnob disabled: ${slInputs[i]}`);
+            continue;
+        }
         slArray[i] = slInputs[i].value;
     }
 
@@ -523,28 +533,6 @@ function cacheKnob(knobID) {
     }
 }
 
-// Event handler for clicking on a grid item. Shows the settings for
-// a knob by unhiding its divSettings div and hiding all the others
-//
-// TODO: No reason to hide EVERY knob after init since only one
-// will be visible at a time. Modify to keep track of the current knob
-// and only hide that one.
-function eventClickGridItem(e) {
-    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
-    if (!drag && currKnobID !== newKnobID) {
-        cacheKnob(currKnobID);
-        currKnobID = newKnobID;
-        showKnob(currKnobID);
-    }
-}
-
-function eventClickSublabelDelete(e) {
-    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-}
-
-function eventClickSublabelAdd(e) {
-
-}
 
 // Disables zoom by disabling the Ctrl key
 /*
@@ -589,6 +577,11 @@ window.onload = () => {
 
     document.addEventListener(
         'mouseup', () => drag ? 'drag' : 'click');
+
+    var btnPresets = document.getElementById("btnPresets");
+    btnPresets.addEventListener("click", (e) => {
+        alert("preset div clicked!");
+    });
 
     //window.addEventListener('resize', eventZoomChanged);
     // window.onkeydown = zoomDisable;

@@ -7,6 +7,14 @@
         src: url(./font/Hack-Regular.ttf);
     }
     */
+    @font-face {
+        font-family: "Hack";
+        src: url(../font/Hack.ttf);
+    }
+
+
+    @import url('https://fonts.googleapis.com/css2?family=Mr+Dafoe&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Exo:wght@900&display=swap');
 
     /* 
      * Bootstrap
@@ -27,12 +35,11 @@
     }
 
 
-    @font-face {
-        font-family: "Hack";
-        src: url(../font/Hack.ttf);
-    }
 
-    body {
+    body,
+    html {
+        margin: 0;
+        padding: 0;
         background-color: black;
     }
 
@@ -51,19 +58,23 @@
     .top {
         display: flex;
         flex-direction: row;
+        padding-left: 7px;
+        padding-right: 8px;
     }
 
     .top-left {
         display: flex;
         flex-direction: column;
+        margin-left: 0px;
+        padding-left: 0px;
         /* align with top-right */
-        padding-bottom: 3px;
     }
 
     .top-right {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+
     }
 
     .settings {
@@ -71,35 +82,41 @@
     }
 
     .knob {
-        font-size: 20px;
-        padding-top: 4px;
-        padding-left: 3px;
+        font-family: "Hack";
+        color: #7DF9FF;
+        font-size: 26px;
+        padding-left: 10px;
     }
+
 
     .menu {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        background-color: #1434A4;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
     .preset-channel-container {
         display: flex;
+        align-items: center;
         flex-direction: row;
+        font-size: 30px;
+
     }
 
     .preset {
         display: flex;
         flex-direction: row;
         /* !pad-together0 */
-        padding-right: 10px;
-        font-size: 26px;
+        padding-right: 5px;
     }
 
     .channel {
         display: flex;
         flex-direction: row;
-        font-size: 26px;
     }
 
     .label {
@@ -109,30 +126,31 @@
     .input-container {
         display: flex;
         flex-direction: row;
-        padding-top: 2px;
         /* !pad-together0 */
-        padding-right: 5px;
+        padding-right: 10px;
     }
 
     .buttons {
         display: flex;
         flex-direction: row;
+        align-items: stretch;
+
         /* align with other header items */
-        padding-bottom: 1px;
     }
 
     .header {
         font-family: "Hack";
-        font-weight: bold;
-        color: #A7C7E7;
+        color: white;
     }
 
     .inputFieldLarge {
         width: 110px;
         border: 0px;
+        height: 16px;
         border-radius: 3px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         text-align: center;
+        margin-top: 5px;
     }
 
     .inputFieldLarge:focus {
@@ -156,22 +174,22 @@
     }
 
     .btn {
-        background-color: #0047AB;
-        border-radius: 3px;
+        background-color: #1434A4;
         border: 0px;
         color: white;
         font-family: "Hack";
         width: 75px;
-        height: 25px;
-        margin-right: 5px;
+        height: 40px;
     }
 
     .btn:hover {
+        background-color: black;
         opacity: 0.8;
+
     }
 
     .btn:active {
-        background-color: #0054ca;
+        background-color: black;
         opacity: 1;
     }
 
@@ -207,11 +225,11 @@
 
     .sl-label {
         font-family: "Hack";
-        font-size: 16;
+        font-size: 17px;
         background-color: black;
         color: white;
         /* align with top-left */
-        padding-top: 1px;
+        padding-top: 4px;
         padding-bottom: 1px;
     }
 
@@ -220,7 +238,7 @@
         flex-direction: column;
         flex-wrap: wrap;
         list-style-type: none;
-        height: 300px;
+        height: 290px;
         padding: 0px;
         margin: 0 auto;
     }
@@ -231,8 +249,8 @@
         padding-right: 5px;
 
         margin-top: 0px;
-        margin-bottom: 4px;
-        margin-right: 2px;
+        margin-bottom: 2px;
+        margin-right: 4px;
         margin-left: 0px;
         white-space: nowrap;
 
@@ -275,26 +293,25 @@
     .sl-list-item-dummy {
         background-color: black;
         border: 1px solid darkslategray;
-        height: 17px;
+        margin-top: 1px;
     }
 
     .sl-list-input-dummy {
         background-color: black;
-        margin: 0;
-        height: 15px;
-        font-size: 10px;
-        cursor: pointer;
+        height: 16px;
+        font-size: 8px;
         text-align: right;
-        padding-bottom: 2px;
+
     }
 
     .sl-drag-handle-dummy {
+        background-color: black;
         padding-left: 3px;
         padding-right: 3px;
     }
 
     .btnDelete {
-        color: rgb(2, 2, 2);
+        color: black;
         opacity: .5;
 
     }
@@ -341,11 +358,11 @@
     }
 
     .item:hover {
-        border: 1px solid red;
+        border: 1px solid #7DF9FF;
     }
 
     .item.item.muuri-item-dragging {
-        border: 1px solid red;
+        border: 1px solid #7DF9FF;
     }
 
     .item.muuri-item-dragging {

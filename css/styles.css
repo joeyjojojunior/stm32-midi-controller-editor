@@ -1,9 +1,35 @@
     /*
      * Custom Fonts
      */
+    /*
     @font-face {
         font-family: "Hack";
         src: url(./font/Hack-Regular.ttf);
+    }
+    */
+
+    /* 
+     * Bootstrap
+     */
+
+    .close {
+        padding: 0;
+        background-color: transparent;
+        border: 0;
+        -webkit-appearance: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .close:not(:disabled):not(.disabled) {
+        cursor: pointer;
+    }
+
+
+    @font-face {
+        font-family: "Hack";
+        src: url(../font/Hack.ttf);
     }
 
     body {
@@ -31,7 +57,7 @@
         display: flex;
         flex-direction: column;
         /* align with top-right */
-        padding-top: 8px;
+        padding-bottom: 3px;
     }
 
     .top-right {
@@ -41,14 +67,19 @@
     }
 
     .settings {
-        padding-top: 5px;
         padding-right: 5px;
+    }
 
+    .knob {
+        font-size: 20px;
+        padding-top: 4px;
+        padding-left: 3px;
     }
 
     .menu {
         display: flex;
         flex-direction: row;
+        align-items: center;
         justify-content: space-between;
     }
 
@@ -57,25 +88,51 @@
         flex-direction: row;
     }
 
+    .preset {
+        display: flex;
+        flex-direction: row;
+        /* !pad-together0 */
+        padding-right: 10px;
+        font-size: 26px;
+    }
+
+    .channel {
+        display: flex;
+        flex-direction: row;
+        font-size: 26px;
+    }
+
+    .label {
+        padding-right: 10px;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: row;
+        padding-top: 2px;
+        /* !pad-together0 */
+        padding-right: 5px;
+    }
+
     .buttons {
-        margin-right: 10px;
+        display: flex;
+        flex-direction: row;
+        /* align with other header items */
+        padding-bottom: 1px;
     }
 
     .header {
-        font-size: 24px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: "Hack";
         font-weight: bold;
         color: #A7C7E7;
     }
 
     .inputFieldLarge {
-        width: 215px;
+        width: 110px;
         border: 0px;
         border-radius: 3px;
-        font-size: 24px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         text-align: center;
-        margin: 7px;
     }
 
     .inputFieldLarge:focus {
@@ -84,6 +141,7 @@
 
     .inputField {
         width: 110px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         border-radius: 3px;
         border: none;
         font-size: 15;
@@ -94,32 +152,27 @@
     }
 
     #inputPresetChannel {
-        width: 40px;
-        text-align: center;
+        width: 30px;
     }
 
-
-    .preset {}
-
-    .channel {}
-
     .btn {
-        background-color: black;
-        border-radius: 5px;
-        border: 1px solid white;
+        background-color: #0047AB;
+        border-radius: 3px;
+        border: 0px;
         color: white;
-        font-family: VT323;
+        font-family: "Hack";
         width: 75px;
-        height: 30px;
-        margin: 3px;
+        height: 25px;
+        margin-right: 5px;
     }
 
     .btn:hover {
-        border: 1px solid red;
+        opacity: 0.8;
     }
 
     .btn:active {
-        background-color: red;
+        background-color: #0054ca;
+        opacity: 1;
     }
 
 
@@ -128,10 +181,9 @@
      */
 
     table {
-        font-size: 15;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #C0C0C0;
-
+        font-size: 17px;
+        font-family: "Hack";
+        color: white;
     }
 
     td {
@@ -154,10 +206,13 @@
     }
 
     .sl-label {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 15;
+        font-family: "Hack";
+        font-size: 16;
         background-color: black;
-        color: #C0C0C0;
+        color: white;
+        /* align with top-left */
+        padding-top: 1px;
+        padding-bottom: 1px;
     }
 
     .sl-list {
@@ -165,28 +220,26 @@
         flex-direction: column;
         flex-wrap: wrap;
         list-style-type: none;
-        height: 280px;
+        height: 300px;
         padding: 0px;
         margin: 0 auto;
     }
 
     .sl-list-item {
         background-color: white;
-        border: 1px solid black;
-        padding-left: 5px;
+        border: 0px;
         padding-right: 5px;
 
         margin-top: 0px;
-        margin-bottom: 0px;
-        margin-right: 0px;
-        margin: 0px;
+        margin-bottom: 4px;
+        margin-right: 2px;
+        margin-left: 0px;
         white-space: nowrap;
 
-        display: inline-flex;
+        display: flex;
         flex-direction: row;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
-        border-radius: 3px;
     }
 
     .sl-list-input {
@@ -194,10 +247,7 @@
         border: none;
         background-color: white;
         padding-top: 0px;
-        padding-bottom: 0px;
-
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 15;
     }
 
     .sl-list-input:focus {
@@ -205,16 +255,69 @@
     }
 
     .sl-drag-handle {
-        margin: auto 0;
-        background-color: white;
-        padding-right: 3px;
+        display: flex;
+        justify-content: center;
+        background-color: darkslategray;
+        padding-left: 4px;
+        padding-right: 4px;
+        margin: 0;
+        height: 100%;
     }
 
     .sl-drag-icon {
-        width: 10px;
+        width: 7px;
         height: auto;
-        margin-right: 4px;
+        filter: invert(1);
+        margin: 0;
+        padding: 0;
     }
+
+    .sl-list-item-dummy {
+        background-color: black;
+        border: 1px solid darkslategray;
+        height: 17px;
+    }
+
+    .sl-list-input-dummy {
+        background-color: black;
+        margin: 0;
+        height: 15px;
+        font-size: 10px;
+        cursor: pointer;
+        text-align: right;
+        padding-bottom: 2px;
+    }
+
+    .sl-drag-handle-dummy {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+    .btnDelete {
+        color: rgb(2, 2, 2);
+        opacity: .5;
+
+    }
+
+    .btnDelete.close:not(:disabled):not(.disabled):hover,
+    .close:not(:disabled):not(.disabled):focus {
+        color: #000;
+        text-decoration: none;
+        opacity: .75;
+    }
+
+    .btnAdd {
+        color: white;
+        opacity: 0.5;
+    }
+
+    .btnAdd.close:not(:disabled):not(.disabled):hover,
+    .close:not(:disabled):not(.disabled):focus {
+        color: white;
+        text-decoration: none;
+        opacity: .75;
+    }
+
 
     /*
      * Grid 

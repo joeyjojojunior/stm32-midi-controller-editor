@@ -98,67 +98,11 @@ function init() {
 }
 
 function createTitle() {
-    knob.innerHTML = "Knob XXX";
-
-    preset.innerHTML = "Preset"
-    var inputPresetLabel = document.createElement("input");
-    inputPresetLabel.className = "inputFieldLarge";
-    inputPresetLabel.id = "inputPresetLabel";
+    var inputPresetLabel = document.getElementById("inputPresetLabel");
     inputPresetLabel.maxLength = MAX_LABEL_CHARS;
 
-    var inputPresetSublabel = document.createElement("input");
-    inputPresetSublabel.className = "inputFieldLarge";
-    inputPresetSublabel.id = "inputPresetSublabel";
+    var inputPresetSublabel = document.getElementById("inputPresetSublabel");
     inputPresetSublabel.maxLength = MAX_LABEL_CHARS;
-
-    preset.appendChild(inputPresetLabel);
-    preset.appendChild(inputPresetSublabel);
-
-    channel.innerHTML = "Channel";
-
-    var inputPresetChannel = document.createElement("input");
-    inputPresetChannel.className = "inputFieldLarge";
-    inputPresetChannel.id = "inputPresetChannel";
-    inputPresetChannel.maxLength = 2;
-
-    channel.appendChild(inputPresetChannel);
-
-    var btnPresets = document.createElement("button");
-    btnPresets.className = "btn";
-    btnPresets.id = "btnPresets";
-    btnPresets.innerHTML = "Presets";
-
-    var btnSave = document.createElement("button");
-    btnSave.className = "btn";
-    btnSave.id = "btnSave";
-    btnSave.innerHTML = "Save";
-
-    var btnSaveAs = document.createElement("button");
-    btnSaveAs.className = "btn";
-    btnSaveAs.id = "btnSaveAs";
-    btnSaveAs.innerHTML = "Save As";
-
-    var btnLoad = document.createElement("button");
-    btnLoad.className = "btn";
-    btnLoad.id = "btnLoad";
-    btnLoad.innerHTML = "Load";
-
-    var btnReset = document.createElement("button");
-    btnReset.className = "btn";
-    btnReset.id = "btnReset";
-    btnReset.innerHTML = "Reset";
-
-    var btnQuit = document.createElement("button");
-    btnQuit.className = "btn";
-    btnQuit.id = "btnQuit";
-    btnQuit.innerHTML = "Quit";
-
-    buttons.appendChild(btnPresets);
-    buttons.appendChild(btnSave);
-    buttons.appendChild(btnSaveAs);
-    buttons.appendChild(btnLoad);
-    buttons.appendChild(btnReset);
-    buttons.appendChild(btnQuit);
 }
 
 function updateTitle(knobID) {
@@ -276,43 +220,48 @@ function createSublabels(knobID) {
         slDragHandle.className = "sl-drag-handle";
 
         var img = document.createElement("img");
-        img.src = "./img/dragIcon.png";
+        img.src = "./img/dragIcon.svg";
         img.className = "sl-drag-icon";
         slDragHandle.appendChild(img);
 
-        subLabel.appendChild(slDragHandle);
-        subLabel.appendChild(input);
-        slList.appendChild(subLabel);
-    }
-
-
-    // Create test labels
-    /*
-    var labels = new Array(Math.floor(Math.random() * (30 - 1 + 1)) + 1);
-    var labels = new Array(128);
-    for (var i = 0; i < labels.length; i++) {
-        var subLabel = document.createElement("li");
-        subLabel.className = "sl-list-item"
-
-        var input = document.createElement("input");
-        input.className = "sl-list-input";
-        input.id = `sl-list-input${i}`
-        input.maxLength = MAX_LABEL_CHARS;
-        input.spellcheck = false;
-
-        var slDragHandle = document.createElement("div");
-        slDragHandle.className = "sl-drag-handle";
-
-        var img = document.createElement("img");
-        img.src = "./img/dragIcon.png";
-        img.className = "sl-drag-icon";
-        slDragHandle.appendChild(img);
+        var closeBtn = document.createElement("button");
+        closeBtn.className = "close btnDelete";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.addEventListener("click", eventClickSublabelDelete, false);
 
         subLabel.appendChild(slDragHandle);
         subLabel.appendChild(input);
+        subLabel.appendChild(closeBtn);
         slList.appendChild(subLabel);
     }
-    */
+
+    // Add dummy entry with add button to add new labels
+    var subLabel = document.createElement("li");
+    subLabel.className = "sl-list-item sl-list-item-dummy"
+
+    var input = document.createElement("input");
+    input.className = "sl-list-input sl-list-input-dummy";
+    input.maxLength = MAX_LABEL_CHARS;
+    input.placeholder = "Add Sub Label ";
+
+    var slDragHandle = document.createElement("div");
+    slDragHandle.className = "sl-drag-handle sl-drag-handle-dummy";
+
+    var img = document.createElement("img");
+    img.src = "./img/dragIcon.svg";
+    img.className = "sl-drag-icon";
+    slDragHandle.appendChild(img);
+
+    var closeBtn = document.createElement("button");
+    closeBtn.className = "close btnAdd";
+    closeBtn.innerHTML = "&plus;";
+    closeBtn.addEventListener("click", eventClickSublabelDelete, false);
+
+    subLabel.appendChild(slDragHandle);
+    subLabel.appendChild(input);
+    subLabel.appendChild(closeBtn);
+    slList.appendChild(subLabel);
+
     sublabels.appendChild(slList);
 
     // Allows moving sub labels around
@@ -582,11 +531,19 @@ function cacheKnob(knobID) {
 // and only hide that one.
 function eventClickGridItem(e) {
     var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
-    if (!drag) {
+    if (!drag && currKnobID !== newKnobID) {
         cacheKnob(currKnobID);
         currKnobID = newKnobID;
         showKnob(currKnobID);
     }
+}
+
+function eventClickSublabelDelete(e) {
+    e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+}
+
+function eventClickSublabelAdd(e) {
+
 }
 
 // Disables zoom by disabling the Ctrl key

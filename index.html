@@ -16,15 +16,51 @@
 
             <div class="top-right">
                 <div class="menu">
+
                     <div class="preset-channel-container">
-                        <div class="preset header"></div>
-                        <div class="channel header"></div>
+                        <div class="preset header">
+                            <label class="label">Preset</label>
+
+                            <div class="input-container">
+                                <input type="text" class="inputFieldLarge" id="inputPresetLabel" placeholder="Label">
+                            </div>
+
+                            <div class="input-container">
+                                <input type="text" class="inputFieldLarge" id="inputPresetSublabel"
+                                    placeholder="Sub Label">
+                            </div>
+                        </div>
+
+                        <div class="channel header">
+                            <label class="label">Channel</label>
+
+                            <div class="input-container">
+                                <input type="text" class="inputFieldLarge" id="inputPresetChannel" maxLength="2">
+                            </div>
+                        </div>
                     </div>
-                    <div class="buttons header"></div>
+
+                    <div class="buttons header">
+                        <button class="btn" id="btnPresets">Presets</button>
+                        <button class="btn" id="btnZoomIn">Size +</button>
+                        <button class="btn" id="btnZoomOut">Size -</button>
+                    </div>
+
+                    <div class="buttons header">
+                        <button class="btn" id="btnSave">Save</button>
+                        <button class="btn" id="btnSaveAs">Save As</button>
+                        <button class="btn" id="btnLoad">Load</button>
+                        <button class="btn" id="btnReset">Reset</button>
+                        <button class="btn" id="btnQuit">Quit</button>
+
+                    </div>
+
                 </div>
+
                 <div class="sublabels">
                     <div class="sl-label">Sub Labels</div>
                 </div>
+
             </div>
         </div>
 

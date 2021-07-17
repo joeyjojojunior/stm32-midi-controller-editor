@@ -5,7 +5,7 @@ const {
 // Global variables
 const MAX_LABEL_CHARS = 14;
 const NUM_COLS = 16;
-const NUM_ROWS = 8;
+const NUM_ROWS = 4;
 const NUM_KNOBS = 128;
 
 var currKnobID = 0; // keeps track of currently displayed knob
@@ -35,7 +35,7 @@ function initKnobSettings() {
             init_value: "",
             max_range: "",
             isLocked: "false",
-            sub_labels: [""]
+            sub_labels: []
         }
     }
 }
@@ -466,6 +466,11 @@ function loadFile(result) {
     var inputs = getInputs();
     var knobs = json.knobs;
 
+    if (knobs.length > 128) {
+        console.log("loadFile: Too many knobs in preset file!");
+        return;
+    }
+
     inputs.presetLabel.value = json.name;
     inputs.presetSublabel.value = json.sub_label;
 
@@ -480,11 +485,43 @@ function loadFile(result) {
     }
 
     showKnob(0);
+}
+
+function saveFile() {
+    var presetJSON = new Object();
+    var inputs = getInputs();
+
+    cacheKnob(currKnobID); // Save currently open knob
+
+    // TODO: Index!
+    presetJSON.name = inputs.presetLabel.value;
+    presetJSON.sub_label = inputs.presetSublabel.value;
+    presetJSON.index = "0";
+    presetJSON.knobs = new Array();
+
+    for (var i = 0; i < knobSettings.length; i++) {
+        if (knobSettings[i].cc === "") continue;
+
+        presetJSON.knobs[i] = {
+            row: Math.trunc(i / NUM_ROWS),
+            col: i % NUM_ROWS,
+            label: knobSettings[i].label,
+            sub_labels: knobSettings[i].sub_labels,
+            channel: knobSettings[i].channel,
+            cc: knobSettings[i].cc,
+            init_value: knobSettings[i].init_value,
+            max_values: knobSettings[i].max_values,
+            isLocked: (knobSettings[i] === "true") ? "1" : "0"
+        }
+    }
+
+    presetJSONStr = JSON.stringify(presetJSON, null, 4);
+    console.log(presetJSONStr);
 
 }
 
 function knobIndex(row, col) {
-    return NUM_COLS * row + col;
+    return row + (col * NUM_COLS);
 }
 
 function getInputs() {
@@ -522,6 +559,9 @@ window.onload = () => {
 document.addEventListener("DOMContentLoaded", function (event) {
     const fileInput = document.getElementById("file-load");
     fileInput.addEventListener("change", eventLoadFile, false);
+
+    const saveBtn = document.getElementById("btnSave");
+    saveBtn.addEventListener("click", saveFile, false);
 });
 
 init();

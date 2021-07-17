@@ -8,78 +8,36 @@ const NUM_COLS = 16;
 const NUM_ROWS = 8;
 const NUM_KNOBS = 128;
 
-var currKnobID = 0;
-var drag = false;
-var jsonString = "";
-var json = "";
-var knobContent = new Array(NUM_KNOBS);
-var knobSettings = new Array(NUM_KNOBS);
+var currKnobID = 0; // keeps track of currently displayed knob
+var drag = false; // prevent grid click event on drag start/stop
 
-for (var i = 0; i < knobSettings.length; i++) {
-    knobSettings[i] = {
-        label: "",
-        channel: "",
-        cc: "",
-        init_value: "",
-        max_range: "",
-        isLocked: "false",
-        sub_labels: [""]
-    }
-}
-
-knobSettings[0] = {
-    label: "Cutoff",
-    channel: "3",
-    cc: "18",
-    init_value: "34",
-    max_range: "128",
-    isLocked: "true",
-    sub_labels: [
-        "Label 1",
-        "Label 2",
-        "Label 3",
-        "Label 4",
-        "Label 5",
-        "Label 6",
-        "Label 7",
-        "Label 8",
-        "Label 9",
-        "Label 10",
-        "Label 11",
-        "Label 12",
-        "Label 13",
-        "Label 14",
-        "Label 15"
-    ]
-}
-knobSettings[1] = {
-    label: "Resonance",
-    channel: "1",
-    cc: "33",
-    init_value: "0",
-    max_range: "16",
-    isLocked: "false",
-    sub_labels: [
-        "Boo 1",
-        "Boo 2",
-        "Boo 3",
-        "Boo 4",
-        "Boo 5"
-    ]
-}
+var knobContent = new Array(NUM_KNOBS); // Content of each grid item
+var knobSettings = new Array(NUM_KNOBS); // Cache of settings for each knob
 
 function init() {
+    initKnobSettings();
     createTitle();
-    document.querySelector(".settings").appendChild(createTableSettings());
+    createTableSettings();
     createGridItems();
     createGrid();
     showKnob(currKnobID);
 
-    //var btnLoad = document.querySelector(".btnLoad-label");
-    //btnLoad.addEventListener("click", loadFile, false);
-
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
+}
+
+function initKnobSettings() {
+    for (var i = 0; i < knobSettings.length; i++) {
+        knobSettings[i] = {
+            label: "",
+            channel: "",
+            cc: "",
+            init_value: "",
+            max_range: "",
+            isLocked: "false",
+            sub_labels: [""]
+        }
+    }
 }
 
 function createTitle() {
@@ -131,7 +89,7 @@ function createTableSettings() {
     tbdy.appendChild(tr);
     tbl.appendChild(tbdy);
 
-    return tbl;
+    document.querySelector(".settings").appendChild(tbl);
 }
 
 function createInputSettings() {
@@ -503,10 +461,26 @@ function eventLoadFile() {
 }
 
 function loadFile(result) {
-    jsonString = result;
-    console.log(`jsonSring: \n ${jsonString}`);
-    json = JSON.parse(jsonString);
-    console.log(`json: \n ${json}`);
+    var jsonString = result;
+    var json = JSON.parse(jsonString);
+    var inputs = getInputs();
+    var knobs = json.knobs;
+
+    inputs.presetLabel.value = json.name;
+    inputs.presetSublabel.value = json.sub_label;
+
+    for (var i = 0; i < knobs.length; i++) {
+        knobSettings[i].label = knobs[i].label;
+        knobSettings[i].channel = knobs[i].channel;
+        knobSettings[i].cc = knobs[i].cc;
+        knobSettings[i].init_value = knobs[i].init_value;
+        knobSettings[i].max_range = knobs[i].max_range;
+        knobSettings[i].isLocked = (knobs[i].isLocked === "0") ? "false" : "true";
+        knobSettings[i].sub_labels = knobs[i].sub_labels;
+    }
+
+    showKnob(0);
+
 }
 
 function knobIndex(row, col) {

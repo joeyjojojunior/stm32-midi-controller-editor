@@ -211,6 +211,12 @@ function createSublabels(knobID) {
 function eventClickSublabelDelete(e) {
     var parentLI = e.target.parentNode;
     parentLI.parentNode.removeChild(parentLI);
+
+    var prevLI = parentLI.previousSibling;
+    if (prevLI !== null) {
+        var prevLILabel = prevLI.childNodes[1];
+        prevLILabel.focus();
+    }
 }
 
 function eventClickSublabelAdd(e) {
@@ -244,6 +250,7 @@ function eventClickSublabelAdd(e) {
     subLabel.appendChild(closeBtn);
 
     parentUL.insertBefore(subLabel, dummyLI);
+    input.focus();
 }
 
 function createGrid() {
@@ -374,9 +381,13 @@ function createGrid() {
 function eventClickGridItem(e) {
     var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
     if (!drag && currKnobID !== newKnobID) {
+
         cacheKnob(currKnobID);
+
+
+
+        showKnob(newKnobID);
         currKnobID = newKnobID;
-        showKnob(currKnobID);
     }
 }
 
@@ -406,6 +417,9 @@ function createGridItems() {
 }
 
 function showKnob(knobID) {
+    var gridItemOld = document.getElementById(`gridItem${currKnobID}`);
+    var gridItemNew = document.getElementById(`gridItem${knobID}`);
+
     var inputs = getInputs();
 
     inputs.label.value = knobSettings[knobID].label;
@@ -415,7 +429,18 @@ function showKnob(knobID) {
     inputs.maxRange.value = knobSettings[knobID].max_range;
     inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
     createSublabels(knobID);
+
+    gridItemOld.classList.remove("active");
+    gridItemNew.classList.add("active");
+
     document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
+}
+
+function updateDisplays() {
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        var knobContent = document.getElementById(`knobContent${i}`);
+        knobContent.innerHTML = knobSettings[i].label;
+    }
 }
 
 function cacheKnob(knobID) {
@@ -487,6 +512,7 @@ function loadFile(result) {
     }
 
     showKnob(0);
+    updateDisplays();
 }
 
 function saveJSONString() {

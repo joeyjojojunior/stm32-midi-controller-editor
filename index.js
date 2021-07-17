@@ -68,30 +68,15 @@ knobSettings[1] = {
     ]
 }
 
-// Title Divs
-var topLeft = document.querySelector(".top-left");
-var knob = document.querySelector(".knob");
-var settings = document.querySelector(".settings");
-
-var topRight = document.querySelector(".top-right");
-var menu = document.querySelector(".menu");
-var preset = document.querySelector(".preset");
-var channel = document.querySelector(".channel");
-var buttons = document.querySelector(".buttons");
-var sublabels = document.querySelector(".sublabels");
-var slLabel = document.querySelector(".sl-label");
-
-var grid = document.querySelector(".grid");
-
 function init() {
     createTitle();
-    settings.appendChild(createTableSettings());
+    document.querySelector(".settings").appendChild(createTableSettings());
     createGridItems();
     createGrid();
     showKnob(currKnobID);
 
-    const fileInput = document.getElementById("file");
-    fileInput.addEventListener("change", loadFile, false);
+    //var btnLoad = document.querySelector(".btnLoad-label");
+    //btnLoad.addEventListener("click", loadFile, false);
 
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
@@ -256,7 +241,7 @@ function createSublabels(knobID) {
     subLabel.appendChild(addBtn);
     slList.appendChild(subLabel);
 
-    sublabels.appendChild(slList);
+    document.querySelector(".sublabels").appendChild(slList);
 
     // Allows moving sub labels around
     $(function () {
@@ -463,48 +448,37 @@ function createGridItems() {
 }
 
 function showKnob(knobID) {
-    var inputLabel = document.getElementById("inputLabel");
-    var inputChannel = document.getElementById("inputChannel");
-    var inputCC = document.getElementById("inputCC");
-    var inputInitValue = document.getElementById("inputInitValue");
-    var inputMaxRange = document.getElementById("inputMaxRange");
-    var inputIsLocked = document.getElementById("inputIsLocked");
+    var inputs = getInputs();
 
-    inputLabel.value = knobSettings[knobID].label;
-    inputChannel.value = knobSettings[knobID].channel;
-    inputCC.value = knobSettings[knobID].cc;
-    inputInitValue.value = knobSettings[knobID].init_value;
-    inputMaxRange.value = knobSettings[knobID].max_range;
-    inputIsLocked.checked = (knobSettings[knobID].isLocked === "true");
+    inputs.label.value = knobSettings[knobID].label;
+    inputs.channel.value = knobSettings[knobID].channel;
+    inputs.cc.value = knobSettings[knobID].cc;
+    inputs.initValue.value = knobSettings[knobID].init_value;
+    inputs.maxRange.value = knobSettings[knobID].max_range;
+    inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
     createSublabels(knobID);
-    knob.innerHTML = `Knob ${knobID + 1}`;
+    document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
 }
 
 function cacheKnob(knobID) {
-    var label = document.getElementById("inputLabel").value;
-    var channel = document.getElementById("inputChannel").value;
-    var cc = document.getElementById("inputCC").value
-    var initValue = document.getElementById("inputInitValue").value;
-    var maxRange = document.getElementById("inputMaxRange").value;
-    var isLocked = document.getElementById("inputIsLocked").checked.toString();
+    var inputs = getInputs();
     var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
 
     var slArray = new Array();
     for (var i = 0; i < slInputs.length; i++) {
         if (slInputs[i].disabled === "true") {
-            console.log(`cacheKnob disabled: ${slInputs[i]}`);
             continue;
         }
         slArray[i] = slInputs[i].value;
     }
 
     knobSettings[knobID] = {
-        label: label,
-        channel: channel,
-        cc: cc,
-        init_value: initValue,
-        max_range: maxRange,
-        isLocked: isLocked,
+        label: inputs.label.value,
+        channel: inputs.channel.value,
+        cc: inputs.cc.value,
+        init_value: inputs.initValue.value,
+        max_range: inputs.maxRange.value,
+        isLocked: inputs.isLocked.checked.toString(),
         sub_labels: slArray
     }
 }
@@ -519,27 +493,37 @@ function zoomDisable(e) {
 }
 */
 
-
-function loadFile() {
-    var file = document.getElementById("file").files[0];
-    console.log(`file: ${file}`);
+function eventLoadFile() {
+    var file = document.getElementById("file-load").files[0];
     if (file) {
         var reader = new FileReader();
         reader.readAsText(file, "UTF-8");
-        reader.onload = () => saveFile(reader.result);
+        reader.onload = () => loadFile(reader.result);
     }
-    console.log(`string: \n ${jsonString}`);
-    json = JSON.parse(jsonString);
-    console.log(`string: \n ${json}`);
-    console.log(json.name);
 }
 
-function saveFile(result) {
+function loadFile(result) {
     jsonString = result;
-    console.log(`string: \n ${jsonString}`);
+    console.log(`jsonSring: \n ${jsonString}`);
     json = JSON.parse(jsonString);
-    console.log(`string: \n ${json}`);
-    console.log(json.name);
+    console.log(`json: \n ${json}`);
+}
+
+function knobIndex(row, col) {
+    return NUM_COLS * row + col;
+}
+
+function getInputs() {
+    return {
+        presetLabel: document.getElementById("inputPresetLabel"),
+        presetSublabel: document.getElementById("inputPresetSublabel"),
+        label: document.getElementById("inputLabel"),
+        channel: document.getElementById("inputChannel"),
+        cc: document.getElementById("inputCC"),
+        initValue: document.getElementById("inputInitValue"),
+        maxRange: document.getElementById("inputMaxRange"),
+        isLocked: document.getElementById("inputIsLocked")
+    }
 }
 
 // Sets the drag flag which is used to prevent firing click 
@@ -559,9 +543,12 @@ window.onload = () => {
         alert("preset div clicked!");
     });
 
-    var btnLoad = document.getElementById("btnLoad-label");
-    btnLoad.addEventListener("click", loadFile, false);
 }
+
+document.addEventListener("DOMContentLoaded", function (event) {
+    const fileInput = document.getElementById("file-load");
+    fileInput.addEventListener("change", eventLoadFile, false);
+});
 
 init();
 

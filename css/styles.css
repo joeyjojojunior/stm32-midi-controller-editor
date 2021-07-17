@@ -366,11 +366,11 @@
     }
 
     .item:hover {
-        border: 1px solid #7DF9FF;
+        border: 1px solid red;
     }
 
     .item.item.muuri-item-dragging {
-        border: 1px solid #7DF9FF;
+        border: 1px solid red;
     }
 
     .item.muuri-item-dragging {

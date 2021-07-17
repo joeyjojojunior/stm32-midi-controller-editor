@@ -105,11 +105,6 @@ function createTitle() {
     inputPresetSublabel.maxLength = MAX_LABEL_CHARS;
 }
 
-function updateTitle(knobID) {
-    var knobLabel = document.querySelector(".knob");
-    knob.innerHTML = `Knob ${knobID + 1}`;
-}
-
 function createTableSettings() {
     var tbl = document.createElement("table");
 
@@ -204,7 +199,6 @@ function createSublabels(knobID) {
     // Create the un-ordererd list for the sublabels
     var slList = document.createElement("ul");
     slList.className = "sl-list";
-    console.log(`Knob: ${knobID}, ${knobSettings[knobID].sub_labels.length}`);
     for (var i = 0; i < knobSettings[knobID].sub_labels.length; i++) {
         var subLabel = document.createElement("li");
         subLabel.className = "sl-list-item"
@@ -224,7 +218,7 @@ function createSublabels(knobID) {
         slDragHandle.appendChild(img);
 
         var closeBtn = document.createElement("button");
-        closeBtn.className = "close btnDelete";
+        closeBtn.className = "sl-list-btn sl-list-btn-delete";
         closeBtn.innerHTML = "&times;";
         closeBtn.addEventListener("click", eventClickSublabelDelete, false);
 
@@ -253,7 +247,7 @@ function createSublabels(knobID) {
     slDragHandle.appendChild(img);
 
     var addBtn = document.createElement("button");
-    addBtn.className = "close btnAdd";
+    addBtn.className = "sl-list-btn sl-list-btn-add";
     addBtn.innerHTML = "&plus;";
     addBtn.addEventListener("click", eventClickSublabelAdd, false);
 
@@ -298,7 +292,7 @@ function eventClickSublabelAdd(e) {
     slDragHandle.appendChild(img);
 
     var closeBtn = document.createElement("button");
-    closeBtn.className = "close btnDelete";
+    closeBtn.className = "sl-list-btn sl-list-btn-delete";
     closeBtn.innerHTML = "&times;";
     closeBtn.addEventListener("click", eventClickSublabelDelete, false);
 
@@ -307,10 +301,8 @@ function eventClickSublabelAdd(e) {
     subLabel.appendChild(closeBtn);
 
     parentUL.insertBefore(subLabel, dummyLI);
-
 }
 
-// Creates the Muuri grid
 function createGrid() {
     var grid = new Muuri('.grid', {
         items: knobContent,
@@ -436,12 +428,6 @@ function createGrid() {
     });
 }
 
-// Event handler for clicking on a grid item. Shows the settings for
-// a knob by unhiding its divSettings div and hiding all the others
-//
-// TODO: No reason to hide EVERY knob after init since only one
-// will be visible at a time. Modify to keep track of the current knob
-// and only hide that one.
 function eventClickGridItem(e) {
     var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
     if (!drag && currKnobID !== newKnobID) {
@@ -451,7 +437,6 @@ function eventClickGridItem(e) {
     }
 }
 
-// Creates all the Muuri grid items for the knobContent
 function createGridItems() {
     for (var i = 0; i < NUM_KNOBS; i++) {
         gridDiv = document.getElementById("knobGrid");
@@ -485,7 +470,6 @@ function showKnob(knobID) {
     var inputMaxRange = document.getElementById("inputMaxRange");
     var inputIsLocked = document.getElementById("inputIsLocked");
 
-    // Update values for newly selected knob
     inputLabel.value = knobSettings[knobID].label;
     inputChannel.value = knobSettings[knobID].channel;
     inputCC.value = knobSettings[knobID].cc;
@@ -497,20 +481,12 @@ function showKnob(knobID) {
 }
 
 function cacheKnob(knobID) {
-    var inputLabel = document.getElementById("inputLabel");
-    var inputChannel = document.getElementById("inputChannel");
-    var inputCC = document.getElementById("inputCC");
-    var inputInitValue = document.getElementById("inputInitValue");
-    var inputMaxRange = document.getElementById("inputMaxRange");
-    var inputIsLocked = document.getElementById("inputIsLocked");
-
-    // Cache existing knob
-    var label = inputLabel.value;
-    var channel = inputChannel.value;
-    var cc = inputCC.value
-    var initValue = inputInitValue.value;
-    var maxRange = inputMaxRange.value;
-    var isLocked = inputIsLocked.checked.toString();
+    var label = document.getElementById("inputLabel").value;
+    var channel = document.getElementById("inputChannel").value;
+    var cc = document.getElementById("inputCC").value
+    var initValue = document.getElementById("inputInitValue").value;
+    var maxRange = document.getElementById("inputMaxRange").value;
+    var isLocked = document.getElementById("inputIsLocked").checked.toString();
     var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
 
     var slArray = new Array();
@@ -583,8 +559,8 @@ window.onload = () => {
         alert("preset div clicked!");
     });
 
-    //window.addEventListener('resize', eventZoomChanged);
-    // window.onkeydown = zoomDisable;
+    var btnLoad = document.getElementById("btnLoad-label");
+    btnLoad.addEventListener("click", loadFile, false);
 }
 
 init();

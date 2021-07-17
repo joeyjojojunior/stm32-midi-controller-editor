@@ -12,35 +12,132 @@
         src: url(../font/Hack.ttf);
     }
 
-
-    @import url('https://fonts.googleapis.com/css2?family=Mr+Dafoe&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Exo:wght@900&display=swap');
-
-    /* 
-     * Bootstrap
-     */
-
-    .close {
-        padding: 0;
-        background-color: transparent;
-        border: 0;
-        -webkit-appearance: none;
-        font-size: 0.75rem;
-        font-weight: 700;
-        line-height: 1;
-    }
-
-    .close:not(:disabled):not(.disabled) {
-        cursor: pointer;
-    }
-
-
-
     body,
     html {
         margin: 0;
         padding: 0;
         background-color: black;
+    }
+
+    /*
+     * Menu bar
+     */
+    .menu {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #212121;
+        padding-left: 10px;
+        flex-wrap: wrap;
+    }
+
+    .preset-channel-container {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        font-size: 30px;
+        flex-wrap: wrap;
+
+    }
+
+    .header {
+        font-family: "Hack";
+        color: white;
+        flex-wrap: wrap;
+    }
+
+    .preset {
+        display: flex;
+        flex-direction: row;
+        /* !pad-together0 */
+        padding-right: 5px;
+    }
+
+    .channel {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .label {
+        padding-right: 10px;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: row;
+        /* !pad-together0 */
+        padding-right: 10px;
+    }
+
+    .inputFieldLarge {
+        width: 110px;
+        border: 0px;
+        height: 16px;
+        border-radius: 3px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .inputFieldLarge:focus {
+        outline-width: 0;
+    }
+
+    #inputPresetChannel {
+        width: 30px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .btn {
+        background-color: #212121;
+        border: 0px;
+        color: white;
+        font-family: "Hack";
+        height: 40px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .btn:hover {
+        background-color: black;
+        opacity: 0.8;
+
+    }
+
+    .btn:active {
+        background-color: black;
+        opacity: 1;
+    }
+
+    .label-container {
+        background-color: #212121;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .label-container:hover {
+        background-color: black;
+        opacity: 0.8;
+    }
+
+    .btnLoad-label {
+        height: 28px;
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 14px;
+        padding-bottom: 0px;
+    }
+
+
+    .file {
+        display: none;
     }
 
     /*
@@ -67,7 +164,6 @@
         flex-direction: column;
         margin-left: 0px;
         padding-left: 0px;
-        /* align with top-right */
     }
 
     .top-right {
@@ -77,126 +173,19 @@
 
     }
 
+    /*
+     * Knob Settings
+     */
     .settings {
         padding-right: 5px;
     }
 
     .knob {
         font-family: "Hack";
-        color: #7DF9FF;
+        color: #d3d3d3;
         font-size: 26px;
         padding-left: 10px;
     }
-
-
-    .menu {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        background-color: #1434A4;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    .preset-channel-container {
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        font-size: 30px;
-
-    }
-
-    .preset {
-        display: flex;
-        flex-direction: row;
-        /* !pad-together0 */
-        padding-right: 5px;
-    }
-
-    .channel {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .label {
-        padding-right: 10px;
-    }
-
-    .input-container {
-        display: flex;
-        flex-direction: row;
-        /* !pad-together0 */
-        padding-right: 10px;
-    }
-
-    .buttons {
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-
-        /* align with other header items */
-    }
-
-    .header {
-        font-family: "Hack";
-        color: white;
-    }
-
-    .inputFieldLarge {
-        width: 110px;
-        border: 0px;
-        height: 16px;
-        border-radius: 3px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        text-align: center;
-        margin-top: 5px;
-    }
-
-    .inputFieldLarge:focus {
-        outline-width: 0;
-    }
-
-    .inputField {
-        width: 110px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        border-radius: 3px;
-        border: none;
-        font-size: 15;
-    }
-
-    .inputField:focus {
-        outline-width: 0;
-    }
-
-    #inputPresetChannel {
-        width: 30px;
-    }
-
-    .btn {
-        background-color: #1434A4;
-        border: 0px;
-        color: white;
-        font-family: "Hack";
-        width: 75px;
-        height: 40px;
-    }
-
-    .btn:hover {
-        background-color: black;
-        opacity: 0.8;
-
-    }
-
-    .btn:active {
-        background-color: black;
-        opacity: 1;
-    }
-
-
-    /*
-     * Knob Settings
-     */
 
     table {
         font-size: 17px;
@@ -213,6 +202,18 @@
     .divIsLocked {
         display: flex;
         align-items: center;
+    }
+
+    .inputField {
+        width: 110px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-radius: 3px;
+        border: none;
+        font-size: 15;
+    }
+
+    .inputField:focus {
+        outline-width: 0;
     }
 
     /*
@@ -245,7 +246,6 @@
 
     .sl-list-item {
         background-color: white;
-        border: 0px;
         padding-right: 5px;
 
         margin-top: 0px;
@@ -258,6 +258,7 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
+
     }
 
     .sl-list-input {
@@ -275,7 +276,7 @@
     .sl-drag-handle {
         display: flex;
         justify-content: center;
-        background-color: darkslategray;
+        background-color: #414141;
         padding-left: 4px;
         padding-right: 4px;
         margin: 0;
@@ -292,49 +293,56 @@
 
     .sl-list-item-dummy {
         background-color: black;
-        border: 1px solid darkslategray;
-        margin-top: 1px;
     }
 
     .sl-list-input-dummy {
         background-color: black;
-        height: 16px;
         font-size: 8px;
+        height: 18px;
         text-align: right;
-
     }
 
     .sl-drag-handle-dummy {
         background-color: black;
-        padding-left: 3px;
-        padding-right: 3px;
     }
 
-    .btnDelete {
+    .sl-list-btn {
+        padding: 0;
+        background-color: transparent;
+        border: 0;
+        -webkit-appearance: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .sl-list-btn:not(:disabled):not(.disabled) {
+        cursor: pointer;
+    }
+
+    .sl-list-btn-delete {
         color: black;
         opacity: .5;
-
     }
 
-    .btnDelete.close:not(:disabled):not(.disabled):hover,
-    .close:not(:disabled):not(.disabled):focus {
+    .sl-list-btn-delete.sl-list-btn:not(:disabled):not(.disabled):hover,
+    .sl-list-btn:not(:disabled):not(.disabled):focus {
         color: #000;
         text-decoration: none;
         opacity: .75;
     }
 
-    .btnAdd {
+    .sl-list-btn-add {
         color: white;
         opacity: 0.5;
     }
 
-    .btnAdd.close:not(:disabled):not(.disabled):hover,
-    .close:not(:disabled):not(.disabled):focus {
+    .sl-list-btn-add.sl-list-btn:not(:disabled):not(.disabled):hover,
+    .sl-list-btn:not(:disabled):not(.disabled):focus {
         color: white;
         text-decoration: none;
         opacity: .75;
     }
-
 
     /*
      * Grid 

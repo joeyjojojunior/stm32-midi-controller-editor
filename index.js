@@ -30,10 +30,10 @@ function initKnobSettings() {
     for (var i = 0; i < knobSettings.length; i++) {
         knobSettings[i] = {
             label: "",
-            channel: "",
-            cc: "",
-            init_value: "",
-            max_range: "",
+            channel: "1",
+            cc: `${i}`,
+            init_value: "0",
+            max_range: "127",
             isLocked: "false",
             sub_labels: []
         }
@@ -441,18 +441,20 @@ function cacheKnob(knobID) {
     }
 }
 
-
-// Disables zoom by disabling the Ctrl key
-/*
-function zoomDisable(e) {
-    if (e.ctrlKey) {
-        return false;
+function eventLoadFile(e) {
+    var file = document.getElementById("file-load").files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = () => loadFile(reader.result);
     }
 }
-*/
 
-function eventLoadFile() {
-    var file = document.getElementById("file-load").files[0];
+function eventDropLoadFile(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const file = e.dataTransfer.files[0];
     if (file) {
         var reader = new FileReader();
         reader.readAsText(file, "UTF-8");
@@ -487,7 +489,7 @@ function loadFile(result) {
     showKnob(0);
 }
 
-function saveFile() {
+function saveJSONString() {
     var presetJSON = new Object();
     var inputs = getInputs();
 
@@ -502,26 +504,40 @@ function saveFile() {
     for (var i = 0; i < knobSettings.length; i++) {
         if (knobSettings[i].cc === "") continue;
 
+        var slLength = knobSettings[i].sub_labels.length;
+
         presetJSON.knobs[i] = {
-            row: Math.trunc(i / NUM_ROWS),
-            col: i % NUM_ROWS,
+            row: Math.trunc(i / NUM_COLS) % NUM_ROWS,
+            col: i % NUM_COLS,
             label: knobSettings[i].label,
             sub_labels: knobSettings[i].sub_labels,
             channel: knobSettings[i].channel,
             cc: knobSettings[i].cc,
             init_value: knobSettings[i].init_value,
-            max_values: knobSettings[i].max_values,
+            max_values: (slLength > 1) ? slLength : 128,
             isLocked: (knobSettings[i] === "true") ? "1" : "0"
         }
     }
 
     presetJSONStr = JSON.stringify(presetJSON, null, 4);
-    console.log(presetJSONStr);
+    return presetJSONStr;
 
 }
 
-function knobIndex(row, col) {
-    return row + (col * NUM_COLS);
+function eventSaveFile(e) {
+    const inputs = getInputs();
+    const pLabel = inputs.presetLabel.value
+    const pSublabel = inputs.presetSublabel.value;
+
+    const separator = (pLabel !== "" || pSublabel !== "") ? "_" : "";
+    const element = document.createElement("a");
+    const file = new Blob([saveJSONString()], {
+        type: "text/plain"
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${pLabel}${separator}${pSublabel}.json`;
+    element.click();
+
 }
 
 function getInputs() {
@@ -548,40 +564,24 @@ window.onload = () => {
 
     document.addEventListener(
         'mouseup', () => drag ? 'drag' : 'click');
-
-    var btnPresets = document.getElementById("btnPresets");
-    btnPresets.addEventListener("click", (e) => {
-        alert("preset div clicked!");
-    });
-
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
     const fileInput = document.getElementById("file-load");
     fileInput.addEventListener("change", eventLoadFile, false);
 
-    const saveBtn = document.getElementById("btnSave");
-    saveBtn.addEventListener("click", saveFile, false);
+    var dropArea = window;
+    dropArea.addEventListener('dragover', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        // Style the drag-and-drop as a "copy file" operation.
+        event.dataTransfer.dropEffect = 'copy';
+    });
+
+    dropArea.addEventListener('drop', eventDropLoadFile, false);
+
+    var btnSaveAs = document.getElementById("btnSaveAs");
+    btnSaveAs.addEventListener("click", eventSaveFile, false);
 });
 
 init();
-
-/*
-    var mainDiv = document.querySelector(".mainDiv");
-
-    var b1 = document.createElement("button");
-    b1.innerHTML += "1080p";
-    b1.addEventListener('click', testZoom1080);
-
-    var b2 = document.createElement("button");
-    b2.innerHTML += "1440p";
-    b2.addEventListener('click', testZoom1440);
-
-    var b3 = document.createElement("button");
-    b3.innerHTML += "2160p";
-    b3.addEventListener('click', testZoom2160);
-
-    mainDiv.appendChild(b1);
-    mainDiv.appendChild(b2);
-    mainDiv.appendChild(b3);
-*/

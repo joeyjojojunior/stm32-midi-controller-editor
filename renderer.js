@@ -15,7 +15,6 @@ const defaultZoomFactors = {
     1080: ZOOM_1080P
 }
 
-
 let displayHeight = 0;
 let zoomFactor = 0;
 let isZoomLocked = false;

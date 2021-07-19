@@ -8,7 +8,9 @@ const NUM_COLS = 16;
 const NUM_ROWS = 4;
 const NUM_KNOBS = 128;
 
+var grid;
 var currKnobID = 0; // keeps track of currently displayed knob
+
 var drag = false; // prevent grid click event on drag start/stop
 
 var knobContent = new Array(NUM_KNOBS); // Content of each grid item
@@ -21,10 +23,7 @@ function init() {
     createGridItems();
     createGrid();
     showKnob(currKnobID);
-
-    for (var i = 0; i < NUM_KNOBS; i++) {
-        cacheKnob(i);
-    }
+    updateDisplays();
 
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
@@ -33,7 +32,7 @@ function init() {
 function initKnobSettings() {
     for (var i = 0; i < knobSettings.length; i++) {
         knobSettings[i] = {
-            label: "",
+            label: `${i}`,
             channel: "1",
             cc: `${i}`,
             init_value: "0",
@@ -107,14 +106,17 @@ function createInputSettings() {
     label.className = "inputField";
     label.id = `inputLabel`;
     label.maxLength = MAX_LABEL_CHARS;
+    label.addEventListener("input", eventInputChanged, false);
 
     channel.className = `inputField`;
     channel.id = `inputChannel`;
     channel.maxLength = 2;
+    channel.addEventListener("input", eventInputChanged, false);
 
     cc.className = `inputField`;
     cc.id = `inputCC`;
     cc.maxLength = 3;
+    cc.addEventListener("input", eventInputChanged, false);
 
     initValue.className = `inputField`;
     initValue.id = `inputInitValue`;
@@ -288,58 +290,6 @@ function eventClickSublabelAdd(e) {
     input.focus();
 }
 
-function eventClickGridItem(e) {
-    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
-    if (!drag && currKnobID !== newKnobID) {
-        cacheKnob(currKnobID);
-        showKnob(newKnobID);
-        currKnobID = newKnobID;
-    }
-}
-
-function showKnob(knobID) {
-    var gridItemOld = document.getElementById(`gridItem${currKnobID}`);
-    var gridItemNew = document.getElementById(`gridItem${knobID}`);
-
-    var inputs = getInputs();
-
-    inputs.label.value = knobSettings[knobID].label;
-    inputs.channel.value = knobSettings[knobID].channel;
-    inputs.cc.value = knobSettings[knobID].cc;
-    inputs.initValue.value = knobSettings[knobID].init_value;
-    inputs.maxRange.value = knobSettings[knobID].max_range;
-    inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
-    createSublabels(knobID);
-
-    gridItemOld.classList.remove("active");
-    gridItemNew.classList.add("active");
-
-    document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
-}
-
-function cacheKnob(knobID) {
-    var inputs = getInputs();
-    var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
-
-    var slArray = new Array();
-    for (var i = 0; i < slInputs.length; i++) {
-        if (slInputs[i].disabled === "true") {
-            continue;
-        }
-        slArray[i] = slInputs[i].value;
-    }
-
-    knobSettings[knobID] = {
-        label: inputs.label.value,
-        channel: inputs.channel.value,
-        cc: inputs.cc.value,
-        init_value: inputs.initValue.value,
-        max_range: inputs.maxRange.value,
-        isLocked: inputs.isLocked.checked.toString(),
-        sub_labels: slArray
-    }
-}
-
 function updateDisplays() {
     for (var i = 0; i < NUM_KNOBS; i++) {
         var knobContent = document.getElementById(`knobContent${i}`);
@@ -357,7 +307,6 @@ function eventLoadFile(e) {
 }
 
 function eventDropLoadFile(e) {
-    console.log("drop");
     const file = e.dataTransfer.files[0];
     if (file) {
         var reader = new FileReader();
@@ -374,8 +323,6 @@ function loadFile(result) {
 
     for (var i = 0; i < NUM_KNOBS; i++) {
         var knobInfo = knobsInfo[i].split(',');
-
-        console.log(knobSettings[i]);
 
         knobSettings[i].label = knobInfo[0];
         knobSettings[i].channel = knobInfo[1];
@@ -470,7 +417,7 @@ function getInputs() {
 }
 
 function createGrid() {
-    var grid = new Muuri('.grid', {
+    grid = new Muuri('.grid', {
         items: knobContent,
         dragEnabled: true,
         dragSortHeuristics: {
@@ -592,6 +539,40 @@ function createGrid() {
             callback(layout);
         }
     });
+
+    // Update knobIDs when moving
+    grid.on('move', (data) => {
+        var movedItem = data.item;
+        var swappedItem = grid.getItem(data.fromIndex);
+        var temp = movedItem._id;
+        var movedIndex = data.fromIndex;
+        var swappedIndex = data.toIndex;
+
+        movedItem._id = swappedItem._id;
+        swappedItem._id = temp;
+
+        movedGridItem = document.getElementById(`gridItem${movedIndex}`);
+        swappedGridItem = document.getElementById(`gridItem${swappedIndex}`);
+        movedGridItem.id = `gridItem${swappedIndex}`;
+        swappedGridItem.id = `gridItem${movedIndex}`;
+
+        movedGridItemContent = document.getElementById(`gridItemContent${movedIndex}`);
+        swappedGridItemContent = document.getElementById(`gridItemContent${swappedIndex}`);
+        movedGridItemContent.id = `gridItemContent${swappedIndex}`;
+        swappedGridItemContent.id = `gridItemContent${movedIndex}`;
+
+        movedKnobContent = document.getElementById(`knobContent${movedIndex}`);
+        swappedKnobContent = document.getElementById(`knobContent${swappedIndex}`);
+        movedKnobContent.id = `knobContent${swappedIndex}`;
+        swappedKnobContent.id = `knobContent${movedIndex}`;
+
+        if (movedGridItem.classList.contains("active")) {
+            currKnobID = swappedIndex;
+            showKnob(swappedIndex);
+        }
+        console.log(`currKnobID: ${currKnobID}`);
+
+    })
 }
 
 function createGridItems() {
@@ -601,7 +582,19 @@ function createGridItems() {
         gridItem = document.createElement("div");
         gridItem.className = "item";
         gridItem.id = `gridItem${i}`;
-        gridItem.addEventListener("mouseup", eventClickGridItem, false);
+        gridItem.addEventListener('mousedown', () => {
+            gridItem.addEventListener('mousemove', flagged);
+        });
+        gridItem.addEventListener('mouseup', (e) => {
+            if (this.isScrolled) {
+                e.target.addEventListener('click', preventClick);
+            } else {
+                e.target.removeEventListener('click', preventClick);
+                eventClickGridItem(e);
+            }
+            this.isScrolled = false;
+            gridItem.removeEventListener('mousemove', flagged);
+        });
 
         gridItemContent = document.createElement("div");
         gridItemContent.className = "item-content";
@@ -610,7 +603,6 @@ function createGridItems() {
         gridKnobContent = document.createElement("div");
         gridKnobContent.className = "knobContent";
         gridKnobContent.id = `knobContent${i}`;
-        gridKnobContent.innerHTML += `${i + 1}<br>THIS IS 14 CHR`
 
         gridItemContent.appendChild(gridKnobContent);
         gridItem.appendChild(gridItemContent);
@@ -619,9 +611,78 @@ function createGridItems() {
     }
 }
 
+function eventInputChanged() {
+    cacheKnob(currKnobID);
+    showKnob(currKnobID);
+}
+
+function eventClickGridItem(e) {
+    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
+    if (currKnobID !== newKnobID) {
+        cacheKnob(currKnobID);
+        showKnob(newKnobID);
+        currKnobID = newKnobID;
+    }
+}
+
+function showKnob(knobID) {
+    var gridItemOld = document.getElementById(`gridItem${currKnobID}`);
+    var gridItemNew = document.getElementById(`gridItem${knobID}`);
+
+    var inputs = getInputs();
+
+    inputs.label.value = knobSettings[knobID].label;
+    inputs.channel.value = knobSettings[knobID].channel;
+    inputs.cc.value = knobSettings[knobID].cc;
+    inputs.initValue.value = knobSettings[knobID].init_value;
+    inputs.maxRange.value = knobSettings[knobID].max_range;
+    inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
+    createSublabels(knobID);
+
+    gridItemOld.classList.remove("active");
+    gridItemNew.classList.add("active");
+
+    document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
+    document.getElementById(`knobContent${knobID}`).innerHTML = inputs.label.value;
+}
+
+function cacheKnob(knobID) {
+    var inputs = getInputs();
+    var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
+
+    var slArray = new Array();
+    for (var i = 0; i < slInputs.length; i++) {
+        if (slInputs[i].disabled === "true") {
+            continue;
+        }
+        slArray[i] = slInputs[i].value;
+    }
+
+    knobSettings[knobID] = {
+        label: inputs.label.value,
+        channel: inputs.channel.value,
+        cc: inputs.cc.value,
+        init_value: inputs.initValue.value,
+        max_range: inputs.maxRange.value,
+        isLocked: inputs.isLocked.checked.toString(),
+        sub_labels: slArray
+    }
+}
+
+function flagged() {
+    this.isScrolled = true;
+}
+
+function preventClick(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+}
+
 // Sets the drag flag which is used to prevent firing click 
 // events at the start and end of dragging actions
 window.onload = () => {
+
+
     document.addEventListener(
         'mousedown', () => drag = false);
 
@@ -630,6 +691,7 @@ window.onload = () => {
 
     document.addEventListener(
         'mouseup', () => drag ? 'drag' : 'click');
+
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -642,12 +704,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnSaveAs.addEventListener("click", eventSaveFile, false);
 });
 
+/*
 var dropArea = window;
 dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
+    e.dataTransfer.dropEffect = 'copy';
 });
 
 dropArea.addEventListener('drop', eventDropLoadFile, false);
+*/
+
 
 init();

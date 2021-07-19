@@ -343,6 +343,9 @@ function loadFile(result) {
 }
 
 function eventSaveFile(e) {
+    var preset = createPresetString();
+    saveFile(preset);
+    /*
     const inputs = getInputs();
     const pLabel = inputs.presetLabel.value
     const pSublabel = inputs.presetSublabel.value;
@@ -354,7 +357,8 @@ function eventSaveFile(e) {
     });
     element.href = URL.createObjectURL(file);
     element.download = `${pLabel}${separator}${pSublabel}.txt`;
-    element.click();
+    */
+    //element.click();
 }
 
 function createPresetString() {
@@ -574,15 +578,11 @@ function createGrid() {
         updateKnobContent(movedIndex);
         updateKnobContent(swappedIndex);
 
+        // If we moved the current knob, update the saved index and re-show it
         if (movedGridItem.classList.contains("active")) {
             currKnobID = swappedIndex;
             showKnob(swappedIndex);
         }
-        /*
-        else {
-            showKnob(currKnobID);
-        }
-        */
     });
 
     grid.on('dragMove', (item, event) => {
@@ -685,16 +685,6 @@ function cacheKnob(knobID) {
         sub_labels: slArray
     }
 }
-
-function flagged() {
-    this.isScrolled = true;
-}
-
-function preventClick(event) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-}
-
 
 window.onload = () => {
     /*

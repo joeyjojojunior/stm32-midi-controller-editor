@@ -2,11 +2,12 @@
 const {
   app,
   BrowserWindow,
-  webFrame,
   ipcMain,
-  screen
+  screen,
+  dialog
 } = require('electron')
 const path = require('path')
+fs = require('fs');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -45,12 +46,20 @@ function createWindow() {
         mainWindow.webContents.send('scale', newScreen.bounds.width, newScreen.bounds.height);
         currentScreen = newScreen;
       }
-
-      console.log("moved");
     });
 
     mainWindow.webContents.on('resize', () => {
       console.log("mainresize");
+    });
+
+    ipcMain.on('saveFile', (event, preset) => {
+      dialog.showSaveDialog().then((pathObj) => {
+        if (!pathObj.canceled) {
+          fs.writeFile(pathObj.filePath, preset, function (err) {
+            if (err) return console.log(err);
+          });
+        }
+      });
     });
 
     ipcMain.on('zoomChanged', (event, height) => {

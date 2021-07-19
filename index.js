@@ -12,6 +12,7 @@ var grid;
 var currKnobID = 0; // keeps track of currently displayed knob
 
 var drag = false; // prevent grid click event on drag start/stop
+var dragging = 0;
 
 var knobContent = new Array(NUM_KNOBS); // Content of each grid item
 var knobSettings = new Array(NUM_KNOBS); // Cache of settings for each knob
@@ -425,6 +426,10 @@ function createGrid() {
             minDragDistance: 20,
             minBounceBackAngle: 1
         },
+        dragStartPredicate: {
+            delay: 100,
+            distance: 10
+        },
         dragSortPredicate: {
             threshold: 50,
             action: 'swap',
@@ -566,13 +571,33 @@ function createGrid() {
         movedKnobContent.id = `knobContent${swappedIndex}`;
         swappedKnobContent.id = `knobContent${movedIndex}`;
 
+        updateKnobContent(movedIndex);
+        updateKnobContent(swappedIndex);
+
         if (movedGridItem.classList.contains("active")) {
             currKnobID = swappedIndex;
             showKnob(swappedIndex);
         }
-        console.log(`currKnobID: ${currKnobID}`);
+        /*
+        else {
+            showKnob(currKnobID);
+        }
+        */
+    });
 
-    })
+    grid.on('dragMove', (item, event) => {
+        var gridItems = document.getElementsByClassName("item");
+        for (var i = 0; i < gridItems.length; i++) {
+            gridItems[i].removeEventListener("click", eventClickGridItem);
+        }
+    });
+
+    grid.on('dragReleaseEnd', (item, event) => {
+        var gridItems = document.getElementsByClassName("item");
+        for (var i = 0; i < gridItems.length; i++) {
+            gridItems[i].addEventListener("click", eventClickGridItem);
+        }
+    });
 }
 
 function createGridItems() {
@@ -582,19 +607,8 @@ function createGridItems() {
         gridItem = document.createElement("div");
         gridItem.className = "item";
         gridItem.id = `gridItem${i}`;
-        gridItem.addEventListener('mousedown', () => {
-            gridItem.addEventListener('mousemove', flagged);
-        });
-        gridItem.addEventListener('mouseup', (e) => {
-            if (this.isScrolled) {
-                e.target.addEventListener('click', preventClick);
-            } else {
-                e.target.removeEventListener('click', preventClick);
-                eventClickGridItem(e);
-            }
-            this.isScrolled = false;
-            gridItem.removeEventListener('mousemove', flagged);
-        });
+
+        gridItem.addEventListener('click', eventClickGridItem);
 
         gridItemContent = document.createElement("div");
         gridItemContent.className = "item-content";
@@ -609,6 +623,10 @@ function createGridItems() {
 
         knobContent[i] = gridItem;
     }
+}
+
+function updateKnobContent(knobID) {
+    document.getElementById(`knobContent${knobID}`).innerHTML = knobSettings[knobID].label;
 }
 
 function eventInputChanged() {
@@ -643,7 +661,6 @@ function showKnob(knobID) {
     gridItemNew.classList.add("active");
 
     document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
-    document.getElementById(`knobContent${knobID}`).innerHTML = inputs.label.value;
 }
 
 function cacheKnob(knobID) {
@@ -678,11 +695,9 @@ function preventClick(event) {
     event.stopImmediatePropagation();
 }
 
-// Sets the drag flag which is used to prevent firing click 
-// events at the start and end of dragging actions
+
 window.onload = () => {
-
-
+    /*
     document.addEventListener(
         'mousedown', () => drag = false);
 
@@ -691,14 +706,12 @@ window.onload = () => {
 
     document.addEventListener(
         'mouseup', () => drag ? 'drag' : 'click');
-
+        */
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
     const fileInput = document.getElementById("file-load");
     fileInput.addEventListener("change", eventLoadFile, false);
-
-
 
     var btnSaveAs = document.getElementById("btnSaveAs");
     btnSaveAs.addEventListener("click", eventSaveFile, false);

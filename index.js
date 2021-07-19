@@ -8,11 +8,13 @@ const NUM_COLS = 16;
 const NUM_ROWS = 4;
 const NUM_KNOBS = 128;
 
-var grid;
+var grid = {};
 var currKnobID = 0; // keeps track of currently displayed knob
 var knobContent = new Array(NUM_KNOBS); // Content of each grid item
 var knobSettings = new Array(NUM_KNOBS); // Cache of settings for each knob
 var currFilename = "";
+var firstRun = true;
+var mode = "knob"; // mode can be "preset" or "knob"
 
 function init() {
     initKnobSettings();
@@ -531,6 +533,16 @@ function createGrid() {
             gridItems[i].addEventListener("click", eventClickGridItem);
         }
     });
+
+    // The first swap nudges the whole grid to the right for some reason.
+    // This does a quick swap at startup to nudge it into position.
+    grid.on('layoutEnd', () => {
+        if (firstRun) {
+            grid.move(0, 1);
+            grid.move(1, 0);
+            firstRun = false;
+        }
+    });
 }
 
 function createGridItems() {
@@ -668,6 +680,53 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnQuit.addEventListener("click", () => {
         window.close();
     });
+
+    var gridContainer = document.querySelector(".grid-container");
+    var presetBrowser = document.querySelector(".preset-browser")
+    presetBrowser.style.display = "none";
+
+    var btnPresets = document.getElementById("btnPresets");
+    btnPresets.addEventListener("click", () => {
+        mode = (mode === "knob") ? "preset" : "knob";
+
+        var knobElems = [document.querySelector(".top"), document.querySelector(".knob"), presetBrowser];
+
+        for (var i = 0; i < knobElems.length; i++) {
+            knobElems[i].style.display = (knobElems[i].style.display === "none") ? "flex" : "none";
+        }
+
+        if (mode == "preset") {
+            gridContainer.classList.add("grid-container-hide");
+
+            setTimeout(() => {
+                presetBrowser.classList.toggle("preset-browser-fade");
+                gridContainer.classList.remove("grid-container-hide");
+                gridContainer.classList.add("grid-container-fade");
+            }, 50);
+            gridContainer.classList.remove("grid-container-fade");
+        } else {
+            gridContainer.classList.add("grid-container-hide");
+            setTimeout(() => {
+                presetBrowser.classList.toggle("preset-browser-fade");
+                gridContainer.classList.remove("grid-container-hide");
+                gridContainer.classList.add("grid-container-fade");
+            }, 50);
+            gridContainer.classList.remove("grid-container-fade");
+
+        }
+
+
+
+
+
+
+        //var presetTitle = document.querySelector(".preset-title");
+        //presetTitle.classList.toggle("hidden");
+
+
+    });
+
+
 });
 
 init();

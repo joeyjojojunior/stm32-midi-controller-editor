@@ -3,13 +3,13 @@
      */
     /*
     @font-face {
-        font-family: "Hack";
-        src: url(./font/Hack-Regular.ttf);
+        font-family: "Roentgen";
+        src: url(./font/Roentgen-Regular.ttf);
     }
     */
     @font-face {
-        font-family: "Hack";
-        src: url(../font/Hack.ttf);
+        font-family: "Roentgen";
+        src: url(../font/Roentgen.ttf);
     }
 
     body,
@@ -17,6 +17,14 @@
         margin: 0;
         padding: 0;
         background-color: black;
+    }
+
+    .visible {
+        visibility: visible;
+    }
+
+    .hidden {
+        visibility: hidden;
     }
 
     /*
@@ -41,7 +49,7 @@
     }
 
     .header {
-        font-family: "Hack";
+        font-family: "Roentgen";
         color: white;
         flex-wrap: wrap;
     }
@@ -96,7 +104,7 @@
         background-color: #212121;
         border: 0px;
         color: white;
-        font-family: "Hack";
+        font-family: "Roentgen";
         height: 40px;
         padding-left: 12px;
         padding-right: 12px;
@@ -178,7 +186,7 @@
     }
 
     .knob {
-        font-family: "Hack";
+        font-family: "Roentgen";
         color: #d3d3d3;
         font-size: 26px;
         padding-left: 10px;
@@ -186,7 +194,7 @@
 
     table {
         font-size: 17px;
-        font-family: "Hack";
+        font-family: "Roentgen";
         color: white;
     }
 
@@ -222,7 +230,7 @@
     }
 
     .sl-label {
-        font-family: "Hack";
+        font-family: "Roentgen";
         font-size: 17px;
         background-color: black;
         color: white;
@@ -344,6 +352,45 @@
     /*
      * Grid 
      */
+
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .grid-container-hide {
+        opacity: 0;
+    }
+
+    .grid-container-fade {
+        zoom: 1;
+        filter: alpha(opacity=50);
+        opacity: 1;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .preset-browser {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 333px;
+        opacity: 0;
+    }
+
+    .preset-browser-fade {
+        zoom: 1;
+        filter: alpha(opacity=50);
+        opacity: 1;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .preset-title {
+        font-family: "Roentgen";
+        color: white;
+        font-size: 80px;
+    }
 
     .grid {
         position: relative;

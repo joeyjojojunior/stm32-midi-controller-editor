@@ -619,16 +619,18 @@ function cacheKnob(knobID) {
     }
 }
 
+function resetKnobs() {
+    initKnobSettings();
+}
+
 window.onload = () => {
-    /*
     var dropArea = window;
     dropArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy';
     });
 
-    dropArea.addEventListener('drop', eventDropLoadFile, false);
-    */
+    //dropArea.addEventListener('drop', loadFile, false);
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -650,15 +652,22 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
 
     var btnLoad = document.getElementById("btnLoad");
-    btnLoad.addEventListener("click", (e) => {
-        loadFile();
+    btnLoad.addEventListener("click", loadFile);
+
+    var btnReset = document.getElementById("btnReset");
+    btnReset.addEventListener("click", () => {
+        var inputPresetLabel = document.getElementById("inputPresetLabel");
+        var inputPresetSublabel = document.getElementById("inputPresetSublabel");
+        inputPresetLabel.value = "";
+        inputPresetSublabel.value = "";
+        initKnobSettings();
+        showKnob(0);
+    });
+
+    var btnQuit = document.getElementById("btnQuit");
+    btnQuit.addEventListener("click", () => {
+        window.close();
     });
 });
-
-
-function eventDropLoadFile(e) {
-    loadFile();
-}
-
 
 init();

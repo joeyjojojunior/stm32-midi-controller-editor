@@ -155,6 +155,11 @@
         flex-direction: column;
     }
 
+    .knob-top-container {
+        display: flex;
+        flex-direction: column;
+    }
+
     /*
      * Top containers
      */
@@ -359,17 +364,6 @@
         align-items: center;
     }
 
-    .grid-container-hide {
-        opacity: 0;
-    }
-
-    .grid-container-fade {
-        zoom: 1;
-        filter: alpha(opacity=50);
-        opacity: 1;
-        transition: opacity 1s ease-in-out;
-    }
-
     .preset-browser {
         display: flex;
         flex-direction: column;
@@ -379,11 +373,29 @@
         opacity: 0;
     }
 
-    .preset-browser-fade {
+    .hide {
+        opacity: 0;
+    }
+
+    .fade {
         zoom: 1;
         filter: alpha(opacity=50);
         opacity: 1;
         transition: opacity 1s ease-in-out;
+    }
+
+    .fade-fast {
+        zoom: 1;
+        filter: alpha(opacity=50);
+        opacity: 1;
+        transition: opacity 0.2s ease-in;
+    }
+
+    .fade-slow {
+        zoom: 1;
+        filter: alpha(opacity=50);
+        opacity: 1;
+        transition: opacity 1.5s ease-in-out;
     }
 
     .preset-title {

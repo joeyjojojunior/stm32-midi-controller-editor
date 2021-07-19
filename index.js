@@ -22,6 +22,10 @@ function init() {
     createGrid();
     showKnob(currKnobID);
 
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        cacheKnob(i);
+    }
+
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
 }
@@ -171,6 +175,37 @@ function createSublabels(knobID) {
         slList.appendChild(subLabel);
     }
 
+    /*
+    for (var i = 0; i < 20; i++) {
+        var subLabel = document.createElement("li");
+        subLabel.className = "sl-list-item"
+
+        var input = document.createElement("input");
+        input.className = "sl-list-input";
+        input.maxLength = MAX_LABEL_CHARS;
+        input.spellcheck = false;
+        input.value = `zacvbgtrijs${i.toString().padStart(3,"0")}`;
+
+        var slDragHandle = document.createElement("div");
+        slDragHandle.className = "sl-drag-handle";
+
+        var img = document.createElement("img");
+        img.src = "./img/dragIcon.svg";
+        img.className = "sl-drag-icon";
+        slDragHandle.appendChild(img);
+
+        var closeBtn = document.createElement("button");
+        closeBtn.className = "sl-list-btn sl-list-btn-delete";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.addEventListener("click", eventClickSublabelDelete, false);
+
+        subLabel.appendChild(slDragHandle);
+        subLabel.appendChild(input);
+        subLabel.appendChild(closeBtn);
+        slList.appendChild(subLabel);
+    }
+    */
+
     // Add dummy entry with add button to add new labels
     var subLabel = document.createElement("li");
     subLabel.className = "sl-list-item sl-list-item-dummy"
@@ -251,6 +286,187 @@ function eventClickSublabelAdd(e) {
 
     parentUL.insertBefore(subLabel, dummyLI);
     input.focus();
+}
+
+function eventClickGridItem(e) {
+    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
+    if (!drag && currKnobID !== newKnobID) {
+        cacheKnob(currKnobID);
+        showKnob(newKnobID);
+        currKnobID = newKnobID;
+    }
+}
+
+function showKnob(knobID) {
+    var gridItemOld = document.getElementById(`gridItem${currKnobID}`);
+    var gridItemNew = document.getElementById(`gridItem${knobID}`);
+
+    var inputs = getInputs();
+
+    inputs.label.value = knobSettings[knobID].label;
+    inputs.channel.value = knobSettings[knobID].channel;
+    inputs.cc.value = knobSettings[knobID].cc;
+    inputs.initValue.value = knobSettings[knobID].init_value;
+    inputs.maxRange.value = knobSettings[knobID].max_range;
+    inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
+    createSublabels(knobID);
+
+    gridItemOld.classList.remove("active");
+    gridItemNew.classList.add("active");
+
+    document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
+}
+
+function cacheKnob(knobID) {
+    var inputs = getInputs();
+    var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
+
+    var slArray = new Array();
+    for (var i = 0; i < slInputs.length; i++) {
+        if (slInputs[i].disabled === "true") {
+            continue;
+        }
+        slArray[i] = slInputs[i].value;
+    }
+
+    knobSettings[knobID] = {
+        label: inputs.label.value,
+        channel: inputs.channel.value,
+        cc: inputs.cc.value,
+        init_value: inputs.initValue.value,
+        max_range: inputs.maxRange.value,
+        isLocked: inputs.isLocked.checked.toString(),
+        sub_labels: slArray
+    }
+}
+
+function updateDisplays() {
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        var knobContent = document.getElementById(`knobContent${i}`);
+        knobContent.innerHTML = knobSettings[i].label;
+    }
+}
+
+function eventLoadFile(e) {
+    var file = document.getElementById("file-load").files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = () => loadFile(reader.result);
+    }
+}
+
+function eventDropLoadFile(e) {
+    console.log("drop");
+    const file = e.dataTransfer.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = () => loadFile(reader.result);
+    }
+}
+
+function loadFile(result) {
+    var presetStrings = result.split("\n");
+
+    var presetInfo = presetStrings[0];
+    var knobsInfo = presetStrings.slice(1, presetStrings.length);
+
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        var knobInfo = knobsInfo[i].split(',');
+
+        console.log(knobSettings[i]);
+
+        knobSettings[i].label = knobInfo[0];
+        knobSettings[i].channel = knobInfo[1];
+        knobSettings[i].cc = knobInfo[2];
+        knobSettings[i].init_value = knobInfo[3];
+        knobSettings[i].max_values = knobInfo[4];
+        knobSettings[i].max_range = knobInfo[5];
+        knobSettings[i].isLocked = (knobInfo[6] === "0") ? "false" : "true";
+
+        var sl_index = 8;
+        for (var j = sl_index; j < knobInfo.length; j++) {
+            knobSettings[i].sub_labels[j - sl_index] = knobInfo[j];
+        }
+    }
+    showKnob(0);
+    updateDisplays();
+}
+
+function eventSaveFile(e) {
+    const inputs = getInputs();
+    const pLabel = inputs.presetLabel.value
+    const pSublabel = inputs.presetSublabel.value;
+
+    const separator = (pLabel !== "" || pSublabel !== "") ? "_" : "preset";
+    const element = document.createElement("a");
+    const file = new Blob([createPresetString()], {
+        type: "text/plain"
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = `${pLabel}${separator}${pSublabel}.txt`;
+    element.click();
+}
+
+function createPresetString() {
+    var presetJSON = new Object();
+    var presetString = new Array();
+    var inputs = getInputs();
+
+    cacheKnob(currKnobID); // Save currently open knob
+
+    // TODO: Index!
+    presetJSON.name = inputs.presetLabel.value;
+    presetJSON.sub_label = inputs.presetSublabel.value;
+    presetJSON.index = "0";
+    presetJSON.knobs = new Array();
+
+    presetString += `${presetJSON.name},${presetJSON.sub_label},${presetJSON.index}`
+
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        var line = "\n";
+
+        presetJSON.knobs[i] = {
+            label: knobSettings[i].label,
+            //label: `abcdefghijk${i.toString().padStart(3,"0")}`,
+            sub_labels: knobSettings[i].sub_labels,
+            channel: knobSettings[i].channel,
+            cc: knobSettings[i].cc,
+            init_value: knobSettings[i].init_value,
+            max_values: (slLength > 1) ? `${slLength}` : "128",
+            max_range: knobSettings[i].max_range,
+            is_locked: (knobSettings[i] === "true") ? "1" : "0"
+        }
+
+        line += `${presetJSON.knobs[i].label},${presetJSON.knobs[i].channel},`
+        line += `${presetJSON.knobs[i].cc},${presetJSON.knobs[i].init_value},`
+        line += `${presetJSON.knobs[i].max_values},${presetJSON.knobs[i].max_range},`
+        line += `${presetJSON.knobs[i].is_locked},`
+
+        var slLength = knobSettings[i].sub_labels.length;
+        line += `${slLength}`;
+        for (var j = 0; j < slLength; j++) {
+            line += `,${knobSettings[i].sub_labels[j]}`;
+        }
+
+        presetString += `${line}`;
+    }
+    return presetString
+}
+
+
+function getInputs() {
+    return {
+        presetLabel: document.getElementById("inputPresetLabel"),
+        presetSublabel: document.getElementById("inputPresetSublabel"),
+        label: document.getElementById("inputLabel"),
+        channel: document.getElementById("inputChannel"),
+        cc: document.getElementById("inputCC"),
+        initValue: document.getElementById("inputInitValue"),
+        maxRange: document.getElementById("inputMaxRange"),
+        isLocked: document.getElementById("inputIsLocked")
+    }
 }
 
 function createGrid() {
@@ -378,19 +594,6 @@ function createGrid() {
     });
 }
 
-function eventClickGridItem(e) {
-    var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
-    if (!drag && currKnobID !== newKnobID) {
-
-        cacheKnob(currKnobID);
-
-
-
-        showKnob(newKnobID);
-        currKnobID = newKnobID;
-    }
-}
-
 function createGridItems() {
     for (var i = 0; i < NUM_KNOBS; i++) {
         gridDiv = document.getElementById("knobGrid");
@@ -416,169 +619,6 @@ function createGridItems() {
     }
 }
 
-function showKnob(knobID) {
-    var gridItemOld = document.getElementById(`gridItem${currKnobID}`);
-    var gridItemNew = document.getElementById(`gridItem${knobID}`);
-
-    var inputs = getInputs();
-
-    inputs.label.value = knobSettings[knobID].label;
-    inputs.channel.value = knobSettings[knobID].channel;
-    inputs.cc.value = knobSettings[knobID].cc;
-    inputs.initValue.value = knobSettings[knobID].init_value;
-    inputs.maxRange.value = knobSettings[knobID].max_range;
-    inputs.isLocked.checked = (knobSettings[knobID].isLocked === "true");
-    createSublabels(knobID);
-
-    gridItemOld.classList.remove("active");
-    gridItemNew.classList.add("active");
-
-    document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
-}
-
-function updateDisplays() {
-    for (var i = 0; i < NUM_KNOBS; i++) {
-        var knobContent = document.getElementById(`knobContent${i}`);
-        knobContent.innerHTML = knobSettings[i].label;
-    }
-}
-
-function cacheKnob(knobID) {
-    var inputs = getInputs();
-    var slInputs = $('.sl-list-input').not('.sl-list-input-dummy');
-
-    var slArray = new Array();
-    for (var i = 0; i < slInputs.length; i++) {
-        if (slInputs[i].disabled === "true") {
-            continue;
-        }
-        slArray[i] = slInputs[i].value;
-    }
-
-    knobSettings[knobID] = {
-        label: inputs.label.value,
-        channel: inputs.channel.value,
-        cc: inputs.cc.value,
-        init_value: inputs.initValue.value,
-        max_range: inputs.maxRange.value,
-        isLocked: inputs.isLocked.checked.toString(),
-        sub_labels: slArray
-    }
-}
-
-function eventLoadFile(e) {
-    var file = document.getElementById("file-load").files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = () => loadFile(reader.result);
-    }
-}
-
-function eventDropLoadFile(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const file = e.dataTransfer.files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = () => loadFile(reader.result);
-    }
-}
-
-function loadFile(result) {
-    var jsonString = result;
-    var json = JSON.parse(jsonString);
-    var inputs = getInputs();
-    var knobs = json.knobs;
-
-    if (knobs.length > 128) {
-        console.log("loadFile: Too many knobs in preset file!");
-        return;
-    }
-
-    inputs.presetLabel.value = json.name;
-    inputs.presetSublabel.value = json.sub_label;
-
-    for (var i = 0; i < knobs.length; i++) {
-        knobSettings[i].label = knobs[i].label;
-        knobSettings[i].channel = knobs[i].channel;
-        knobSettings[i].cc = knobs[i].cc;
-        knobSettings[i].init_value = knobs[i].init_value;
-        knobSettings[i].max_range = knobs[i].max_range;
-        knobSettings[i].isLocked = (knobs[i].isLocked === "0") ? "false" : "true";
-        knobSettings[i].sub_labels = knobs[i].sub_labels;
-    }
-
-    showKnob(0);
-    updateDisplays();
-}
-
-function saveJSONString() {
-    var presetJSON = new Object();
-    var inputs = getInputs();
-
-    cacheKnob(currKnobID); // Save currently open knob
-
-    // TODO: Index!
-    presetJSON.name = inputs.presetLabel.value;
-    presetJSON.sub_label = inputs.presetSublabel.value;
-    presetJSON.index = "0";
-    presetJSON.knobs = new Array();
-
-    for (var i = 0; i < knobSettings.length; i++) {
-        if (knobSettings[i].cc === "") continue;
-
-        var slLength = knobSettings[i].sub_labels.length;
-
-        presetJSON.knobs[i] = {
-            row: Math.trunc(i / NUM_COLS) % NUM_ROWS,
-            col: i % NUM_COLS,
-            label: knobSettings[i].label,
-            sub_labels: knobSettings[i].sub_labels,
-            channel: knobSettings[i].channel,
-            cc: knobSettings[i].cc,
-            init_value: knobSettings[i].init_value,
-            max_values: (slLength > 1) ? slLength : 128,
-            isLocked: (knobSettings[i] === "true") ? "1" : "0"
-        }
-    }
-
-    presetJSONStr = JSON.stringify(presetJSON, null, 4);
-    return presetJSONStr;
-
-}
-
-function eventSaveFile(e) {
-    const inputs = getInputs();
-    const pLabel = inputs.presetLabel.value
-    const pSublabel = inputs.presetSublabel.value;
-
-    const separator = (pLabel !== "" || pSublabel !== "") ? "_" : "";
-    const element = document.createElement("a");
-    const file = new Blob([saveJSONString()], {
-        type: "text/plain"
-    });
-    element.href = URL.createObjectURL(file);
-    element.download = `${pLabel}${separator}${pSublabel}.json`;
-    element.click();
-
-}
-
-function getInputs() {
-    return {
-        presetLabel: document.getElementById("inputPresetLabel"),
-        presetSublabel: document.getElementById("inputPresetSublabel"),
-        label: document.getElementById("inputLabel"),
-        channel: document.getElementById("inputChannel"),
-        cc: document.getElementById("inputCC"),
-        initValue: document.getElementById("inputInitValue"),
-        maxRange: document.getElementById("inputMaxRange"),
-        isLocked: document.getElementById("inputIsLocked")
-    }
-}
-
 // Sets the drag flag which is used to prevent firing click 
 // events at the start and end of dragging actions
 window.onload = () => {
@@ -596,18 +636,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
     const fileInput = document.getElementById("file-load");
     fileInput.addEventListener("change", eventLoadFile, false);
 
-    var dropArea = window;
-    dropArea.addEventListener('dragover', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        // Style the drag-and-drop as a "copy file" operation.
-        event.dataTransfer.dropEffect = 'copy';
-    });
 
-    dropArea.addEventListener('drop', eventDropLoadFile, false);
 
     var btnSaveAs = document.getElementById("btnSaveAs");
     btnSaveAs.addEventListener("click", eventSaveFile, false);
 });
+
+var dropArea = window;
+dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+});
+
+dropArea.addEventListener('drop', eventDropLoadFile, false);
 
 init();

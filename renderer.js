@@ -39,9 +39,58 @@ ipcRenderer.on('scale', (event, width, height) => {
     zoomFactor = webFrame.getZoomFactor();
 });
 
-function saveFile(preset) {
-    ipcRenderer.send('saveFile', preset);
+function saveFile(preset, path) {
+    ipcRenderer.send('saveFile', preset, path);
 }
+
+function saveFileAs(preset) {
+    ipcRenderer.send('saveFileAs', preset);
+}
+
+ipcRenderer.on('saveFileAs-saved', (event, path) => {
+    currFilename = path;
+})
+
+function loadFile() {
+    ipcRenderer.send('loadFile');
+}
+
+ipcRenderer.on('loadFile-loaded', (event, preset, fname) => {
+    //console.log(preset);
+    var presetStrings = preset.split("\n");
+
+    var presetInfo = presetStrings[0];
+    var presetTokens = presetInfo.split(',');
+
+    var inputPresetLabel = document.getElementById("inputPresetLabel");
+    inputPresetLabel.value = presetTokens[0];
+
+    var inputPresetSublabel = document.getElementById("inputPresetSublabel");
+    inputPresetSublabel.value = presetTokens[1];
+
+    var knobsInfo = presetStrings.slice(1, presetStrings.length);
+
+    for (var i = 0; i < NUM_KNOBS; i++) {
+        var knobInfo = knobsInfo[i].split(',');
+
+        knobSettings[i].label = knobInfo[0];
+        knobSettings[i].channel = knobInfo[1];
+        knobSettings[i].cc = knobInfo[2];
+        knobSettings[i].init_value = knobInfo[3];
+        knobSettings[i].max_values = knobInfo[4];
+        knobSettings[i].max_range = knobInfo[5];
+        knobSettings[i].isLocked = (knobInfo[6] === "0") ? "false" : "true";
+
+        var sl_index = 8;
+        for (var j = sl_index; j < knobInfo.length; j++) {
+            knobSettings[i].sub_labels[j - sl_index] = knobInfo[j];
+        }
+    }
+
+    currFilename = fname;
+    showKnob(0);
+    updateDisplays();
+});
 
 function eventZoomChanged() {
     currZoomFactor = webFrame.getZoomFactor();

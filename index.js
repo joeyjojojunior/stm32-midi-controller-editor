@@ -10,12 +10,9 @@ const NUM_KNOBS = 128;
 
 var grid;
 var currKnobID = 0; // keeps track of currently displayed knob
-
-var drag = false; // prevent grid click event on drag start/stop
-var dragging = 0;
-
 var knobContent = new Array(NUM_KNOBS); // Content of each grid item
 var knobSettings = new Array(NUM_KNOBS); // Cache of settings for each knob
+var currFilename = "";
 
 function init() {
     initKnobSettings();
@@ -298,69 +295,6 @@ function updateDisplays() {
     }
 }
 
-function eventLoadFile(e) {
-    var file = document.getElementById("file-load").files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = () => loadFile(reader.result);
-    }
-}
-
-function eventDropLoadFile(e) {
-    const file = e.dataTransfer.files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = () => loadFile(reader.result);
-    }
-}
-
-function loadFile(result) {
-    var presetStrings = result.split("\n");
-
-    var presetInfo = presetStrings[0];
-    var knobsInfo = presetStrings.slice(1, presetStrings.length);
-
-    for (var i = 0; i < NUM_KNOBS; i++) {
-        var knobInfo = knobsInfo[i].split(',');
-
-        knobSettings[i].label = knobInfo[0];
-        knobSettings[i].channel = knobInfo[1];
-        knobSettings[i].cc = knobInfo[2];
-        knobSettings[i].init_value = knobInfo[3];
-        knobSettings[i].max_values = knobInfo[4];
-        knobSettings[i].max_range = knobInfo[5];
-        knobSettings[i].isLocked = (knobInfo[6] === "0") ? "false" : "true";
-
-        var sl_index = 8;
-        for (var j = sl_index; j < knobInfo.length; j++) {
-            knobSettings[i].sub_labels[j - sl_index] = knobInfo[j];
-        }
-    }
-    showKnob(0);
-    updateDisplays();
-}
-
-function eventSaveFile(e) {
-    var preset = createPresetString();
-    saveFile(preset);
-    /*
-    const inputs = getInputs();
-    const pLabel = inputs.presetLabel.value
-    const pSublabel = inputs.presetSublabel.value;
-
-    const separator = (pLabel !== "" || pSublabel !== "") ? "_" : "preset";
-    const element = document.createElement("a");
-    const file = new Blob([createPresetString()], {
-        type: "text/plain"
-    });
-    element.href = URL.createObjectURL(file);
-    element.download = `${pLabel}${separator}${pSublabel}.txt`;
-    */
-    //element.click();
-}
-
 function createPresetString() {
     var presetJSON = new Object();
     var presetString = new Array();
@@ -406,7 +340,6 @@ function createPresetString() {
     }
     return presetString
 }
-
 
 function getInputs() {
     return {
@@ -688,34 +621,44 @@ function cacheKnob(knobID) {
 
 window.onload = () => {
     /*
-    document.addEventListener(
-        'mousedown', () => drag = false);
+    var dropArea = window;
+    dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    });
 
-    document.addEventListener(
-        'mousemove', () => drag = true);
-
-    document.addEventListener(
-        'mouseup', () => drag ? 'drag' : 'click');
-        */
+    dropArea.addEventListener('drop', eventDropLoadFile, false);
+    */
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    const fileInput = document.getElementById("file-load");
-    fileInput.addEventListener("change", eventLoadFile, false);
+    var btnSave = document.getElementById("btnSave");
+    btnSave.addEventListener("click", (e) => {
+        var preset = createPresetString();
+
+        if (currFilename === "") {
+            saveFileAs(preset);
+        } else {
+            saveFile(preset, currFilename);
+        }
+    });
 
     var btnSaveAs = document.getElementById("btnSaveAs");
-    btnSaveAs.addEventListener("click", eventSaveFile, false);
+    btnSaveAs.addEventListener("click", (e) => {
+        var preset = createPresetString();
+        saveFileAs(preset);
+    });
+
+    var btnLoad = document.getElementById("btnLoad");
+    btnLoad.addEventListener("click", (e) => {
+        loadFile();
+    });
 });
 
-/*
-var dropArea = window;
-dropArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-});
 
-dropArea.addEventListener('drop', eventDropLoadFile, false);
-*/
+function eventDropLoadFile(e) {
+    loadFile();
+}
 
 
 init();

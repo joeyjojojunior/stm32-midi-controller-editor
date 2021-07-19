@@ -52,15 +52,57 @@ function createWindow() {
       console.log("mainresize");
     });
 
-    ipcMain.on('saveFile', (event, preset) => {
-      dialog.showSaveDialog().then((pathObj) => {
+    // Save
+    ipcMain.on('saveFile', (event, preset, path) => {
+      fs.writeFile(path, preset, function (err) {
+        if (err) {
+          console.error(err)
+          return
+        }
+      });
+    });
+
+    // Save As
+    ipcMain.on('saveFileAs', (event, preset) => {
+      dialog.showSaveDialog({
+        properties: ['openFile'],
+        filters: [{
+          name: "Preset Text Files",
+          extensions: ['txt']
+        }]
+      }).then((pathObj) => {
         if (!pathObj.canceled) {
           fs.writeFile(pathObj.filePath, preset, function (err) {
-            if (err) return console.log(err);
+            if (err) {
+              console.error(err)
+              return
+            }
+            event.reply('saveFileAs-saved', pathObj.filePath);
           });
         }
       });
     });
+
+    // Load 
+    ipcMain.on('loadFile', (event) => {
+      dialog.showOpenDialog({
+        filters: [{
+          name: "Preset Text Files",
+          extensions: ['txt']
+        }]
+      }).then((pathObj) => {
+        if (!pathObj.canceled) {
+          fs.readFile(pathObj.filePaths[0], 'utf8', (err, preset) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+            event.reply('loadFile-loaded', preset, pathObj.filePaths[0]);
+          })
+        }
+      });
+    });
+
 
     ipcMain.on('zoomChanged', (event, height) => {
       if (height === 2160) {
@@ -98,8 +140,6 @@ app.whenReady().then(() => {
 
 
   createWindow();
-
-  //zoom - changed
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

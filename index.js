@@ -583,13 +583,11 @@ function eventClickGridItem(e) {
     var newKnobID = (e.target.id.match(/\d+/g) || []).map(n => parseInt(n))[0];
     if (currKnobID !== newKnobID) {
         var ktContainer = document.querySelector(".knob-top-container");
-
-        ktContainer.classList.add("hide");
+        ktContainer.classList.add("fade-out-fast");
         setTimeout(() => {
-            ktContainer.classList.remove("hide");
-            ktContainer.classList.add("fade-fast");
-        }, 50);
-        ktContainer.classList.remove("fade-fast");
+            ktContainer.classList.add("fade-in-fast");
+        }, 200);
+        ktContainer.classList.remove("fade-in-fast");
 
         cacheKnob(currKnobID);
         showKnob(newKnobID);
@@ -682,6 +680,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         inputPresetLabel.value = "";
         inputPresetSublabel.value = "";
         initKnobSettings();
+        updateDisplays();
         showKnob(0);
     });
 
@@ -701,20 +700,24 @@ document.addEventListener("DOMContentLoaded", function (event) {
     btnPresets.addEventListener("click", () => {
         mode = (mode === "knob") ? "preset" : "knob";
 
-        var knobElems = [document.querySelector(".top"), document.querySelector(".knob"), presetBrowser];
-
-        for (var i = 0; i < knobElems.length; i++) {
-            knobElems[i].style.display = (knobElems[i].style.display === "none") ? "flex" : "none";
-        }
-
-        mainDiv.classList.add("hide");
+        mainDiv.classList.add("fade-out");
+        if (mode === "preset") presetBrowser.classList.add("fade-out");
 
         setTimeout(() => {
-            presetBrowser.classList.toggle("fade-slow");
+            var knobElems = [document.querySelector(".top"), document.querySelector(".knob"), presetBrowser];
+            for (var i = 0; i < knobElems.length; i++) {
+                knobElems[i].style.display = (knobElems[i].style.display === "none") ? "flex" : "none";
+            }
+        }, 250);
+
+        mainDiv.classList.add("hide");
+        setTimeout(() => {
+            presetBrowser.classList.add("fade-in-slow");
             mainDiv.classList.remove("hide");
-            mainDiv.classList.add("fade");
-        }, 50);
-        mainDiv.classList.remove("fade");
+            mainDiv.classList.add("fade-in");
+        }, 300);
+        presetBrowser.classList.remove("fade-in-slow");
+        mainDiv.classList.remove("fade-in")
     });
 
 

@@ -14,27 +14,35 @@ function createWindow() {
     title: "STM32 MIDI Controller Editor",
     width: 1920,
     height: 1080,
+    //autoHideMenuBar: true,
     //resizable: false,
     useContentSize: true,
+    frame: false,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
+      //enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.js'),
     }
   });
 
+  // Load main HTML file
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.on('did-finish-load', () => {
+    /*
+     * Zooming / scaling
+     */
     // Open the window on the display with the cursor and maximize
     let cursor = screen.getCursorScreenPoint();
     let currentScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
     mainWindow.setBounds(currentScreen.bounds)
     mainWindow.maximize();
 
+    // Tell renderer that the window has loaded so it can grab the display height
     mainWindow.webContents.send('windowLoaded', currentScreen.bounds.height);
 
-    // Scale the content zoom for the current resolution
+    // Tell renderer to scale the content zoom for the current resolution
     mainWindow.webContents.send('scale', currentScreen.bounds.width, currentScreen.bounds.height);
 
     // If the display has changed after moving, set its new bounds and scale accordingly
@@ -48,10 +56,57 @@ function createWindow() {
       }
     });
 
-    mainWindow.webContents.on('resize', () => {
-      console.log("mainresize");
+    // Rescale window if zoom changes (not working right now)
+    ipcMain.on('zoomChanged', (event, height) => {
+      if (height === 2160) {
+        console.log("2160");
+        mainWindow.setBounds({
+          width: 3840,
+          height: 2160
+        });
+      } else if (height === 1440) {
+        console.log("1440");
+        mainWindow.setBounds({
+          width: 2560,
+          height: 1440
+        });
+      } else if (height === 1080) {
+        console.log("1080");
+        mainWindow.setBounds({
+          width: 1920,
+          height: 1080
+        });
+
+      }
     });
 
+    /*
+     * Titlebar actions
+     */
+    ipcMain.on('window-minimize', (event) => {
+      mainWindow.minimize();
+    })
+
+    ipcMain.on('window-maximize', (event) => {
+      if (!mainWindow.isMaximized()) {
+        mainWindow.maximize();
+        mainWindow.setResizable(false);
+        event.reply('window-maximize-maximized');
+      } else {
+        mainWindow.unmaximize();
+        mainWindow.setResizable(true);
+        event.reply('window-maximize-unmaximized');
+      }
+    })
+
+    ipcMain.on('window-close', (event) => {
+      mainWindow.close();
+    })
+
+
+    /*
+     * Menu button actions
+     */
     // Save
     ipcMain.on('saveFile', (event, preset, path) => {
       fs.writeFile(path, preset, function (err) {
@@ -103,29 +158,6 @@ function createWindow() {
       });
     });
 
-
-    ipcMain.on('zoomChanged', (event, height) => {
-      if (height === 2160) {
-        console.log("2160");
-        mainWindow.setBounds({
-          width: 3840,
-          height: 2160
-        });
-      } else if (height === 1440) {
-        console.log("1440");
-        mainWindow.setBounds({
-          width: 2560,
-          height: 1440
-        });
-      } else if (height === 1080) {
-        console.log("1080");
-        mainWindow.setBounds({
-          width: 1920,
-          height: 1080
-        });
-
-      }
-    });
 
   });
 

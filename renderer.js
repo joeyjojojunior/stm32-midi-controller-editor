@@ -28,6 +28,9 @@ let isZoomLocked = false;
 delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
+/*
+ * Zooming/scaling
+ */
 ipcRenderer.on('windowLoaded', (event, height) => {
     displayHeight = height;
 });
@@ -39,6 +42,39 @@ ipcRenderer.on('scale', (event, width, height) => {
     zoomFactor = webFrame.getZoomFactor();
 });
 
+/*
+ * Titlebar actions
+ */
+function eventBtnMin() {
+    ipcRenderer.send('window-minimize');
+}
+
+function eventBtnMax() {
+    ipcRenderer.send('window-maximize');
+}
+
+ipcRenderer.on('window-maximize-maximized', (event) => {
+    var tbr = document.getElementById("titlebar-drag-region");
+    tbr.classList.remove("drag");
+    tbr.classList.add("no-drag");
+    console.log("drag off");
+
+});
+
+ipcRenderer.on('window-maximize-unmaximized', (event) => {
+    var tbr = document.getElementById("titlebar-drag-region");
+    tbr.classList.remove("no-drag");
+    tbr.classList.add("drag");
+    console.log("drag on");
+});
+
+function eventBtnClose() {
+    ipcRenderer.send('window-close');
+}
+
+/*
+ * Menu button actions
+ */
 function saveFile(preset, path) {
     ipcRenderer.send('saveFile', preset, path);
 }
@@ -92,6 +128,10 @@ ipcRenderer.on('loadFile-loaded', (event, preset, fname) => {
     updateDisplays();
 });
 
+
+/*
+ * Test stuff
+ */
 function eventZoomChanged() {
     currZoomFactor = webFrame.getZoomFactor();
     if (currZoomFactor - zoomFactor < 0) {

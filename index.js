@@ -653,6 +653,24 @@ window.onload = () => {
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
+
+    /*
+     * Titlebar actions
+     */
+    // Titlebar button click events
+    var btnMin = document.querySelector(".titlebar-btn-min");
+    var btnMax = document.querySelector(".titlebar-btn-max");
+    var btnClose = document.querySelector(".titlebar-btn-close");
+
+    btnMin.addEventListener("click", eventBtnMin);
+    btnMax.addEventListener("click", eventBtnMax);
+    btnClose.addEventListener("click", eventBtnClose);
+
+
+    /*
+     * Menu button actions
+     */
+    // Save button click event
     var btnSave = document.getElementById("btnSave");
     btnSave.addEventListener("click", (e) => {
         var preset = createPresetString();
@@ -664,15 +682,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
+    // Save As button click event
     var btnSaveAs = document.getElementById("btnSaveAs");
     btnSaveAs.addEventListener("click", (e) => {
         var preset = createPresetString();
         saveFileAs(preset);
     });
 
+    // Load button click event
     var btnLoad = document.getElementById("btnLoad");
     btnLoad.addEventListener("click", loadFile);
 
+    // Reset button click event
     var btnReset = document.getElementById("btnReset");
     btnReset.addEventListener("click", () => {
         var inputPresetLabel = document.getElementById("inputPresetLabel");
@@ -684,11 +705,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         showKnob(0);
     });
 
-    var btnQuit = document.getElementById("btnQuit");
-    btnQuit.addEventListener("click", () => {
-        window.close();
-    });
-
+    // Presets button click event
     var gridContainer = document.querySelector(".grid-container");
     var presetBrowser = document.querySelector(".preset-browser")
     var knob = document.querySelector(".knob");

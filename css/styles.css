@@ -22,7 +22,7 @@
 
     #titlebar {
         display: flex;
-        height: 14px;
+        height: 20px;
         padding: 1px;
         justify-content: center;
         align-items: center;
@@ -50,7 +50,7 @@
 
     #titlebar-title {
         font-family: "Roentgen";
-        font-size: 9px;
+        font-size: 12px;
         color: white;
         padding: 0px;
         padding-left: 8px;
@@ -88,8 +88,8 @@
     }
 
     .titlebar-btn svg {
-        width: 5px;
-        height: 5px;
+        width: 7px;
+        height: 7px;
         padding: 1px;
     }
 
@@ -434,6 +434,7 @@
         align-items: center;
         justify-content: space-evenly;
         height: 333px;
+        width: 100%;
     }
 
     .preset-title {
@@ -444,19 +445,20 @@
 
     .preset-path-container {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        padding-right: 15px;
     }
 
     .preset-path-input {
         height: 20px;
-        width: 300px;
         background-color: black;
         color: white;
         font-family: "Roentgen";
         border: solid 1px #fddede;
-        padding-left: 8x;
         margin: 2px;
+        width: 300px;
+        padding-left: 8px;
     }
 
     .preset-path-input:focus {

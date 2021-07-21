@@ -653,10 +653,19 @@ window.onload = () => {
         e.dataTransfer.dropEffect = 'copy';
     });
 
-    //dropArea.addEventListener('drop', loadFile, false);
+
 }
 
+window.addEventListener('resize', () => {
+    eventZoomChanged();
+});
+
 document.addEventListener("DOMContentLoaded", function (event) {
+    // Rescale the window to fit the current zoom factor
+    // Need some delay so electron can register the proper factor
+    setTimeout(() => {
+        eventZoomChanged();
+    }, 20);
 
     /*
      * Titlebar actions

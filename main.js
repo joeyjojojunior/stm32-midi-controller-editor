@@ -9,11 +9,28 @@ const {
 const path = require('path')
 fs = require('fs');
 
+const scaleFactor = 1.0954451150103321;
+
+var BASE_WIDTH = 1920;
+var BASE_HEIGHT = 918;
+
+const sizes = [{
+        width: BASE_WIDTH,
+        height: BASE_HEIGHT,
+        zScale: 1
+    },
+    {
+        width: 2103,
+        height: 1005,
+        zScale: scaleFactor
+    }
+]
+
 function createWindow() {
     const mainWindow = new BrowserWindow({
         title: "STM32 MIDI Controller Editor",
-        width: 1920,
-        height: 1080,
+        width: BASE_WIDTH,
+        height: BASE_HEIGHT,
         //autoHideMenuBar: true,
         //resizable: false,
         useContentSize: true,
@@ -31,56 +48,36 @@ function createWindow() {
 
     mainWindow.webContents.on('did-finish-load', () => {
         /*
-         * Zooming / scaling
+         * Zooming/scaling
+         * --------------------------------------------------------
+         * The index.js window object has a resize event listener.
+         *
+         * Zooming in/out triggers this event and calls function
+         * eventZoomChanged() in the render process.
+         *
+         * The fn then gets the new zoom factor and sends it to the
+         * main process which uses it to rescale the content size
+         * so the window will scale to fit the new content exactly.
          */
-        // Open the window on the display with the cursor and maximize
-        //let cursor = screen.getCursorScreenPoint();
-        //let currentScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
-        //mainWindow.setBounds(currentScreen.bounds)
-        //mainWindow.maximize();
+        ipcMain.on('zoom-changed', (event, zScale) => {
+            var newWidth = Math.trunc(BASE_WIDTH * zScale);
+            var newHeight = Math.trunc(BASE_HEIGHT * zScale);
+            mainWindow.setContentSize(newWidth, newHeight);
+        });
 
-        // Tell renderer that the window has loaded so it can grab the display height
-        // mainWindow.webContents.send('windowLoaded', currentScreen.bounds.height);
-
-        // Tell renderer to scale the content zoom for the current resolution
-        //mainWindow.webContents.send('scale', currentScreen.bounds.width, currentScreen.bounds.height);
-
-        // If the display has changed after moving, set its new bounds and scale accordingly
         /*
-        mainWindow.on('moved', () => {
-            let newScreen = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
-
-            if (newScreen.id !== currentScreen.id) {
-                mainWindow.setBounds(newScreen.bounds)
-                mainWindow.webContents.send('scale', newScreen.bounds.width, newScreen.bounds.height);
-                currentScreen = newScreen;
-            }
-        });
-
-        // Rescale window if zoom changes (not working right now)
-        ipcMain.on('zoomChanged', (event, height) => {
-            if (height === 2160) {
-                console.log("2160");
-                mainWindow.setBounds({
-                    width: 3840,
-                    height: 2160
-                });
-            } else if (height === 1440) {
-                console.log("1440");
-                mainWindow.setBounds({
-                    width: 2560,
-                    height: 1440
-                });
-            } else if (height === 1080) {
-                console.log("1080");
-                mainWindow.setBounds({
-                    width: 1920,
-                    height: 1080
-                });
-
-            }
-        });
+         * Main window maximize events
          */
+        mainWindow.on('maximize', (event) => {
+            mainWindow.webContents.send('window-maximize-maximized');
+            console.log("maximize");
+        });
+
+        mainWindow.on('unmaximize', (event) => {
+            mainWindow.webContents.send('window-maximize-unmaximized');
+            console.log("unmaximize");
+
+        });
 
         /*
          * Options loading
@@ -115,21 +112,6 @@ function createWindow() {
         ipcMain.on('window-close', (event) => {
             mainWindow.close();
         });
-
-        /*
-         * Main window maximize events
-         */
-        mainWindow.on('maximize', (event) => {
-            mainWindow.webContents.send('window-maximize-maximized');
-            console.log("maximize");
-        });
-
-        mainWindow.on('unmaximize', (event) => {
-            mainWindow.webContents.send('window-maximize-unmaximized');
-            console.log("unmaximize");
-
-        });
-
 
         /*
          * Preset browser actions

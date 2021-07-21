@@ -31,22 +31,21 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 /*
  * Zooming/scaling
  */
-/*
-ipcRenderer.on('windowLoaded', (event, height) => {
-    displayHeight = height;
-});
 
-// Scale the content according to resolution height
-ipcRenderer.on('scale', (event, width, height) => {
-    webFrame.setZoomFactor(defaultZoomFactors[height]);
-    displayHeight = height;
-    zoomFactor = webFrame.getZoomFactor();
-});
-*/
-
-function pathInputSize(path) {
-    return `${(path.length + 2) * 8}px`
+function eventZoomChanged() {
+    console.log(`zoom factor: ${webFrame.getZoomFactor()}`);
+    ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
 }
+
+ipcRenderer.on('zoom-changed-complete', (event, zScale) => {
+    webFrame.setZoomFactor(zScale);
+});
+
+ipcRenderer.on('size-increased', (event, zScale) => {
+    webFrame.setZoomFactor(zScale);
+});
+
+
 
 /*
  * Options loading
@@ -58,6 +57,12 @@ ipcRenderer.on('options-loaded', (event, options) => {
         presetPathInput.style.width = pathInputSize(options.presetPath);
     }
 });
+
+// Helper function returns the width needed to
+// fit the path input field text exactly
+function pathInputSize(path) {
+    return `${(path.length + 2) * 8}px`
+}
 
 /*
  * Titlebar actions
@@ -166,41 +171,3 @@ ipcRenderer.on('loadFile-loaded', (event, preset, fname) => {
 /*
  * Test stuff
  */
-function eventZoomChanged() {
-    currZoomFactor = webFrame.getZoomFactor();
-    if (currZoomFactor - zoomFactor < 0) {
-        if (currZoomFactor > ZOOM_1440P && currZoomFactor < ZOOM_2160P) {
-            webFrame.setZoomFactor(ZOOM_1440P);
-            ipcRenderer.send('zoomChanged', 1440);
-        } else if (currZoomFactor > ZOOM_1080P && currZoomFactor < ZOOM_1440P) {
-            webFrame.setZoomFactor(ZOOM_1080P);
-            ipcRenderer.send('zoomChanged', 1080);
-        } else {
-            //webFrame.setZoomFactor(ZOOM_2160P);
-        }
-
-    }
-    console.log("eventZoomChanged");
-    zoomFactor = currZoomFactor;
-}
-
-function testZoom1080() {
-    ipcRenderer.send('zoomChanged', 1080);
-
-    webFrame.setZoomFactor(ZOOM_1080P);
-
-}
-
-function testZoom1440() {
-    ipcRenderer.send('zoomChanged', 1440);
-
-    webFrame.setZoomFactor(ZOOM_1440P);
-
-}
-
-function testZoom2160() {
-    ipcRenderer.send('zoomChanged', 2160);
-
-    webFrame.setZoomFactor(ZOOM_2160P);
-
-}

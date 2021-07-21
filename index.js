@@ -14,7 +14,7 @@ var knobContent = new Array(NUM_KNOBS); // Content of each grid item
 var knobSettings = new Array(NUM_KNOBS); // Cache of settings for each knob
 var currFilename = "";
 var firstRun = true;
-var mode = "knob"; // mode can be "preset" or "knob"
+var mode = "preset"; // mode can be "preset" or "knob"
 
 function init() {
     initKnobSettings();
@@ -27,6 +27,9 @@ function init() {
 
     // Keeps grid item text in its container
     jQuery(".knobContent").fitText(0.87);
+
+    // Need to force layout call to make sure grid aligns correctly at startup
+    grid.layout();
 }
 
 function initKnobSettings() {
@@ -613,6 +616,7 @@ function showKnob(knobID) {
     gridItemNew.classList.add("active");
 
     document.querySelector(".knob").innerHTML = `Knob ${knobID + 1}`;
+    updateKnobContent(knobID);
 }
 
 function cacheKnob(knobID) {
@@ -638,8 +642,8 @@ function cacheKnob(knobID) {
     }
 }
 
-function resetKnobs() {
-    initKnobSettings();
+function initPresets() {
+
 }
 
 window.onload = () => {
@@ -658,18 +662,62 @@ document.addEventListener("DOMContentLoaded", function (event) {
      * Titlebar actions
      */
     // Titlebar button click events
+    var tbr = document.getElementById("titlebar-drag-region");
     var btnMin = document.querySelector(".titlebar-btn-min");
     var btnMax = document.querySelector(".titlebar-btn-max");
     var btnClose = document.querySelector(".titlebar-btn-close");
 
+    tbr.classList.add("drag");
     btnMin.addEventListener("click", eventBtnMin);
     btnMax.addEventListener("click", eventBtnMax);
     btnClose.addEventListener("click", eventBtnClose);
 
+    /*
+     * Preset browser actions
+     */
+
+    var presetPathBtn = document.querySelector(".preset-path-btn");
+    presetPathBtn.addEventListener("click", setPresetPath);
 
     /*
      * Menu button actions
      */
+    // Presets button click event
+    var top = document.querySelector(".top");
+    var presetBrowser = document.querySelector(".preset-browser")
+    var knob = document.querySelector(".knob");
+    var mainDiv = document.querySelector(".mainDiv");
+
+    knob.style.display = "none";
+    top.style.display = "none";
+
+    var btnPresets = document.getElementById("btnPresets");
+    btnPresets.addEventListener("click", () => {
+        mode = (mode === "knob") ? "preset" : "knob";
+
+        if (mode == "preset") {
+            fetchPresets();
+        }
+
+        mainDiv.classList.add("fade-out");
+        presetBrowser.classList.add("fade-out");
+        setTimeout(() => {
+            var knobElems = [document.querySelector(".top"), document.querySelector(".knob"), presetBrowser];
+            for (var i = 0; i < knobElems.length; i++) {
+                knobElems[i].style.display = (knobElems[i].style.display === "none") ? "flex" : "none";
+            }
+        }, 250);
+
+        mainDiv.classList.add("hide");
+        setTimeout(() => {
+            presetBrowser.classList.add("fade-in-slow");
+            mainDiv.classList.remove("hide");
+            mainDiv.classList.add("fade-in");
+        }, 300);
+        presetBrowser.classList.remove("fade-in-slow");
+        mainDiv.classList.remove("fade-in")
+    });
+
     // Save button click event
     var btnSave = document.getElementById("btnSave");
     btnSave.addEventListener("click", (e) => {
@@ -704,40 +752,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
         updateDisplays();
         showKnob(0);
     });
-
-    // Presets button click event
-    var gridContainer = document.querySelector(".grid-container");
-    var presetBrowser = document.querySelector(".preset-browser")
-    var knob = document.querySelector(".knob");
-    var mainDiv = document.querySelector(".mainDiv");
-
-    presetBrowser.style.display = "none";
-
-    var btnPresets = document.getElementById("btnPresets");
-    btnPresets.addEventListener("click", () => {
-        mode = (mode === "knob") ? "preset" : "knob";
-
-        mainDiv.classList.add("fade-out");
-        if (mode === "preset") presetBrowser.classList.add("fade-out");
-
-        setTimeout(() => {
-            var knobElems = [document.querySelector(".top"), document.querySelector(".knob"), presetBrowser];
-            for (var i = 0; i < knobElems.length; i++) {
-                knobElems[i].style.display = (knobElems[i].style.display === "none") ? "flex" : "none";
-            }
-        }, 250);
-
-        mainDiv.classList.add("hide");
-        setTimeout(() => {
-            presetBrowser.classList.add("fade-in-slow");
-            mainDiv.classList.remove("hide");
-            mainDiv.classList.add("fade-in");
-        }, 300);
-        presetBrowser.classList.remove("fade-in-slow");
-        mainDiv.classList.remove("fade-in")
-    });
-
-
 });
 
 init();

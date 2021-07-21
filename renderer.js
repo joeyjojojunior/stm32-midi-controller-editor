@@ -31,6 +31,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 /*
  * Zooming/scaling
  */
+/*
 ipcRenderer.on('windowLoaded', (event, height) => {
     displayHeight = height;
 });
@@ -40,6 +41,22 @@ ipcRenderer.on('scale', (event, width, height) => {
     webFrame.setZoomFactor(defaultZoomFactors[height]);
     displayHeight = height;
     zoomFactor = webFrame.getZoomFactor();
+});
+*/
+
+function pathInputSize(path) {
+    return `${(path.length + 2) * 8}px`
+}
+
+/*
+ * Options loading
+ */
+ipcRenderer.on('options-loaded', (event, options) => {
+    if (options != null && options != undefined) {
+        var presetPathInput = document.querySelector(".preset-path-input");
+        presetPathInput.value = options.presetPath;
+        presetPathInput.style.width = pathInputSize(options.presetPath);
+    }
 });
 
 /*
@@ -73,8 +90,25 @@ function eventBtnClose() {
 }
 
 /*
+ * Preset browser actions
+ */
+function setPresetPath() {
+    ipcRenderer.send('set-preset-path')
+}
+
+ipcRenderer.on('set-preset-path-ready', (event, path) => {
+    var presetPathInput = document.querySelector(".preset-path-input");
+    presetPathInput.value = path;
+    presetPathInput.style.width = pathInputSize(path);
+});
+
+/*
  * Menu button actions
  */
+function fetchPresets(path) {
+
+}
+
 function saveFile(preset, path) {
     ipcRenderer.send('saveFile', preset, path);
 }

@@ -22,12 +22,12 @@
 
     #titlebar {
         display: flex;
-        height: 10px;
-        padding: 2px;
+        height: 14px;
+        padding: 1px;
         justify-content: center;
         align-items: center;
         /*Compensate for body 1px border*/
-        background: #111111;
+        background: #151515;
     }
 
     #titlebar #titlebar-drag-region {
@@ -88,30 +88,16 @@
     }
 
     .titlebar-btn svg {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
         padding: 1px;
     }
-
-    #titlebar-btn-min {}
-
-    #titlebar-btn-max {}
-
-    #titlebar-btn-close {}
 
     body,
     html {
         margin: 0;
         padding: 0;
         background-color: black;
-    }
-
-    .visible {
-        visibility: visible;
-    }
-
-    .hidden {
-        visibility: hidden;
     }
 
     /*
@@ -122,7 +108,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        background-color: #212121;
+        background-color: #222222;
         padding-left: 10px;
         flex-wrap: wrap;
     }
@@ -188,11 +174,11 @@
     }
 
     .btn {
-        background-color: #212121;
+        background-color: #222222;
         border: 0px;
         color: white;
         font-family: "Roentgen";
-        height: 40px;
+        height: 35px;
         padding-left: 12px;
         padding-right: 12px;
     }
@@ -200,7 +186,6 @@
     .btn:hover {
         background-color: black;
         opacity: 0.8;
-
     }
 
     .btn:active {
@@ -209,7 +194,6 @@
     }
 
     .label-container {
-        background-color: #212121;
         display: flex;
         align-items: center;
         font-size: 14px;
@@ -442,24 +426,123 @@
     }
 
     /*
+     * Preset browser
+     */
+    .preset-browser {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        height: 333px;
+    }
+
+    .preset-title {
+        font-family: "Roentgen";
+        color: white;
+        font-size: 80px;
+    }
+
+    .preset-path-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .preset-path-input {
+        height: 20px;
+        width: 300px;
+        background-color: black;
+        color: white;
+        font-family: "Roentgen";
+        border: solid 1px #fddede;
+        padding-left: 8x;
+        margin: 2px;
+    }
+
+    .preset-path-input:focus {
+        outline-width: 0;
+    }
+
+    .preset-path-btn {
+        font-family: "Roentgen";
+        color: white;
+        border: 0px;
+        background-color: #111111;
+        height: 24px;
+        border: solid 1px #fddede;
+        margin: 2px;
+    }
+
+    .preset-path-btn:hover {
+        background-color: #222222;
+    }
+
+    .preset-path-btn:active {
+        color: #888888;
+    }
+
+    /*
      * Grid 
      */
-
     .grid-container {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    .preset-browser {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 333px;
-        opacity: 0;
+    .grid {
+        position: relative;
     }
 
+    .item {
+        display: block;
+        position: absolute;
+        width: 108px;
+        height: 54px;
+        margin: 4px;
+        z-index: 1;
+        background: black;
+        color: white;
+        font-family: monospace;
+        border: solid 1px #515151;
+        text-align: center;
+    }
+
+    .item.active {
+        border: 1px solid red;
+    }
+
+    .item:hover:not(.active) {
+        border: 1px dashed red;
+    }
+
+    .item.item.muuri-item-dragging:not(.active) {
+        border: 1px dashed red;
+        opacity: 0.8;
+    }
+
+    .item.muuri-item-dragging {
+        z-index: 3;
+    }
+
+    .item.muuri-item-releasing {
+        z-index: 2;
+    }
+
+    .item.muuri-item-hidden {
+        z-index: 0;
+    }
+
+    .item.mu .item-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+
+    /*
+     * Transition related
+     */
     .fade-out {
         zoom: 1;
         filter: alpha(opacity=50);
@@ -497,62 +580,4 @@
         filter: alpha(opacity=50);
         opacity: 1;
         transition: opacity 0.4s ease-in-out;
-    }
-
-    .preset-title {
-        font-family: "Roentgen";
-        color: white;
-        font-size: 80px;
-    }
-
-    .grid {
-        position: relative;
-    }
-
-    .knobContent {}
-
-    .item {
-        display: block;
-        position: absolute;
-        width: 108px;
-        height: 54px;
-        margin: 4px;
-        z-index: 1;
-        background: black;
-        color: white;
-        font-family: monospace;
-        border: solid 1px #515151;
-        text-align: center;
-
-    }
-
-    .item.active {
-        border: 1px solid red;
-    }
-
-    .item:hover:not(.active) {
-        border: 1px dashed red;
-    }
-
-    .item.item.muuri-item-dragging:not(.active) {
-        border: 1px dashed red;
-        opacity: 0.8;
-    }
-
-    .item.muuri-item-dragging {
-        z-index: 3;
-    }
-
-    .item.muuri-item-releasing {
-        z-index: 2;
-    }
-
-    .item.muuri-item-hidden {
-        z-index: 0;
-    }
-
-    .item.mu .item-content {
-        position: relative;
-        width: 100%;
-        height: 100%;
     }

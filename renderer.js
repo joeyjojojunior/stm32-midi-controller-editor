@@ -10,30 +10,15 @@ const {
     webFrame
 } = require('electron')
 
-const ZOOM_1080P = 1;
-const ZOOM_1440P = 1.3333333; // sqrt(2560p/1920p)
-const ZOOM_2160P = 2;
-
-const defaultZoomFactors = {
-    2160: ZOOM_2160P,
-    1440: ZOOM_1440P,
-    1080: ZOOM_1080P
-}
-
-let displayHeight = 0;
-let zoomFactor = 0;
-let isZoomLocked = false;
-
-
 delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 /*
  * Zooming/scaling
  */
-
-function eventZoomChanged() {
-    console.log(`zoom factor: ${webFrame.getZoomFactor()}`);
+// Triggered when the zoom changes and prompts the main 
+// process to resize the window to fit the contents
+function r_eventZoomChanged() {
     ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
 }
 
@@ -44,8 +29,6 @@ ipcRenderer.on('zoom-changed-complete', (event, zScale) => {
 ipcRenderer.on('size-increased', (event, zScale) => {
     webFrame.setZoomFactor(zScale);
 });
-
-
 
 /*
  * Options loading
@@ -61,17 +44,19 @@ ipcRenderer.on('options-loaded', (event, options) => {
 // Helper function returns the width needed to
 // fit the path input field text exactly
 function pathInputSize(path) {
-    return `${(path.length + 2) * 8}px`
+    return `${Math.trunc((path.length) * 8.5)}px`
 }
 
 /*
  * Titlebar actions
  */
-function eventBtnMin() {
+// Titlebar minimize button action
+function r_eventBtnMin() {
     ipcRenderer.send('window-minimize');
 }
 
-function eventBtnMax() {
+// Titlebar maximize button action
+function r_eventBtnMax() {
     ipcRenderer.send('window-maximize');
 }
 
@@ -90,14 +75,15 @@ ipcRenderer.on('window-maximize-unmaximized', (event) => {
     console.log("drag on");
 });
 
-function eventBtnClose() {
+// Titlebar close button action
+function r_eventBtnClose() {
     ipcRenderer.send('window-close');
 }
 
 /*
  * Preset browser actions
  */
-function setPresetPath() {
+function r_setPresetPath() {
     ipcRenderer.send('set-preset-path')
 }
 
@@ -110,15 +96,15 @@ ipcRenderer.on('set-preset-path-ready', (event, path) => {
 /*
  * Menu button actions
  */
-function fetchPresets(path) {
+function fetchPresets(path) {}
 
-}
-
-function saveFile(preset, path) {
+// Save file
+function r_saveFile(preset, path) {
     ipcRenderer.send('saveFile', preset, path);
 }
 
-function saveFileAs(preset) {
+// Save As file
+function r_saveFileAs(preset) {
     ipcRenderer.send('saveFileAs', preset);
 }
 
@@ -126,7 +112,8 @@ ipcRenderer.on('saveFileAs-saved', (event, path) => {
     currFilename = path;
 })
 
-function loadFile() {
+// Load file
+function r_loadFile() {
     ipcRenderer.send('loadFile');
 }
 
@@ -166,8 +153,3 @@ ipcRenderer.on('loadFile-loaded', (event, preset, fname) => {
     showKnob(0);
     updateDisplays();
 });
-
-
-/*
- * Test stuff
- */

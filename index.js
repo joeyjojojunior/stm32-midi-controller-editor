@@ -652,19 +652,15 @@ window.onload = () => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy';
     });
-
-
 }
 
-window.addEventListener('resize', () => {
-    eventZoomChanged();
-});
+window.addEventListener('resize', r_eventZoomChanged);
 
 document.addEventListener("DOMContentLoaded", function (event) {
     // Rescale the window to fit the current zoom factor
-    // Need some delay so electron can register the proper factor
+    // Needs some delay so electron can register the proper factor
     setTimeout(() => {
-        eventZoomChanged();
+        r_eventZoomChanged();
     }, 20);
 
     /*
@@ -677,16 +673,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
     var btnClose = document.querySelector(".titlebar-btn-close");
 
     tbr.classList.add("drag");
-    btnMin.addEventListener("click", eventBtnMin);
-    btnMax.addEventListener("click", eventBtnMax);
-    btnClose.addEventListener("click", eventBtnClose);
+    btnMin.addEventListener("click", r_eventBtnMin);
+    btnMax.addEventListener("click", r_eventBtnMax);
+    btnClose.addEventListener("click", r_eventBtnClose);
 
     /*
      * Preset browser actions
      */
-
     var presetPathBtn = document.querySelector(".preset-path-btn");
-    presetPathBtn.addEventListener("click", setPresetPath);
+    presetPathBtn.addEventListener("click", r_setPresetPath);
 
     /*
      * Menu button actions
@@ -733,9 +728,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
         var preset = createPresetString();
 
         if (currFilename === "") {
-            saveFileAs(preset);
+            r_saveFileAs(preset);
         } else {
-            saveFile(preset, currFilename);
+            r_saveFile(preset, currFilename);
         }
     });
 
@@ -743,12 +738,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
     var btnSaveAs = document.getElementById("btnSaveAs");
     btnSaveAs.addEventListener("click", (e) => {
         var preset = createPresetString();
-        saveFileAs(preset);
+        r_saveFileAs(preset);
     });
 
     // Load button click event
     var btnLoad = document.getElementById("btnLoad");
-    btnLoad.addEventListener("click", loadFile);
+    btnLoad.addEventListener("click", r_loadFile);
 
     // Reset button click event
     var btnReset = document.getElementById("btnReset");

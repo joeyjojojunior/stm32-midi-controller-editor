@@ -9,30 +9,18 @@ const {
 const path = require('path')
 fs = require('fs');
 
-const scaleFactor = 1.0954451150103321;
-
 var BASE_WIDTH = 1920;
 var BASE_HEIGHT = 918;
-
-const sizes = [{
-        width: BASE_WIDTH,
-        height: BASE_HEIGHT,
-        zScale: 1
-    },
-    {
-        width: 2103,
-        height: 1005,
-        zScale: scaleFactor
-    }
-]
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
         title: "STM32 MIDI Controller Editor",
         width: BASE_WIDTH,
         height: BASE_HEIGHT,
+        x: 0,
+        y: 0,
         //autoHideMenuBar: true,
-        //resizable: false,
+        resizable: false,
         useContentSize: true,
         frame: false,
         webPreferences: {

@@ -10,7 +10,8 @@ const path = require('path')
 fs = require('fs');
 
 var BASE_WIDTH = 1920;
-var BASE_HEIGHT = 918;
+var BASE_HEIGHT = 920;
+var presetStrings = new Array();
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -32,7 +33,7 @@ function createWindow() {
     });
 
     // Load main HTML file
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('./src/index.html');
 
     mainWindow.webContents.on('did-finish-load', () => {
         /*
@@ -124,6 +125,26 @@ function createWindow() {
                 }
             });
         });
+
+        ipcMain.on('fetch-presets', (event, presetPath) => {
+            var presetStrings = new Array();
+            try {
+                const presets = fs.readdirSync(presetPath);
+                presets.forEach(p => {
+                    if (path.extname(p) == ".txt") {
+                        try {
+                            const preset = fs.readFileSync(`${presetPath}\\${p}`, 'utf-8');
+                            presetStrings.push(preset.split('\n')[0]);
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            event.reply('fetch-presets-fetched', presetStrings);
+        })
 
         /*
          * Menu button actions

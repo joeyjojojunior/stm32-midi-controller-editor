@@ -1,0 +1,52 @@
+class Grid {
+    constructor() {
+        this.content = initContent();
+        this.grid = initGrid();
+    }
+    
+    function changeContent(id); // change HTML content of grid item i
+    function clearContent(id); // clear HTML content of grid item i 
+
+    static layout();
+    static options();
+    static initContent(); 
+    static initGrid();
+    static eventClick();
+    static eventLayout(grid, layoutId, items, width, height, callback);
+    static eventMove(data);
+    static eventDragMove(item, event);
+    static eventDragReleaseEnd(item, event);
+    static eventLayoutEnd();
+}
+
+class Settings {
+    constructor() {
+        this.currID = 0;
+    }
+}
+
+class Knob extends Settings {
+    constructor() {
+        super();
+        this.settings = initSettings();
+    }
+
+    static initSettings();
+}
+
+class Preset extends Settings {
+    this.path = "";
+    this.filename = "";
+
+    constructor(path) {
+        super();
+        this.settings = initSettings();
+    }
+
+    get path();
+    set path();
+    get filename();
+    set filename();
+
+    static initSettings();
+}

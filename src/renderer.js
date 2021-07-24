@@ -35,9 +35,12 @@ ipcRenderer.on('size-increased', (event, zScale) => {
  */
 ipcRenderer.on('options-loaded', (event, options) => {
     if (options != null && options != undefined) {
+        /*
         var presetPathInput = document.querySelector(".preset-path-input");
+        presetPath = options.presetPath;
         presetPathInput.value = options.presetPath;
         presetPathInput.style.width = pathInputSize(options.presetPath);
+        */
     }
 });
 
@@ -83,6 +86,7 @@ function r_eventBtnClose() {
 /*
  * Preset browser actions
  */
+// Set the preset path to the user's selection in an open dialog
 function r_setPresetPath() {
     ipcRenderer.send('set-preset-path')
 }
@@ -91,6 +95,26 @@ ipcRenderer.on('set-preset-path-ready', (event, path) => {
     var presetPathInput = document.querySelector(".preset-path-input");
     presetPathInput.value = path;
     presetPathInput.style.width = pathInputSize(path);
+});
+
+// Fetch the list of presets in the preset path
+function r_fetchPresets() {
+    console.log("renderer fetching");
+    ipcRenderer.send('fetch-presets', Presets.path);
+}
+
+ipcRenderer.on('fetch-presets-fetched', (event, presetStrings) => {
+    for (var i = 0; i < presetStrings.length; i++) {
+        var presetStr = presetStrings[i].split(',');
+        var name = presetStr[0];
+        var sublabel = presetStr[1];
+        var index = parseInt(presetStr[2], 10);
+        presetSettings[index] = {
+            name: name,
+            sublabel: sublabel,
+            index: `${index}`
+        };
+    }
 });
 
 /*
@@ -150,6 +174,6 @@ ipcRenderer.on('loadFile-loaded', (event, preset, fname) => {
     }
 
     currFilename = fname;
-    showKnob(0);
+    activateItem(0);
     updateDisplays();
 });

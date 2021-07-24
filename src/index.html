@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>STM32 MIDI Controller Editor</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <div id="container">
+        <header id="titlebar">
+            <div id="titlebar-drag-region">
+                <div id="titlebar-title">STM32 Midi Controller Editor</div>
+
+            </div>
+            <div id="titlebar-btns">
+                <button class="titlebar-btn titlebar-btn-min">
+                    <svg x="0px" y="0px" viewBox="0 0 10.2 1">
+                        <rect x="0" y="50%" width="10.2" height="1" /></svg>
+                </button>
+                <button class="titlebar-btn titlebar-btn-max">
+                    <svg viewBox="0 0 10 10">
+                        <path d="M0,0v10h10V0H0z M9,9H1V1h8V9z" /></svg>
+                </button>
+                <button class="titlebar-btn titlebar-btn-close">
+                    <svg viewBox="0 0 10 10">
+                        <polygon
+                            points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="menu">
+
+            <div class="preset header">
+                <label class="label">Preset</label>
+
+                <div class="input-container">
+                    <input type="text" class="inputFieldLarge" id="inputPresetLabel" placeholder="Label">
+                </div>
+
+                <div class="input-container">
+                    <input type="text" class="inputFieldLarge" id="inputPresetSublabel" placeholder="Sub Label">
+                </div>
+            </div>
+
+            <div class="buttons header">
+                <button class="btn" id="btnPresets">Presets</button>
+                <button class="btn" id="btnZoomIn">Size +</button>
+                <button class="btn" id="btnZoomOut">Size -</button>
+                &nbsp; &nbsp;
+                <button class="btn" id="btnSave">Save</button>
+                <button class="btn" id="btnSaveAs">Save As</button>
+                <button class="btn" id="btnLoad">Load</button>
+                <button class="btn" id="btnReset">Reset</button>
+            </div>
+
+        </div>
+
+
+        <!--
+        <div class="preset-browser">
+            <div class="preset-title">Presets</div>
+            <div class="preset-path-container">
+                <input class="preset-path-input" readonly="true">
+                <button class="preset-path-btn">Select Dir</button>
+            </div>
+        </div>
+        -->
+
+        <div class="mainDiv">
+            <div class="knob-top-container">
+                <div class="knob"></div>
+                <div class="top">
+                    <div class="top-left">
+                        <div class="settings"></div>
+                    </div>
+
+                    <div class="top-right">
+                        <div class="sublabels">
+                            <div class="sl-label">Sub Labels</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="grid"></div>
+        </div>
+    </div>
+    <script src="../node_modules/web-animations-js/web-animations.min.js"></script>
+    <script src="../lib/jquery-1.11.1.js"></script>
+    <script src="../lib/jquery-1.12.4.js"></script>
+    <script src="../lib/jquery-ui-1.12.1.js"></script>
+    <script src="../lib/fittext-1.2.js"></script>
+    <script src="../lib/muuri-0.9.5.js"></script>
+    <script src="./renderer.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>

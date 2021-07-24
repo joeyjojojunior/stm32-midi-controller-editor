@@ -2,10 +2,10 @@
   "name": "stm32-midi-controller-editor",
   "version": "1.0.0",
   "description": "preset editor for an stm32 midi controller",
-  "main": "main.js",
+  "main": "./src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "gulp scripts && electron ."
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   "author": "joeyjojojunior",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^13.1.6"
+    "electron": "^13.1.6",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1"
   },
   "dependencies": {
     "custom-electron-titlebar": "^3.2.7",

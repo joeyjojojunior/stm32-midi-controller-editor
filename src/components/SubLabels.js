@@ -1,24 +1,36 @@
 import React from 'react';
-import { MAX_LABEL_CHARS } from '../utils/globals';
+import { v4 as uuidv4 } from 'uuid';
+import SubLabel from './SubLabel';
+import SubLabelAdd from './SubLabelAdd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import dragIcon from '../img/dragIcon.svg'
-const NUM_COLS = 11;
 const NUM_ROWS_PER_COL = 12;
+const MAX_SUBLABELS = 128;
 
 class SubLabels extends React.Component {
     constructor(props) {
         super(props);
 
         const items = [];
-        for (let i = 0; i < 128; i++) {
-            items.push({ id: `item${i}`, content: `item${i}` });
+        for (let i = 0; i < 6; i++) {
+            items.push({ id: uuidv4(), content: `item${i}` });
         }
-        items.push({ id: `item${items.length + 1}`, content: "dummy" });
-        this.state = {
-            items: items
-        }
-        this.onDragEnd = this.onDragEnd.bind(this);
+        items.push({ id: uuidv4(), content: "add" });
+        this.state = { items }
 
+        this.onDragEnd = this.onDragEnd.bind(this);
+    }
+
+    onDragEnd(result) {
+        // dropped outside the list
+        if (!result.destination) return;
+
+        const items = this.reorder(
+            this.state.items,
+            result.source.index,
+            result.destination.index
+        );
+
+        this.setState({ items });
     }
 
     reorder(list, startIndex, endIndex) {
@@ -29,24 +41,8 @@ class SubLabels extends React.Component {
         return result;
     }
 
-    onDragEnd(result) {
-        // dropped outside the list
-        if (!result.destination) {
-            return;
-        }
-
-        const items = this.reorder(
-            this.state.items,
-            result.source.index,
-            result.destination.index
-        );
-
-        this.setState({
-            items
-        });
-    }
-
     createDroppables() {
+        const NUM_COLS = Math.ceil(this.state.items.length / NUM_ROWS_PER_COL);
         const droppables = [];
         for (let i = 0; i < NUM_COLS; i++) {
             const startIndex = i * NUM_ROWS_PER_COL;
@@ -73,6 +69,9 @@ class SubLabels extends React.Component {
         const endIndex = Math.min(startIndex + NUM_ROWS_PER_COL, this.state.items.length);
         for (let i = startIndex; i < endIndex; i++) {
             const item = this.state.items[i];
+            const subLabel = (item.content !== "add") ?
+                <SubLabel content={item.content} btnID={item.id} deleteItem={this.deleteItem.bind(this)}></SubLabel> :
+                <SubLabelAdd btnID={item.id} addItem={this.addItem.bind(this)}></SubLabelAdd>;
             draggables.push(
                 <Draggable key={item.id} draggableId={item.id} index={i}>
                     {(provided, snapshot) => (
@@ -81,13 +80,7 @@ class SubLabels extends React.Component {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                         >
-                            <div className="sublabels-list-item">
-                                <div className="sublabels-drag-handle">
-                                    <img src={dragIcon} className="sublabels-drag-icon" alt=""></img>
-                                </div>
-                                <input className="sublabels-list-input" maxLength={MAX_LABEL_CHARS} spellCheck="false" value={item.content}></input>
-                                <button className="sublabels-list-btn sublabels-list-btn-delete">&times;</button>
-                            </div>
+                            {subLabel}
                         </div>
                     )}
                 </Draggable>
@@ -96,8 +89,30 @@ class SubLabels extends React.Component {
         return draggables;
     }
 
+    deleteItem(e) {
+        this.setState({
+            items: this.state.items.filter(el => el.id !== e.target.id)
+        });
+    }
+
+    addItem(e) {
+        if (this.state.items.length < MAX_SUBLABELS) {
+            const addIndex = this.state.items.findIndex(item => item.id === e.target.id);
+            this.setState({
+                items: [
+                    ...this.state.items.slice(0, addIndex),
+                    { id: uuidv4(), content: "" },
+                    ...this.state.items.slice(addIndex, this.state.items.length)
+                ]
+            });
+
+        }
+
+    }
+
     render() {
-        console.log(this.state.items);
+        console.log(this.state.items)
+
         return (
             <div className="sublabels">
                 <div className="sublabels-label">Sub Labels</div>
@@ -106,42 +121,9 @@ class SubLabels extends React.Component {
                         {this.createDroppables()}
                     </DragDropContext>
                 </div>
-
             </div>
         );
     }
 }
 
 export default SubLabels;
-
-/*
-  <Draggable key={item.id} draggableId={item.id} index={index}>
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <div className="sublabels-list-item sublabels-list-item-dummy">
-                                                        <div className="sublabels-drag-handle sublabels-drag-handle-dummy">
-                                                            <img src={dragIcon} className="sublabels-drag-icon" alt=""></img>
-                                                        </div>
-                                                        <input className="sublabels-list-input sublabels-list-input-dummy" maxLength={MAX_LABEL_CHARS} spellCheck="false" placeholder="Add Sub Label " disabled="true"></input>
-                                                        <button className="sublabels-list-btn sublabels-list-btn-add">&#43;</button>
-                                                    </div>
-
-                                                </div>
-                                            )}
-                                        </Draggable>
-
-
-
-        <li className="sublabels-list-item">
-            <div className="sublabels-drag-handle">
-                <img src="../img/dragIcon.svg" className="sublabels-drag-icon" alt=""></img>
-            </div>
-            <input className="sublabels-list-input" maxLength={MAX_LABEL_CHARS} spellCheck="false"></input>
-            <button className="sublabels-list-btn sublabels-list-btn-delete">&times;</button>
-        </li>
-</div>
-*/

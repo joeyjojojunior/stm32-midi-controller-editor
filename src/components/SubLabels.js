@@ -11,13 +11,13 @@ class SubLabels extends React.Component {
         return (
             <div className="sublabels">
                 <div className="sublabels-label">Sub Labels</div>
-                <ul className="sl-list">
-                    <li className="sl-list-item">
-                        <div className="sl-drag-handle">
-                            <img src="../img/dragIcon.svg" className="sl-drag-icon" alt=""></img>
+                <ul className="sublabels-list">
+                    <li className="sublabels-list-item">
+                        <div className="sublabels-drag-handle">
+                            <img src="../img/dragIcon.svg" className="sublabels-drag-icon" alt=""></img>
                         </div>
-                        <input className="sl-list-input" maxLength={MAX_LABEL_CHARS} spellCheck="false"></input>
-                        <button className="sl-list-btn sl-list-btn-delete">&times;</button>
+                        <input className="sublabels-list-input" maxLength={MAX_LABEL_CHARS} spellCheck="false"></input>
+                        <button className="sublabels-list-btn sublabels-list-btn-delete">&times;</button>
                     </li>
                 </ul>
             </div>

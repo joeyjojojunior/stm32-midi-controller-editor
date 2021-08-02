@@ -13,6 +13,7 @@ html {
 .App {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 :not(input):not(textarea),

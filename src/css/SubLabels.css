@@ -1,6 +1,6 @@
 .sublabels {
-    padding: 0px;
     cursor: default;
+    padding-left: 10px;
 }
 
 .sublabels-label {
@@ -8,12 +8,11 @@
     font-size: 17px;
     background-color: black;
     color: white;
-    /* align with top-left */
-    padding-top: 4px;
-    padding-bottom: 1px;
+    padding-top: 26px;
+    padding-bottom: 2px;
 }
 
-.sl-list {
+.sublabels-list {
     display: inline-flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -23,7 +22,7 @@
     margin: 0 auto;
 }
 
-.sl-list-item {
+.sublabels-list-item {
     background-color: white;
     padding-right: 5px;
 
@@ -40,7 +39,7 @@
 
 }
 
-.sl-list-input {
+.sublabels-list-input {
     width: 105px;
     border: none;
     background-color: white;
@@ -48,11 +47,11 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sl-list-input:focus {
+.sublabels-list-input:focus {
     outline-width: 0px;
 }
 
-.sl-drag-handle {
+.sublabels-drag-handle {
     display: flex;
     justify-content: center;
     background-color: #414141;
@@ -62,7 +61,7 @@
     height: 100%;
 }
 
-.sl-drag-icon {
+.sublabels-drag-icon {
     width: 7px;
     height: auto;
     filter: invert(1);
@@ -70,22 +69,22 @@
     padding: 0;
 }
 
-.sl-list-item-dummy {
+.sublabels-list-item-dummy {
     background-color: black;
 }
 
-.sl-list-input-dummy {
+.sublabels-list-input-dummy {
     background-color: black;
     font-size: 8px;
     height: 18px;
     text-align: right;
 }
 
-.sl-drag-handle-dummy {
+.sublabels-drag-handle-dummy {
     background-color: black;
 }
 
-.sl-list-btn {
+.sublabels-list-btn {
     padding: 0;
     background-color: transparent;
     border: 0;
@@ -95,29 +94,29 @@
     line-height: 1;
 }
 
-.sl-list-btn:not(:disabled):not(.disabled) {
+.sublabels-list-btn:not(:disabled):not(.disabled) {
     cursor: pointer;
 }
 
-.sl-list-btn-delete {
+.sublabels-list-btn-delete {
     color: black;
     opacity: .5;
 }
 
-.sl-list-btn-delete.sl-list-btn:not(:disabled):not(.disabled):hover,
-.sl-list-btn:not(:disabled):not(.disabled):focus {
+.sublabels-list-btn-delete.sublabels-list-btn:not(:disabled):not(.disabled):hover,
+.sublabels-list-btn:not(:disabled):not(.disabled):focus {
     color: #000;
     text-decoration: none;
     opacity: .75;
 }
 
-.sl-list-btn-add {
+.sublabels-list-btn-add {
     color: white;
     opacity: 0.5;
 }
 
-.sl-list-btn-add.sl-list-btn:not(:disabled):not(.disabled):hover,
-.sl-list-btn:not(:disabled):not(.disabled):focus {
+.sublabels-list-btn-add.sublabels-list-btn:not(:disabled):not(.disabled):hover,
+.sublabels-list-btn:not(:disabled):not(.disabled):focus {
     color: white;
     text-decoration: none;
     opacity: .75;

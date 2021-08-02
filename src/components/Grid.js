@@ -37,7 +37,6 @@ class Grid extends React.Component {
     }
 
     render() {
-        console.log(this.state.grid);
         return (
             <div className="grid">
                 {this.state.items}

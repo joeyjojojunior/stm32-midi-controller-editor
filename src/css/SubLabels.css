@@ -1,6 +1,14 @@
 .sublabels {
     cursor: default;
     padding-left: 10px;
+    height: 290px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.sublabels-container {
+    display: flex;
 }
 
 .sublabels-label {
@@ -90,20 +98,21 @@
     line-height: 1;
 }
 
-.sublabels-list-btn:not(:disabled):not(.disabled) {
-    cursor: pointer;
-}
 
 .sublabels-list-btn-delete {
     color: black;
     opacity: .5;
+    cursor: pointer;
 }
 
-.sublabels-list-btn-delete.sublabels-list-btn:not(:disabled):not(.disabled):hover,
-.sublabels-list-btn:not(:disabled):not(.disabled):focus {
-    color: #000;
-    text-decoration: none;
-    opacity: .75;
+.sublabels-list-btn-delete:hover {
+    color: black;
+    opacity: 1
+}
+
+.sublabels-list-btn-delete:active {
+    color: red;
+    opacity: 1;
 }
 
 .sublabels-list-btn-add {
@@ -111,9 +120,12 @@
     opacity: 0.5;
 }
 
-.sublabels-list-btn-add.sublabels-list-btn:not(:disabled):not(.disabled):hover,
-.sublabels-list-btn:not(:disabled):not(.disabled):focus {
+.sublabels-list-btn-add:hover {
     color: white;
-    text-decoration: none;
-    opacity: .75;
+    opacity: 1
+}
+
+.sublabels-list-btn-add:active {
+    color: gray;
+    opacity: 1
 }

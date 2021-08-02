@@ -14,7 +14,6 @@ class GridItem extends React.Component {
     }
 
     render() {
-        console.log(`render ${this.state.id}`);
         return (
             <div className={`item ${this.state.active}`} onClick={this.props.eventClick} >
                 <div className="item-content">

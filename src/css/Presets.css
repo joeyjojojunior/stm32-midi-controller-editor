@@ -1,0 +1,54 @@
+.preset-browser {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 333px;
+    width: 100%;
+}
+
+.preset-title {
+    font-family: "Roentgen";
+    color: white;
+    font-size: 80px;
+}
+
+.preset-path-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 15px;
+}
+
+.preset-path-input {
+    height: 20px;
+    background-color: black;
+    color: white;
+    font-family: "Roentgen";
+    border: solid 1px #fddede;
+    margin: 2px;
+    width: 300px;
+    padding-left: 8px;
+}
+
+.preset-path-input:focus {
+    outline-width: 0;
+}
+
+.preset-path-btn {
+    font-family: "Roentgen";
+    color: white;
+    border: 0px;
+    background-color: #111111;
+    height: 24px;
+    border: solid 1px #fddede;
+    margin: 2px;
+}
+
+.preset-path-btn:hover {
+    background-color: #222222;
+}
+
+.preset-path-btn:active {
+    color: #888888;
+}

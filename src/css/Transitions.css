@@ -1,0 +1,38 @@
+.fade-out {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+}
+
+.fade-out-fast {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.hide {
+    opacity: 0;
+}
+
+.fade-in {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 1;
+    transition: opacity 0.25s ease-in-out;
+}
+
+.fade-in-fast {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 1;
+    transition: opacity 0.2s ease-in;
+}
+
+.fade-in-slow {
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+}

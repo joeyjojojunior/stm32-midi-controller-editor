@@ -1,32 +1,50 @@
 {
-  "name": "stm32-midi-controller-editor",
-  "version": "1.0.0",
-  "description": "preset editor for an stm32 midi controller",
-  "main": "./src/main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp scripts && electron ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github-joeyjojojunior:joeyjojojunior/stm32-midi-controller-editor.git"
-  },
-  "keywords": [
-    "midi",
-    "controller",
-    "stm32"
-  ],
-  "author": "joeyjojojunior",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^13.1.6",
-    "gulp": "^4.0.2",
-    "gulp-concat": "^2.6.1"
-  },
-  "dependencies": {
-    "custom-electron-titlebar": "^3.2.7",
-    "electron-packager": "^15.2.0",
-    "jquery": "^3.6.0",
-    "web-animations-js": "^2.3.2"
-  }
+    "name": "stm32-mce-react",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@testing-library/jest-dom": "^5.11.4",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.1.10",
+        "muuri": "^0.9.5",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-scripts": "4.0.3",
+        "web-animations-js": "^2.3.2",
+        "web-vitals": "^1.0.1"
+    },
+    "devDependencies": {
+        "electron": "^13.1.7",
+        "electron-packager": "^15.3.0",
+        "foreman": "^3.0.1"
+    },
+    "homepage": "./",
+    "main": "src/electron-main.js",
+    "scripts": {
+        "start": "nf start -p 3000",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject",
+        "electron": "electron .",
+        "electron-start": "node src/electron-wait-react",
+        "react-start": "react-scripts start"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }

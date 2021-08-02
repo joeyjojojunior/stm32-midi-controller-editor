@@ -1,0 +1,50 @@
+.settings {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.settings-table-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-knob-label {
+    font-family: "Roentgen";
+    color: #d3d3d3;
+    font-size: 26px;
+    padding-left: 2px;
+}
+
+table {
+    font-size: 17px;
+    font-family: "Roentgen";
+    color: white;
+}
+
+td {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.settings-checkbox-div {
+    display: flex;
+    padding-left: 1px;
+}
+
+.inputField {
+    width: 110px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 3px;
+    border: none;
+    font-size: 15;
+}
+
+.inputField:focus {
+    outline-width: 0;
+}
+
+#inputIsLocked {
+    width: 25px;
+}

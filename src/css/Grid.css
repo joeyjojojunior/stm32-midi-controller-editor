@@ -1,0 +1,48 @@
+.grid {
+    position: relative;
+}
+
+.item {
+    display: block;
+    position: absolute;
+    width: 108px;
+    height: 54px;
+    margin: 4px;
+    z-index: 1;
+    background: black;
+    color: white;
+    font-family: monospace;
+    border: solid 1px #515151;
+    text-align: center;
+}
+
+.item.active {
+    border: 1px solid red;
+}
+
+.item:hover:not(.active) {
+    border: 1px dashed red;
+}
+
+.item.item.muuri-item-dragging:not(.active) {
+    border: 1px dashed red;
+    opacity: 0.8;
+}
+
+.item.muuri-item-dragging {
+    z-index: 3;
+}
+
+.item.muuri-item-releasing {
+    z-index: 2;
+}
+
+.item.muuri-item-hidden {
+    z-index: 0;
+}
+
+.item.mu .item-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}

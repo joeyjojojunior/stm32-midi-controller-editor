@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "Roentgen";
+  src: url(../font/Roentgen.ttf);
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+}
+
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}

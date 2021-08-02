@@ -18,6 +18,7 @@ function App() {
       <Menu></Menu>
       <Settings></Settings>
       <Grid></Grid>
+
     </div>
   );
 }

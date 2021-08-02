@@ -34,9 +34,6 @@
 
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
-
 }
 
 .sublabels-list-input {
@@ -57,12 +54,11 @@
     background-color: #414141;
     padding-left: 4px;
     padding-right: 4px;
-    margin: 0;
-    height: 100%;
+    width: 8px;
 }
 
 .sublabels-drag-icon {
-    width: 7px;
+    width: 7 px;
     height: auto;
     filter: invert(1);
     margin: 0;

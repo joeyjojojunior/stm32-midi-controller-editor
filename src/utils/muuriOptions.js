@@ -36,16 +36,15 @@ let options = {
         var rowSizes = [];
         var rowFixes = [];
 
-        var xPre, yPre, wPre, hPre;
+        var wPre, hPre;
         var numToFix = 0;
 
-        for (var i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             item = items[i];
 
             m = item.getMargin();
             wPre = item.getWidth() + m.left + m.right;
             hPre = item.getHeight() + m.top + m.bottom;
-            xPre += wPre;
 
             if (hPre > currentRowH) {
                 currentRowH = hPre;
@@ -74,9 +73,7 @@ let options = {
             rowFixes.push(k);
 
             if (currentW >= maxW) {
-                yPre += currentRowH;
                 currentRowH = 0;
-                xPre = 0;
                 numToFix -= 1;
                 currentW = 0;
                 numToFix = 0;
@@ -89,7 +86,7 @@ let options = {
         currentRowH = 0;
         currentRowW = 0;
 
-        for (var i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             item = items[i];
             x += w;
 

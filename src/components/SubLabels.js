@@ -1,8 +1,9 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import SubLabel from './SubLabel';
 import SubLabelAdd from './SubLabelAdd';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 const NUM_ROWS_PER_COL = 12;
 const MAX_SUBLABELS = 128;
 
@@ -11,8 +12,8 @@ class SubLabels extends React.Component {
         super(props);
 
         const items = [];
-        for (let i = 0; i < 6; i++) {
-            items.push({ id: uuidv4(), content: `item${i}` });
+        for (let i = 0; i < 128; i++) {
+            items.push({ id: uuidv4(), content: "" });
         }
         items.push({ id: uuidv4(), content: "add" });
         this.state = { items }
@@ -69,9 +70,21 @@ class SubLabels extends React.Component {
         const endIndex = Math.min(startIndex + NUM_ROWS_PER_COL, this.state.items.length);
         for (let i = startIndex; i < endIndex; i++) {
             const item = this.state.items[i];
-            const subLabel = (item.content !== "add") ?
-                <SubLabel content={item.content} btnID={item.id} deleteItem={this.deleteItem.bind(this)}></SubLabel> :
-                <SubLabelAdd btnID={item.id} addItem={this.addItem.bind(this)}></SubLabelAdd>;
+            const subLabel =
+                (item.content !== "add") ?
+                    <SubLabel
+                        btnID={item.id}
+                        deleteItem={this.deleteItem.bind(this)}
+                        content={item.content}
+                    >
+                    </SubLabel>
+                    :
+                    <SubLabelAdd
+                        btnID={item.id}
+                        addItem={this.addItem.bind(this)}
+                    >
+                    </SubLabelAdd>;
+
             draggables.push(
                 <Draggable key={item.id} draggableId={item.id} index={i}>
                     {(provided, snapshot) => (
@@ -89,14 +102,8 @@ class SubLabels extends React.Component {
         return draggables;
     }
 
-    deleteItem(e) {
-        this.setState({
-            items: this.state.items.filter(el => el.id !== e.target.id)
-        });
-    }
-
     addItem(e) {
-        if (this.state.items.length < MAX_SUBLABELS) {
+        if (this.state.items.length < MAX_SUBLABELS + 1) {
             const addIndex = this.state.items.findIndex(item => item.id === e.target.id);
             this.setState({
                 items: [
@@ -105,14 +112,16 @@ class SubLabels extends React.Component {
                     ...this.state.items.slice(addIndex, this.state.items.length)
                 ]
             });
-
         }
+    }
 
+    deleteItem(e) {
+        this.setState({
+            items: this.state.items.filter(el => el.id !== e.target.id)
+        });
     }
 
     render() {
-        console.log(this.state.items)
-
         return (
             <div className="sublabels">
                 <div className="sublabels-label">Sub Labels</div>

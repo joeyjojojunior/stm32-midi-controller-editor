@@ -7,7 +7,11 @@ import { NUM_KNOBS } from '../utils/globals';
 class Grid extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { grid: null, items: this.initItems(), activeItem: null };
+        this.state = {
+            grid: null,
+            items: this.initItems(),
+            activeItem: null
+        };
     }
 
     initItems() {
@@ -15,6 +19,7 @@ class Grid extends React.Component {
         for (var i = 0; i < NUM_KNOBS; i++) {
             items[i] = <GridItem eventClick={this.eventClick.bind(this)} id={i}></GridItem>
         }
+
         return items;
     }
 
@@ -22,13 +27,13 @@ class Grid extends React.Component {
         if (this.state.activeItem !== null) {
             this.state.activeItem.classList.remove("active");
         }
+
         e.target.classList.add("active");
+
         this.setState({
             activeItem: e.target
         });
-
     }
-
 
     componentDidMount() {
         if (this.state.grid === null) {

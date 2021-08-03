@@ -19,7 +19,7 @@ class Menu extends React.Component {
                     </div>
                 </div>
                 <div class="buttons header">
-                    <button class="btn" id="btnPresets">Presets</button>
+                    <button class="btn" id="btnPresets" onClick={this.props.eventClickPresets}>Presets</button>
                     <button class="btn" id="btnZoomIn">Size +</button>
                     <button class="btn" id="btnZoomOut">Size -</button>
                     &nbsp; &nbsp;

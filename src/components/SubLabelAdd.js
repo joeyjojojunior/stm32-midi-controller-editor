@@ -2,7 +2,6 @@ import React from 'react';
 import { MAX_LABEL_CHARS } from '../utils/globals';
 import dragIcon from '../img/dragIcon.svg'
 
-
 class SubLabelAdd extends React.Component {
     constructor(props) {
         super(props);
@@ -26,7 +25,8 @@ class SubLabelAdd extends React.Component {
                 <button
                     id={this.props.btnID}
                     className="sublabels-list-btn sublabels-list-btn-add"
-                    onClick={this.props.addItem}>
+                    onClick={this.props.addItem}
+                >
                     &#43;
                 </button>
             </div>

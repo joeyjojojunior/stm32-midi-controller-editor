@@ -24,7 +24,6 @@ class SettingsTable extends React.Component {
                     </tbody>
                 </table>
             </div>
-
         );
     }
 }

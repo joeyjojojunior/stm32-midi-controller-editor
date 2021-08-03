@@ -1,9 +1,7 @@
 import React from 'react';
-
-const { ipcRenderer } = window.require('electron');
+//const { ipcRenderer } = window.require('electron');
 
 class GridItem extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {

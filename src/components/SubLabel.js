@@ -2,7 +2,6 @@ import React from 'react';
 import { MAX_LABEL_CHARS } from '../utils/globals';
 import dragIcon from '../img/dragIcon.svg'
 
-
 class SubLabel extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +14,8 @@ class SubLabel extends React.Component {
                 <div className="sublabels-drag-handle">
                     <img src={dragIcon} className="sublabels-drag-icon" alt=""></img>
                 </div>
-                <input className="sublabels-list-input"
+                <input
+                    className="sublabels-list-input"
                     maxLength={MAX_LABEL_CHARS}
                     spellCheck="false"
                     value={this.props.content}

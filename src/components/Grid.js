@@ -1,5 +1,6 @@
 import React from 'react';
 import Muuri from 'muuri';
+import { v4 as uuidv4 } from 'uuid';
 import GridItem from './GridItem';
 import options from '../utils/muuriOptions';
 import { NUM_KNOBS } from '../utils/globals';
@@ -10,34 +11,46 @@ class Grid extends React.Component {
         this.state = {
             grid: null,
             items: this.initItems(),
-            activeItem: null
+            activeItem: null,
+            isDragging: false
         };
     }
 
     initItems() {
         var items = [];
         for (var i = 0; i < NUM_KNOBS; i++) {
-            items[i] = <GridItem eventClick={this.eventClick.bind(this)} id={i}></GridItem>
+            items[i] = <GridItem id={uuidv4()} eventClick={this.eventClick.bind(this)}></GridItem>
         }
-
         return items;
     }
 
     eventClick(e) {
-        if (this.state.activeItem !== null) {
-            this.state.activeItem.classList.remove("active");
+        if (!this.state.isDragging) {
+            if (this.state.activeItem !== null) {
+                this.state.activeItem.classList.remove("active");
+            }
+            e.target.classList.add("active");
+            this.setState({
+                activeItem: e.target
+            });
         }
-
-        e.target.classList.add("active");
-
-        this.setState({
-            activeItem: e.target
-        });
     }
 
     componentDidMount() {
         if (this.state.grid === null) {
-            this.setState({ grid: new Muuri('.grid', options) });
+            const grid = new Muuri('.grid', options);
+
+            grid.on("dragMove", () => {
+                this.setState({
+                    isDragging: true
+                })
+            });
+            grid.on('dragReleaseEnd', () => {
+                this.setState({
+                    isDragging: false
+                })
+            });
+            this.setState({ grid: grid });
         }
     }
 

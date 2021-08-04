@@ -18,6 +18,7 @@ const BASE_WIDTH = 1920;
 const BASE_HEIGHT = 920;
 
 let isDialogOpen = false;
+let isFetchingPresets = false;
 
 function createWindow() {
     // Create the browser window.
@@ -46,8 +47,19 @@ function createWindow() {
 
     mainWindow.webContents.on('did-finish-load', () => {
         /*
-       * Preset browser actions
-       */
+         * Options loading
+         */
+        fs.readFile("./options.json", 'utf8', (err, options) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            mainWindow.webContents.send('options-loaded', JSON.parse(options));
+        })
+
+        /*
+         * Preset browser actions
+         */
         // Set the default preset path
         ipcMain.on('set-preset-dir', (event) => {
             if (!isDialogOpen) {
@@ -73,6 +85,30 @@ function createWindow() {
                 });
             }
         });
+
+        ipcMain.on('fetch-presets', (event, presetPath) => {
+            if (!isFetchingPresets) {
+                var presetStrings = [];
+                try {
+                    isFetchingPresets = true;
+                    const presets = fs.readdirSync(presetPath);
+                    presets.forEach(p => {
+                        if (path.extname(p) === ".txt") {
+                            try {
+                                const preset = fs.readFileSync(`${presetPath}\\${p}`, 'utf-8');
+                                presetStrings.push(preset.split('\n')[0]);
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+                isFetchingPresets = false;
+                event.reply('fetch-presets-fetched', presetStrings);
+            }
+        })
     });
 
 

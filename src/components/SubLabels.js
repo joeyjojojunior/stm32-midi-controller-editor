@@ -7,7 +7,7 @@ import SubLabelAdd from './SubLabelAdd';
 const NUM_ROWS_PER_COL = 12;
 const MAX_SUBLABELS = 128;
 
-class SubLabels extends React.Component {
+class SubLabels extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -133,4 +133,4 @@ class SubLabels extends React.Component {
     }
 }
 
-export default SubLabels;
+export default SubLabels = React.memo(SubLabels);

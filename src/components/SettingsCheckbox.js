@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SettingsCheckbox extends React.Component {
+class SettingsCheckbox extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -25,4 +25,4 @@ class SettingsCheckbox extends React.Component {
     }
 }
 
-export default SettingsCheckbox;
+export default SettingsCheckbox = React.memo(SettingsCheckbox);

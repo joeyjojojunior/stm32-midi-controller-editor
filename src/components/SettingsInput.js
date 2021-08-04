@@ -1,12 +1,15 @@
 import React from 'react';
 
-class SettingsInput extends React.Component {
+class SettingsInput extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
     }
 
     render() {
+
+
+
         return (
             <tr>
                 <td>{this.props.settingLabel}</td>
@@ -16,6 +19,7 @@ class SettingsInput extends React.Component {
                         className="inputField"
                         maxLength={this.props.maxLength}
                         spellcheck="false"
+                        value={this.props.value}
                         onChange={this.props.eventInputChanged}
                     >
                     </input>
@@ -25,4 +29,4 @@ class SettingsInput extends React.Component {
     }
 }
 
-export default SettingsInput;
+export default SettingsInput = React.memo(SettingsInput);

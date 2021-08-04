@@ -1,6 +1,6 @@
 import React from 'react';
 
-class TitleBar extends React.Component {
+class TitleBar extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -33,4 +33,4 @@ class TitleBar extends React.Component {
     }
 }
 
-export default TitleBar;
+export default TitleBar = React.memo(TitleBar);

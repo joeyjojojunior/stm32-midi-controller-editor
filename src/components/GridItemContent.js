@@ -1,6 +1,6 @@
 import React from 'react';
 
-class GridItemContent extends React.Component {
+class GridItemContent extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,4 +20,4 @@ class GridItemContent extends React.Component {
     }
 }
 
-export default GridItemContent;
+export default GridItemContent = React.memo(GridItemContent);

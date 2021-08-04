@@ -7,7 +7,7 @@ import "../css/Presets.css";
 import "../css/Grid.css";
 import "../css/Transitions.css"
 
-import React from "react";
+import React, { Profiler } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 import FadeProps from './FadeProps';
@@ -23,7 +23,7 @@ const { ipcRenderer } = window.require('electron');
 const Mode = { PRESETS: 0, SETTINGS: 1 };
 const ANIM_LENGTH = 250;
 
-class App extends React.Component {
+class App extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -78,6 +78,7 @@ class App extends React.Component {
       presets: presets,
       content: content,
       activeItem: null,
+      activeID: content[0].id,
       isDragging: false,
       fade: false,
       presetsLoaded: false
@@ -85,6 +86,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({
+      activeItem: document.getElementById(`${this.state.content[0].id}`)
+    });
+
     // Check for an existing path in the options.json file
     ipcRenderer.on('options-loaded', (event, options) => {
       if (options != null && options !== undefined) {
@@ -92,11 +97,6 @@ class App extends React.Component {
       }
     });
   }
-
-  componentDidUpdate() {
-  }
-
-
 
   fetchPresets() {
     ipcRenderer.send('fetch-presets', this.state.presetPath);
@@ -129,7 +129,6 @@ class App extends React.Component {
   // Updates the content to be displayed in 
   // the grid based on the current preset
   updateContent() {
-    console.log("update");
     var content = [];
     var data = (this.state.mode === Mode.PRESETS) ? this.state.presets : this.state.preset;
 
@@ -179,7 +178,7 @@ class App extends React.Component {
         this.state.activeItem.classList.remove("active");
       }
       e.target.classList.add("active");
-      this.setState({ activeItem: e.target });
+      this.setState({ activeItem: e.target, activeID: e.target.id });
     }
   }
 
@@ -219,6 +218,18 @@ class App extends React.Component {
     this.setState({ fade: false });
   }
 
+  profile(
+    id, // the "id" prop of the Profiler tree that has just committed
+    phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
+    actualDuration, // time spent rendering the committed update
+    baseDuration, // estimated time to render the entire subtree without memoization
+    startTime, // when React began rendering this update
+    commitTime, // when React committed this update
+    interactions // the Set of interactions belonging to this update
+  ) {
+    //console.log(actualDuration);
+  }
+
 
   render() {
     if (this.state && !this.state.presetsLoaded && this.state.presetPath) {
@@ -233,8 +244,9 @@ class App extends React.Component {
         eventPresetDirChanged={this.eventPresetDirChanged.bind(this)}
         eventSetPresetDir={this.eventSetPresetDir.bind(this)}>
       </Presets>,
-      <Settings eventInputChanged={this.eventInputChanged.bind(this)}></Settings>
+      <Settings activeID={this.state.activeID} preset={this.state.preset} eventInputChanged={this.eventInputChanged.bind(this)}></Settings>
     ];
+
 
     return (
       <div className="App">
@@ -257,4 +269,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default App = React.memo(App);

@@ -2,7 +2,7 @@ import React from 'react';
 import { MAX_LABEL_CHARS } from '../utils/globals';
 import dragIcon from '../img/dragIcon.svg'
 
-class SubLabel extends React.Component {
+class SubLabel extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -33,4 +33,4 @@ class SubLabel extends React.Component {
     }
 }
 
-export default SubLabel;
+export default SubLabel = React.memo(SubLabel);

@@ -1,6 +1,6 @@
 import React from "react";
 
-class Presets extends React.Component {
+class Presets extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -29,4 +29,4 @@ class Presets extends React.Component {
     }
 }
 
-export default Presets;
+export default Presets = React.memo(Presets);

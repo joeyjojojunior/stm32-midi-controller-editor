@@ -12,13 +12,13 @@ AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 const DEFAULT_ANIMATION_LENGTH = 200;
 const FADE = { IN: 1, OUT: 0 };
 
-class FadeProps extends Component {
+class FadeProps extends React.PureComponent {
     static propTypes = {
         children: PropTypes.element,
         animationLength: PropTypes.number
@@ -114,5 +114,5 @@ class FadeProps extends Component {
     }
 }
 
-export default FadeProps;
+export default FadeProps = React.memo(FadeProps);
 

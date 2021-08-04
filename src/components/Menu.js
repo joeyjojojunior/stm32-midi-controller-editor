@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Menu extends React.Component {
+class Menu extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -33,4 +33,4 @@ class Menu extends React.Component {
     }
 }
 
-export default Menu;
+export default Menu = React.memo(Menu);

@@ -2,22 +2,17 @@ import React from 'react';
 import SettingsTable from './SettingsTable';
 import SubLabels from './SubLabels';
 
-class Settings extends React.Component {
+class Settings extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
-    }
-
-    componentDidUpdate() {
-        console.log("settings rendered");
-
     }
 
     render() {
 
         return (
             <div className="settings">
-                <SettingsTable eventInputChanged={this.props.eventInputChanged}>
+                <SettingsTable activeID={this.props.activeID} preset={this.props.preset} eventInputChanged={this.props.eventInputChanged}>
                 </SettingsTable>
                 <SubLabels></SubLabels>
             </div>
@@ -25,4 +20,4 @@ class Settings extends React.Component {
     }
 }
 
-export default Settings;
+export default Settings = React.memo(Settings);

@@ -3,13 +3,10 @@ import Muuri from 'muuri';
 import GridItem from './GridItem';
 import options from '../utils/muuriOptions';
 
-class Grid extends React.Component {
+class Grid extends React.PureComponent {
     constructor(props) {
         super(props);
-
-        this.state = {
-            grid: null,
-        };
+        this.state = { grid: null };
     }
 
     getItems() {
@@ -20,7 +17,7 @@ class Grid extends React.Component {
             const item = (
                 <GridItem
                     id={id}
-                    content={value}
+                    content={this.props.content[i].value}
                     active={(i === 0) ? "active" : ""}
                     eventClick={this.props.eventClick}>
                 </GridItem>
@@ -50,14 +47,13 @@ class Grid extends React.Component {
     }
 
     componentDidUpdate() {
+        // Turn off the fade transition if we switched modes
         if (this.props.fade) {
             setTimeout(this.props.modeRendered, 300);
         }
     }
 
     render() {
-
-
         return (
             <div className="grid">
                 {this.getItems()}
@@ -66,4 +62,4 @@ class Grid extends React.Component {
     }
 }
 
-export default Grid;
+export default Grid = React.memo(Grid);

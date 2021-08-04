@@ -70,7 +70,9 @@ class FadeProps extends React.PureComponent {
         /* If timeoutId is not set, then no fade is currently in progress, so let's
          * start the fade! */
         if (!this.timeoutId) {
-            this.timeoutId = setTimeout(this.queueNextChild, this.props.animationLength);
+            (this.props.active) ?
+                this.timeoutId = setTimeout(this.queueNextChild, this.props.animationLength) :
+                this.queueNextChild();
             this.setState(({ direction }) => ({ direction: +!direction }));
             return;
         }
@@ -97,18 +99,14 @@ class FadeProps extends React.PureComponent {
     render() {
         const { direction, currentChild } = this.state;
         const { animationLength } = this.props;
-        const style = (this.props.active) ?
-            {
-                transition: `opacity ${animationLength}ms linear`,
-                opacity: direction
-            }
-            :
-            {};
 
         return (
             <div
                 className={this.props.className}
-                style={style}
+                style={{
+                    transition: `opacity ${animationLength}ms linear`,
+                    opacity: direction
+                }}
                 children={currentChild} />
         );
     }

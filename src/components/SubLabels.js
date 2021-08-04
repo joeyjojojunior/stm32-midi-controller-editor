@@ -12,7 +12,7 @@ class SubLabels extends React.PureComponent {
         super(props);
 
         const items = [];
-        for (let i = 0; i < 128; i++) {
+        for (let i = 0; i < 1; i++) {
             items.push({ id: uuidv4(), content: "" });
         }
         items.push({ id: uuidv4(), content: "add" });

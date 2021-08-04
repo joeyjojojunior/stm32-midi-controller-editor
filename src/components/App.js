@@ -198,7 +198,6 @@ class App extends React.PureComponent {
     }
   }
 
-
   // Enables fade transition on FadeProps and switches the current mode
   eventChangeMode(e) {
     // Prevent changing modes unless a fade has been completed
@@ -218,6 +217,7 @@ class App extends React.PureComponent {
     this.setState({ fade: false });
   }
 
+
   profile(
     id, // the "id" prop of the Profiler tree that has just committed
     phase, // either "mount" (if the tree just mounted) or "update" (if it re-rendered)
@@ -229,7 +229,6 @@ class App extends React.PureComponent {
   ) {
     //console.log(actualDuration);
   }
-
 
   render() {
     if (this.state && !this.state.presetsLoaded && this.state.presetPath) {
@@ -246,7 +245,6 @@ class App extends React.PureComponent {
       </Presets>,
       <Settings activeID={this.state.activeID} preset={this.state.preset} eventInputChanged={this.eventInputChanged.bind(this)}></Settings>
     ];
-
 
     return (
       <div className="App">

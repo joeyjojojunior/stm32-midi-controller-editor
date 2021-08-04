@@ -16,6 +16,7 @@ class SettingsInput extends React.Component {
                         className="inputField"
                         maxLength={this.props.maxLength}
                         spellcheck="false"
+                        onChange={this.props.eventInputChanged}
                     >
                     </input>
                 </td>

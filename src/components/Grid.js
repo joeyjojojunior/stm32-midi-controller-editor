@@ -1,39 +1,34 @@
 import React from 'react';
 import Muuri from 'muuri';
-import { v4 as uuidv4 } from 'uuid';
 import GridItem from './GridItem';
 import options from '../utils/muuriOptions';
-import { NUM_KNOBS } from '../utils/globals';
 
 class Grid extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             grid: null,
-            items: this.initItems(),
-            activeItem: null,
-            isDragging: false
         };
     }
 
-    initItems() {
-        var items = [];
-        for (var i = 0; i < NUM_KNOBS; i++) {
-            items[i] = <GridItem id={uuidv4()} eventClick={this.eventClick.bind(this)}></GridItem>
+    getItems() {
+        var items = []
+        for (let i = 0; i < 128; i++) {
+            const id = this.props.content[i].id;
+            const value = this.props.content[i].value;
+            const item = (
+                <GridItem
+                    id={id}
+                    content={value}
+                    active={(i === 0) ? "active" : ""}
+                    eventClick={this.props.eventClick}>
+                </GridItem>
+            );
+            items.push(item);
         }
-        return items;
-    }
 
-    eventClick(e) {
-        if (!this.state.isDragging) {
-            if (this.state.activeItem !== null) {
-                this.state.activeItem.classList.remove("active");
-            }
-            e.target.classList.add("active");
-            this.setState({
-                activeItem: e.target
-            });
-        }
+        return items;
     }
 
     componentDidMount() {
@@ -54,10 +49,18 @@ class Grid extends React.Component {
         }
     }
 
+    componentDidUpdate() {
+        if (this.props.fade) {
+            setTimeout(this.props.modeRendered, 300);
+        }
+    }
+
     render() {
+
+
         return (
             <div className="grid">
-                {this.state.items}
+                {this.getItems()}
             </div>
         )
     }

@@ -8,10 +8,17 @@ class Settings extends React.Component {
         this.state = {};
     }
 
+    componentDidUpdate() {
+        console.log("settings rendered");
+
+    }
+
     render() {
+
         return (
             <div className="settings">
-                <SettingsTable></SettingsTable>
+                <SettingsTable eventInputChanged={this.props.eventInputChanged}>
+                </SettingsTable>
                 <SubLabels></SubLabels>
             </div>
         );

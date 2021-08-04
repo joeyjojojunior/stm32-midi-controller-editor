@@ -1,9 +1,11 @@
 
 const { webContents } = require('electron');
+const { dialog } = require('electron')
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
+const fs = require('fs');
 
 const path = require('path');
 const url = require('url');
@@ -15,6 +17,8 @@ let mainWindow;
 const BASE_WIDTH = 1920;
 const BASE_HEIGHT = 920;
 
+let isDialogOpen = false;
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -25,7 +29,7 @@ function createWindow() {
         webPreferences: {
             contextIsolation: false,
             nodeIntegration: true,
-            //enableRemoteModule: true,
+            enableRemoteModule: false,
             preload: path.join(__dirname, './preload.js'),
         }
     });
@@ -41,7 +45,34 @@ function createWindow() {
     //mainWindow.webContents.openDevTools();
 
     mainWindow.webContents.on('did-finish-load', () => {
+        /*
+       * Preset browser actions
+       */
+        // Set the default preset path
+        ipcMain.on('set-preset-dir', (event) => {
+            if (!isDialogOpen) {
+                isDialogOpen = true;
+                dialog.showOpenDialog({
+                    title: "Select a preset folder...",
+                    properties: ['openDirectory']
+                }).then((pathObj) => {
+                    if (!pathObj.canceled) {
+                        var optionsJSON = {
+                            presetPath: pathObj.filePaths[0]
+                        };
 
+                        fs.writeFile("./options.json", JSON.stringify(optionsJSON), function (err) {
+                            if (err) {
+                                console.error(err)
+                                return
+                            }
+                        });
+                        event.reply('set-preset-path-ready', pathObj.filePaths[0]);
+                    }
+                    isDialogOpen = false;
+                });
+            }
+        });
     });
 
 

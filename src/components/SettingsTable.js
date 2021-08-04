@@ -15,12 +15,47 @@ class SettingsTable extends React.Component {
                 <div className="settings-knob-label">{this.state.label}</div>
                 <table>
                     <tbody>
-                        <SettingsInput settingLabel="Label" id="inputLabel" maxLength={MAX_LABEL_CHARS}></SettingsInput>
-                        <SettingsInput settingLabel="Channel" id="inputChannel" maxLength="2"></SettingsInput>
-                        <SettingsInput settingLabel="CC" id="inputCC" maxLength="3"></SettingsInput>
-                        <SettingsInput settingLabel="Init Value" id="inputInitValue" maxLength="3"></SettingsInput>
-                        <SettingsInput settingLabel="Max Range" id="inputMaxRange" maxLength="3"></SettingsInput>
-                        <SettingsCheckbox settingLabel="Locked" id="inputIsLocked"></SettingsCheckbox>
+                        <SettingsInput
+                            settingLabel="Label"
+                            id="inputLabel"
+                            maxLength={MAX_LABEL_CHARS}
+                            eventInputChanged={this.props.eventInputChanged}
+                        >
+                        </SettingsInput>
+
+                        <SettingsInput
+                            settingLabel="Channel"
+                            id="inputChannel"
+                            maxLength="2"
+                            eventInputChanged={this.props.eventInputChanged}>
+                        </SettingsInput>
+
+                        <SettingsInput
+                            settingLabel="CC"
+                            id="inputCC"
+                            maxLength="3"
+                            eventInputChanged={this.props.eventInputChanged}>
+                        </SettingsInput>
+
+                        <SettingsInput
+                            settingLabel="Init Value"
+                            id="inputInitValue"
+                            maxLength="3"
+                            eventInputChanged={this.props.eventInputChanged}>
+                        </SettingsInput>
+
+                        <SettingsInput
+                            settingLabel="Max Range"
+                            id="inputMaxRange"
+                            maxLength="3"
+                            eventInputChanged={this.props.eventInputChanged}>
+                        </SettingsInput>
+
+                        <SettingsCheckbox
+                            settingLabel="Locked"
+                            id="inputIsLocked"
+                            eventInputChanged={this.props.eventInputChanged}>
+                        </SettingsCheckbox>
                     </tbody>
                 </table>
             </div>

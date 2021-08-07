@@ -240,7 +240,7 @@ class App extends React.Component {
         this.setState({ preset: newPreset });
     }
 
-    eventOrderSubLabels(e, items) {
+    eventOrderSubLabels(e) {
         const id = this.state.activeItem.id;
         const newPreset = new Map(this.state.preset);
         const newSubLabels = new Map();
@@ -282,8 +282,6 @@ class App extends React.Component {
             ></Settings>
         ];
 
-        console.log("render")
-        console.log(this.state.preset.get(this.state.activeID).subLabels);
         return (
             <div className="App">
                 <Titlebar></Titlebar>

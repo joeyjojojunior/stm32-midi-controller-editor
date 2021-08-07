@@ -5,7 +5,6 @@ import SubLabel from './SubLabel';
 import SubLabelAdd from './SubLabelAdd';
 
 const NUM_ROWS_PER_COL = 12;
-const MAX_SUBLABELS = 128;
 
 class SubLabels extends React.Component {
     constructor(props) {
@@ -20,9 +19,13 @@ class SubLabels extends React.Component {
 
     componentDidUpdate() {
         const preset = this.props.preset.get(this.props.activeID);
-        if (preset.subLabels.size === 0) return;
+        if (preset === undefined) return
 
-        if (this.props.activeID !== this.state.activeID || this.labelsChanged() || preset.subLabels.size === 0) {
+        if (preset.subLabels.size === 0) this.props.eventAddSubLabel();
+        console.log(preset.subLabels.size);
+        console.log(preset.subLabels);
+
+        if (this.props.activeID !== this.state.activeID || this.labelsChanged()) {
             this.initItems();
         }
     }
@@ -31,7 +34,6 @@ class SubLabels extends React.Component {
         const items = [];
         const preset = this.props.preset.get(this.props.activeID);
         const subLabels = preset.subLabels;
-
         if (subLabels.size === 0) {
             items.push({ id: uuidv4(), content: "" });
         } else {

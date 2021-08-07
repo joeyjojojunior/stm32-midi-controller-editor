@@ -6,37 +6,47 @@ import { MAX_LABEL_CHARS } from '../utils/globals';
 class SettingsTable extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = { label: "Knob 1", lastActiveId: "" };
-    }
-
-    render() {
-        /*
-        if (this.props.activeID) {
-            this.setState({
-                lastActiveID: this.props.activeID
-            })
-        }
-
-        const id = (this.props.activeID) ? this.props.activeID : this.state.lastActiveID;
-        */
-
-        const id = this.props.activeID;
-        const values = (this.props.activeID) ?
-            {
-                label: this.props.preset.get(id).label,
-                channel: this.props.preset.get(id).label,
-                cc: this.props.preset.get(id).label,
-                initValue: this.props.preset.get(id).label,
-                maxRange: this.props.preset.get(id).label,
-            }
-            :
+        this.state = {
+            label: "Knob 1",
+            lastActiveId: "",
+            valueCache:
             {
                 label: "",
                 channel: "",
                 cc: "",
                 initValue: "",
-                maxRange: "",
+                maxRange: ""
             }
+        };
+    }
+    eventInputUpdated(e) {
+        if (e !== undefined) {
+            this.setState({
+                valueCache: {
+                    label: e.target.value,
+                    channel: e.target.value,
+                    cc: e.target.value,
+                    initValue: e.target.value,
+                    maxRange: e.target.value
+                }
+            })
+        }
+    }
+
+    render() {
+        const id = this.props.activeID;
+        let values;
+        try {
+            values = {
+                label: this.props.preset.get(id).label,
+                channel: this.props.preset.get(id).channel,
+                cc: this.props.preset.get(id).cc,
+                initValue: this.props.preset.get(id).initValue,
+                maxRange: this.props.preset.get(id).maxRange
+            };
+        } catch { // Sometimes state doesn't update in time
+            values = this.state.valueCache;
+        }
 
 
         return (
@@ -50,6 +60,7 @@ class SettingsTable extends React.PureComponent {
                             value={values.label}
                             maxLength={MAX_LABEL_CHARS}
                             eventInputChanged={this.props.eventInputChanged}
+                            eventInputUpdated={this.eventInputUpdated.bind(this)}
                         >
                         </SettingsInput>
 
@@ -58,7 +69,9 @@ class SettingsTable extends React.PureComponent {
                             id="inputChannel"
                             value={values.channel}
                             maxLength="2"
-                            eventInputChanged={this.props.eventInputChanged}>
+                            eventInputChanged={this.props.eventInputChanged}
+                            eventInputUpdated={this.eventInputUpdated.bind(this)}
+                        >
                         </SettingsInput>
 
                         <SettingsInput
@@ -66,7 +79,9 @@ class SettingsTable extends React.PureComponent {
                             id="inputCC"
                             value={values.cc}
                             maxLength="3"
-                            eventInputChanged={this.props.eventInputChanged}>
+                            eventInputChanged={this.props.eventInputChanged}
+                            eventInputUpdated={this.eventInputUpdated.bind(this)}
+                        >
                         </SettingsInput>
 
                         <SettingsInput
@@ -74,7 +89,9 @@ class SettingsTable extends React.PureComponent {
                             id="inputInitValue"
                             value={values.initValue}
                             maxLength="3"
-                            eventInputChanged={this.props.eventInputChanged}>
+                            eventInputChanged={this.props.eventInputChanged}
+                            eventInputUpdated={this.eventInputUpdated.bind(this)}
+                        >
                         </SettingsInput>
 
                         <SettingsInput
@@ -82,7 +99,9 @@ class SettingsTable extends React.PureComponent {
                             id="inputMaxRange"
                             value={values.maxRange}
                             maxLength="3"
-                            eventInputChanged={this.props.eventInputChanged}>
+                            eventInputChanged={this.props.eventInputChanged}
+                            eventInputUpdated={this.eventInputUpdated.bind(this)}
+                        >
                         </SettingsInput>
 
                         <SettingsCheckbox

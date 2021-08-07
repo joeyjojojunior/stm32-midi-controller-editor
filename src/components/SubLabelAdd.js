@@ -25,7 +25,7 @@ class SubLabelAdd extends React.PureComponent {
                 <button
                     id={this.props.btnID}
                     className="sublabels-list-btn sublabels-list-btn-add"
-                    onClick={this.props.addItem}
+                    onClick={this.props.eventAddSubLabel}
                 >
                     &#43;
                 </button>

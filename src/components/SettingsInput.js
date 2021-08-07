@@ -7,9 +7,6 @@ class SettingsInput extends React.PureComponent {
     }
 
     render() {
-
-
-
         return (
             <tr>
                 <td>{this.props.settingLabel}</td>
@@ -21,6 +18,7 @@ class SettingsInput extends React.PureComponent {
                         spellcheck="false"
                         value={this.props.value}
                         onChange={this.props.eventInputChanged}
+                        onBlur={this.props.eventInputUpdated}
                     >
                     </input>
                 </td>

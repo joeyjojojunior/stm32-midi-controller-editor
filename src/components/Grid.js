@@ -20,7 +20,7 @@ class Grid extends React.PureComponent {
                     id={id}
                     content={this.props.content[i].value}
                     active={(i === 0) ? "active" : ""}
-                    eventClick={this.props.eventClick}>
+                    eventClick={(true) && this.props.eventClick}>
                 </GridItem>
             );
             items.push(item);
@@ -49,9 +49,7 @@ class Grid extends React.PureComponent {
 
     componentDidUpdate() {
         // Turn off the fade transition if we switched modes
-        if (this.props.fade) {
-            setTimeout(this.props.modeRendered, 0);
-        }
+        if (this.props.fade) this.props.modeRendered();
     }
 
     render() {

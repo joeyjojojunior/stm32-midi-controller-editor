@@ -11,6 +11,8 @@ class Grid extends React.PureComponent {
     }
 
     getItems() {
+        if (this.props.content.size === 0) return "";
+
         var items = []
         for (let i = 0; i < NUM_KNOBS; i++) {
             const id = this.props.content[i].id;
@@ -18,7 +20,7 @@ class Grid extends React.PureComponent {
             const item = (
                 <GridItem
                     id={id}
-                    content={this.props.content[i].value}
+                    content={value}
                     active={(i === 0) ? "active" : ""}
                     eventClick={(true) && this.props.eventClick}>
                 </GridItem>

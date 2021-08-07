@@ -22,8 +22,6 @@ class SubLabels extends React.Component {
         if (preset === undefined) return
 
         if (preset.subLabels.size === 0) this.props.eventAddSubLabel();
-        console.log(preset.subLabels.size);
-        console.log(preset.subLabels);
 
         if (this.props.activeID !== this.state.activeID || this.labelsChanged()) {
             this.initItems();
@@ -31,8 +29,10 @@ class SubLabels extends React.Component {
     }
 
     initItems() {
-        const items = [];
         const preset = this.props.preset.get(this.props.activeID);
+        if (preset === undefined) return;
+
+        const items = [];
         const subLabels = preset.subLabels;
         if (subLabels.size === 0) {
             items.push({ id: uuidv4(), content: "" });

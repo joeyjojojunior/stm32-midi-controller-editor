@@ -15,7 +15,7 @@ class Presets extends React.PureComponent {
                     <input
                         className="preset-path-input"
                         readonly="true"
-                        value={this.props.presetPath}
+                        value={this.props.presetsPath}
                         onChange={this.props.eventPresetDirChanged}>
                     </input>
                     <button

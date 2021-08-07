@@ -70,7 +70,7 @@ function createWindow() {
                 }).then((pathObj) => {
                     if (!pathObj.canceled) {
                         var optionsJSON = {
-                            presetPath: pathObj.filePaths[0]
+                            presetsPath: pathObj.filePaths[0]
                         };
 
                         fs.writeFile("./options.json", JSON.stringify(optionsJSON), function (err) {
@@ -86,17 +86,17 @@ function createWindow() {
             }
         });
 
-        ipcMain.on('fetch-presets', (event, presetPath) => {
+        ipcMain.on('fetch-presets', (event, presetsPath) => {
             if (!isFetchingPresets) {
                 var presetStrings = [];
                 try {
                     isFetchingPresets = true;
-                    const presets = fs.readdirSync(presetPath);
+                    const presets = fs.readdirSync(presetsPath);
                     presets.forEach(p => {
                         if (path.extname(p) === ".txt") {
                             try {
-                                const preset = fs.readFileSync(`${presetPath}\\${p}`, 'utf-8');
-                                presetStrings.push(preset.split('\n')[0]);
+                                const preset = fs.readFileSync(`${presetsPath}\\${p}`, 'utf-8');
+                                presetStrings.push(`${p},${preset.split('\n')[0]}`);
                             } catch (err) {
                                 console.error(err);
                             }
@@ -109,7 +109,21 @@ function createWindow() {
                 event.reply('fetch-presets-fetched', presetStrings);
             }
         })
+
+        ipcMain.on('loadPreset', (event, presetPath) => {
+            fs.readFile(presetPath, 'utf8', (err, preset) => {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+                event.reply('loadPreset-loaded', preset);
+
+            })
+
+        });
     });
+
+
 
 
     // Emitted when the window is closed.

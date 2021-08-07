@@ -28,7 +28,37 @@ class App extends React.Component {
         super(props);
 
         // Create blank preset 
+        const initData = this.init();
+        this.state = {
+            mode: Mode.PRESETS,
+            presetsPath: "",
+            preset: initData.preset,
+            presets: initData.presets,
+            content: initData.content,
+            activeItem: null,
+            activeID: initData.content[0].id,
+            isDragging: false,
+            fade: false,
+            presetsLoaded: false
+        };
+    }
+
+    componentDidMount() {
+        this.setState({
+            activeItem: document.getElementById(`${this.state.content[0].id}`)
+        });
+
+        // Check for an existing path in the options.json file
+        ipcRenderer.on('options-loaded', (event, options) => {
+            if (options != null && options !== undefined) {
+                this.setState({ presetsPath: options.presetsPath });
+            }
+        });
+    }
+
+    init() {
         var preset = new Map();
+        var presets = new Map();
         for (let i = 0; i < NUM_KNOBS; i++) {
             const id = uuidv4();
             preset.set(
@@ -45,25 +75,11 @@ class App extends React.Component {
                 }
             )
 
-            if (i === 0) {
-                preset.get(id).label = "Cutoff";
-                preset.get(id).subLabels.set(uuidv4(), "Sublabel1");
-                preset.get(id).subLabels.set(uuidv4(), "Sublabel2");
-            }
-            if (i === 1) {
-                preset.get(id).label = "Resonance";
-                preset.get(id).subLabels.set(uuidv4(), "asdael1");
-                preset.get(id).subLabels.set(uuidv4(), "Sasdasl2");
-            }
-        }
-
-        var presets = new Map();
-        for (let i = 0; i < NUM_KNOBS; i++) {
-            const id = uuidv4();
             presets.set(
                 id,
                 {
                     id: id,
+                    fileName: "",
                     label: "",
                     subLabel: ""
                 }
@@ -79,39 +95,19 @@ class App extends React.Component {
             });
         }
 
-        this.state = {
-            mode: Mode.PRESETS,
-            presetPath: "",
+        return {
             preset: preset,
             presets: presets,
-            content: content,
-            activeItem: null,
-            activeID: content[0].id,
-            isDragging: false,
-            fade: false,
-            presetsLoaded: false
+            content: content
         };
     }
 
-    componentDidMount() {
-        this.setState({
-            activeItem: document.getElementById(`${this.state.content[0].id}`)
-        });
-
-        // Check for an existing path in the options.json file
-        ipcRenderer.on('options-loaded', (event, options) => {
-            if (options != null && options !== undefined) {
-                this.setState({ presetPath: options.presetPath });
-            }
-        });
-    }
-
     fetchPresets() {
-        ipcRenderer.send('fetch-presets', this.state.presetPath);
+        ipcRenderer.send('fetch-presets', this.state.presetsPath);
         ipcRenderer.on('fetch-presets-fetched', (event, presetStrings) => {
             presetStrings.sort((e1, e2) => {
-                let indexE1 = parseInt(e1.split(',')[2], 10);
-                let indexE2 = parseInt(e2.split(',')[2], 10);
+                let indexE1 = parseInt(e1.split(',')[3], 10);
+                let indexE2 = parseInt(e2.split(',')[3], 10);
                 if (indexE1 < indexE2) return -1;
                 if (indexE1 > indexE2) return 1;
                 return 0;
@@ -122,8 +118,9 @@ class App extends React.Component {
             for (const [uuid, settings] of newPresets) {
                 if (i < presetStrings.length) {
                     let presetStr = presetStrings[i].split(',');
-                    settings.label = presetStr[0];
-                    settings.subLabel = presetStr[1];
+                    settings.fileName = presetStr[0];
+                    settings.label = presetStr[1];
+                    settings.subLabel = presetStr[2];
                 } else {
                     settings.label = "";
                     settings.subLabel = "";
@@ -132,6 +129,47 @@ class App extends React.Component {
             }
             this.setState({ presets: newPresets });
         });
+    }
+
+    loadPreset(id) {
+        var presetData = this.state.presets.get(id);
+        if (presetData === undefined) return;
+
+        if (presetData.fileName === "") {
+            const initData = this.init();
+            this.setState({
+                preset: initData.preset,
+                activeID: initData.content[0].id,
+            })
+        }
+
+        var presetPath = `${this.state.presetsPath}\\${presetData.fileName}`
+        ipcRenderer.send('loadPreset', presetPath);
+        ipcRenderer.on('loadPreset-loaded', (event, presetStr) => {
+            let knobSettings = presetStr.split('\n').slice(1);
+            let newPreset = new Map(this.state.preset);
+            let i = 0;
+            for (const [uuid, settings] of newPreset) {
+                let knob = knobSettings[i].split(',');
+                settings.label = knob[0];
+                settings.channel = knob[1];
+                settings.cc = knob[2];
+                settings.initValue = knob[3];
+                settings.maxRange = knob[4];
+                settings.isLocked = (knob[5] === "0") ? false : true;
+
+                let subLabelStrings = knob.slice(8);
+                let newSubLabels = new Map();
+                for (let j = 0; j < subLabelStrings.length; j++) {
+                    newSubLabels.set(uuidv4(), subLabelStrings[j]);
+                }
+                settings.subLabels = newSubLabels;
+                i++;
+            }
+            this.setState({ preset: newPreset });
+        });
+
+        this.updateContent()
     }
 
     // Updates the content to be displayed in 
@@ -168,7 +206,7 @@ class App extends React.Component {
 
         ipcRenderer.on('set-preset-path-ready', (event, path) => {
             this.setState({
-                presetPath: path,
+                presetsPath: path,
                 presetsLoaded: false
             });
         });
@@ -181,6 +219,15 @@ class App extends React.Component {
 
     // Selects a Grid item to edit
     eventClick(e) {
+        switch (this.state.mode) {
+            case Mode.PRESETS:
+                this.loadPreset(e.target.id);
+                break;
+            case Mode.SETTINGS:
+                break;
+            default:
+                break;
+        }
         this.state.activeItem.classList.remove("active");
         e.target.classList.add("active");
         this.setState({ activeItem: e.target, activeID: e.target.id });
@@ -260,7 +307,7 @@ class App extends React.Component {
     }
 
     render() {
-        if (this.state && !this.state.presetsLoaded && this.state.presetPath) {
+        if (this.state && !this.state.presetsLoaded && this.state.presetsPath) {
             this.fetchPresets();
             setTimeout(() => { this.updateContent() }, 0);
             this.setState({ presetsLoaded: true });
@@ -268,7 +315,7 @@ class App extends React.Component {
 
         const modeComponents = [
             <Presets
-                presetPath={this.state.presetPath}
+                presetsPath={this.state.presetsPath}
                 eventPresetDirChanged={this.eventPresetDirChanged.bind(this)}
                 eventSetPresetDir={this.eventSetPresetDir.bind(this)}>
             </Presets>,

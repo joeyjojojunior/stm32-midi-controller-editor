@@ -9,7 +9,7 @@ const NUM_ROWS_PER_COL = 12;
 class SubLabels extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { items: [], activeID: this.props.activeID }
+        this.state = { items: [], activeSettingsID: this.props.activeSettingsID }
         this.onDragEnd = this.onDragEnd.bind(this);
     }
 
@@ -18,18 +18,18 @@ class SubLabels extends React.Component {
     }
 
     componentDidUpdate() {
-        const preset = this.props.preset.get(this.props.activeID);
+        const preset = this.props.preset.get(this.props.activeSettingsID);
         if (preset === undefined) return
 
         if (preset.subLabels.size === 0) this.props.eventAddSubLabel();
 
-        if (this.props.activeID !== this.state.activeID || this.labelsChanged()) {
+        if (this.props.activeSettingsID !== this.state.activeSettingsID || this.labelsChanged()) {
             this.initItems();
         }
     }
 
     initItems() {
-        const preset = this.props.preset.get(this.props.activeID);
+        const preset = this.props.preset.get(this.props.activeSettingsID);
         if (preset === undefined) return;
 
         const items = [];
@@ -41,13 +41,12 @@ class SubLabels extends React.Component {
                 items.push({ id: uuid, content: subLabel });
             }
         }
-
         items.push({ id: uuidv4(), content: "add" });
-        this.setState({ items: items, activeID: this.props.activeID })
+        this.setState({ items: items, activeSettingsID: this.props.activeSettingsID })
     }
 
     labelsChanged() {
-        const preset = this.props.preset.get(this.props.activeID);
+        const preset = this.props.preset.get(this.props.activeSettingsID);
         const subLabels = preset.subLabels;
 
         if (subLabels.size !== this.state.items.length - 1)

@@ -8,7 +8,7 @@ class SettingsTable extends React.PureComponent {
         super(props);
         this.state = {
             label: "Knob 1",
-            lastActiveId: "",
+            lastactiveSettingsID: "",
             valueCache:
             {
                 label: "",
@@ -34,7 +34,7 @@ class SettingsTable extends React.PureComponent {
     }
 
     render() {
-        const id = this.props.activeID;
+        const id = this.props.activeSettingsID;
         let values;
         try {
             values = {

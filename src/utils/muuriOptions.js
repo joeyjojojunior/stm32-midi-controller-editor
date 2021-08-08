@@ -6,8 +6,8 @@ let options = {
         minBounceBackAngle: 1
     },
     dragStartPredicate: {
-        delay: 100,
-        distance: 10
+        delay: 50,
+        distance: 33
     },
     dragSortPredicate: {
         threshold: 50,

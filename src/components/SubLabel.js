@@ -26,7 +26,7 @@ class SubLabel extends React.Component {
                 <button
                     id={this.props.btnID}
                     className="sublabels-list-btn sublabels-list-btn-delete"
-                    onClick={this.props.eventDeleteSubLabel}
+                    onClick={this.props.deleteItem}
                 >
                     &times;
                 </button>

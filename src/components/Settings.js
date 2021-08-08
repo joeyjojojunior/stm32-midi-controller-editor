@@ -12,12 +12,12 @@ class Settings extends React.Component {
         return (
             <div className="settings">
                 <SettingsTable
-                    activeID={this.props.activeID}
+                    activeSettingsID={this.props.activeSettingsID}
                     preset={this.props.preset}
                     eventInputChanged={this.props.eventInputChanged}
                 ></SettingsTable>
                 <SubLabels
-                    activeID={this.props.activeID}
+                    activeSettingsID={this.props.activeSettingsID}
                     preset={this.props.preset}
                     eventInputChanged={this.props.eventInputChanged}
                     eventAddSubLabel={this.props.eventAddSubLabel}

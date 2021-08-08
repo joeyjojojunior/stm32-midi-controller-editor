@@ -7,7 +7,7 @@ import { NUM_KNOBS } from '../utils/globals';
 class Grid extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = { grid: null };
+        this.state = { grid: null, isDragging: false };
     }
 
     getItems() {
@@ -21,8 +21,8 @@ class Grid extends React.PureComponent {
                 <GridItem
                     id={id}
                     content={value}
-                    active={(i === 0) ? "active" : ""}
-                    eventClick={(true) && this.props.eventClick}>
+                    active={(id === this.props.activeID) ? "active" : ""}
+                    eventClick={(!this.state.isDragging) && this.props.eventClick}>
                 </GridItem>
             );
             items.push(item);

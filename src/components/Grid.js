@@ -4,7 +4,7 @@ import GridItem from './GridItem';
 import options from '../utils/muuriOptions';
 import { NUM_KNOBS } from '../utils/globals';
 
-class Grid extends React.PureComponent {
+class Grid extends React.Component {
     constructor(props) {
         super(props);
         this.state = { grid: null, isDragging: false };
@@ -63,4 +63,4 @@ class Grid extends React.PureComponent {
     }
 }
 
-export default Grid = React.memo(Grid);
+export default Grid;

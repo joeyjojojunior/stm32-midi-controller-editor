@@ -61,7 +61,7 @@ class App extends React.Component {
                 setTimeout(() => { this.updateContent() }, 50);
             }
         });
-        //this.loadPreset(this.state.activePresetID);
+
     }
 
     componentDidUpdate() {
@@ -86,7 +86,6 @@ class App extends React.Component {
         var presets = new Map();
         for (let i = 0; i < uuids.length; i++) {
             const id = uuids[i];
-            console.log(id);
             preset.set(
                 id,
                 {
@@ -203,7 +202,6 @@ class App extends React.Component {
         var data = (this.state.mode === Mode.PRESETS) ? this.state.presets : this.state.preset;
 
         for (const [uuid, settings] of data) {
-            console.log(data);
             content.push({
                 id: uuid,
                 value: this.formatContent(settings)
@@ -245,7 +243,7 @@ class App extends React.Component {
     eventClick(e) {
         switch (this.state.mode) {
             case Mode.PRESETS:
-                this.loadPreset(e.target.id);
+                //this.loadPreset(e.target.id);
                 this.setState({ activePresetItem: e.target, activePresetID: e.target.id });
                 break;
             case Mode.SETTINGS:
@@ -254,6 +252,7 @@ class App extends React.Component {
             default:
                 break;
         }
+
     }
 
     // Updates the preset and content with the new input 
@@ -289,6 +288,7 @@ class App extends React.Component {
                 mode: (this.state.mode === Mode.PRESETS) ? Mode.SETTINGS : Mode.PRESETS
             });
         }
+        this.loadPreset(this.state.activePresetID);
         setTimeout(() => { this.updateContent() }, 0);
     }
 

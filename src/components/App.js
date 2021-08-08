@@ -38,9 +38,9 @@ class App extends React.Component {
             presets: initData.presets,
             content: initData.content,
             activeSettingsItem: null,
-            activeSettingsID: initData.content[0].id,
+            activeSettingsID: initData.preset.keys().next().value,
             activePresetItem: null,
-            activePresetID: initData.content[0].id,
+            activePresetID: initData.preset.keys().next().value,
             isDragging: false,
             fade: false,
             presetsLoaded: false
@@ -49,8 +49,8 @@ class App extends React.Component {
 
     componentDidMount() {
         this.setState({
-            activePresetItem: document.getElementById(`${this.state.content[0].id}`),
-            activeSettingsItem: document.getElementById(`${this.state.content[0].id}`)
+            activePresetItem: document.getElementById(`${this.state.preset.keys().next().value}`),
+            activeSettingsItem: document.getElementById(`${this.state.preset.keys().next().value}`)
         });
 
 
@@ -58,7 +58,8 @@ class App extends React.Component {
         ipcRenderer.on('options-loaded', (event, options) => {
             if (options != null && options !== undefined) {
                 this.setState({ presetsPath: options.presetsPath });
-                setTimeout(() => { this.updateContent() }, 50);
+                this.fetchPresets();
+                this.updateAllContent();
             }
         });
 
@@ -66,10 +67,8 @@ class App extends React.Component {
 
     componentDidUpdate() {
         if (!this.state.presetsLoaded && this.state.presetsPath) {
-            this.fetchPresets();
             this.setState({ presetsLoaded: true });
         }
-
     }
 
 
@@ -84,6 +83,7 @@ class App extends React.Component {
     initData(uuids) {
         var preset = new Map();
         var presets = new Map();
+        var content = new Map();
         for (let i = 0; i < uuids.length; i++) {
             const id = uuids[i];
             preset.set(
@@ -109,15 +109,7 @@ class App extends React.Component {
                     subLabel: ""
                 }
             )
-        }
-
-        // Create initial content based on blank preset
-        var content = [];
-        for (const [uuid, settings] of preset) {
-            content.push({
-                id: uuid,
-                value: ""
-            });
+            content.set(id, "");
         }
 
         return {
@@ -164,7 +156,7 @@ class App extends React.Component {
             const initData = this.initData(this.state.uuids);
             this.setState({
                 preset: initData.preset,
-                activeID: initData.content[0].id,
+                activeID: initData.preset.keys().next().value,
             })
         }
 
@@ -197,17 +189,26 @@ class App extends React.Component {
 
     // Updates the content to be displayed in 
     // the grid based on the current preset
-    updateContent() {
-        var content = [];
-        var data = (this.state.mode === Mode.PRESETS) ? this.state.presets : this.state.preset;
+    updateAllContent() {
+        setTimeout(() => {
+            var content = new Map();
+            var data = (this.state.mode === Mode.PRESETS) ? this.state.presets : this.state.preset;
 
-        for (const [uuid, settings] of data) {
-            content.push({
-                id: uuid,
-                value: this.formatContent(settings)
-            });
-        }
-        this.setState({ content: content });
+            for (const [uuid, settings] of data) {
+                content.set(uuid, this.formatContent(settings));
+            }
+            this.setState({ content: content });
+        }, 0);
+    }
+
+    updateContent() {
+        setTimeout(() => {
+            var content = new Map(this.state.content);
+            var data = (this.state.mode === Mode.PRESETS) ? this.state.presets : this.state.preset;
+            var id = (this.state.mode === Mode.PRESETS) ? this.state.activePresetID : this.state.activeSettingsID;
+            content.set(id, this.formatContent(data.get(id)));
+            this.setState({ content: content });
+        }, 0);
     }
 
     // Formats content to be displayed in each Grid item
@@ -249,17 +250,19 @@ class App extends React.Component {
     eventSetPresetDir(e) {
         ipcRenderer.send('set-preset-dir');
         ipcRenderer.on('set-preset-path-ready', (event, path) => {
+            const initData = this.initData(this.state.uuids);
             this.setState({
                 presetsPath: path,
-                presetsLoaded: false
+                presetsLoaded: false,
+                preset: initData.preset,
+                presets: initData.presets,
+                content: initData.content
+
             });
+            this.fetchPresets();
+            this.updateAllContent();
         });
     }
-
-    eventPresetDirChanged() {
-        this.fetchPresets();
-    }
-
 
     // Selects a Grid item to edit
     eventClick(e) {
@@ -322,7 +325,7 @@ class App extends React.Component {
             });
         }
         this.loadPreset(this.state.activePresetID);
-        setTimeout(() => { this.updateContent() }, 0);
+        this.updateAllContent();
     }
 
     eventAddSubLabel(e) {
@@ -363,10 +366,10 @@ class App extends React.Component {
     }
 
     render() {
+        console.log("render");
         const modeComponents = [
             <Presets
                 presetsPath={this.state.presetsPath}
-                eventPresetDirChanged={this.eventPresetDirChanged.bind(this)}
                 eventSetPresetDir={this.eventSetPresetDir.bind(this)}>
             </Presets>,
             <Settings

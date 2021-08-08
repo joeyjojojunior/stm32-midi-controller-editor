@@ -14,6 +14,19 @@ class Grid extends React.Component {
         if (this.props.content.size === 0) return "";
 
         var items = []
+        for (const [uuid, c] of this.props.content) {
+            const item = (
+                <GridItem
+                    id={uuid}
+                    content={c}
+                    active={(uuid === this.props.activeID) ? "active" : ""}
+                    eventClick={(!this.state.isDragging) && this.props.eventClick}>
+                </GridItem>
+            );
+            items.push(item);
+        }
+
+        /*
         for (let i = 0; i < NUM_KNOBS; i++) {
             const id = this.props.content[i].id;
             const value = this.props.content[i].value;
@@ -27,7 +40,7 @@ class Grid extends React.Component {
             );
             items.push(item);
         }
-
+*/
         return items;
     }
 

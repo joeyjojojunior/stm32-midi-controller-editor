@@ -2,7 +2,7 @@ import React from "react";
 import SettingsTable from "./SettingsTable";
 import SubLabels from "./SubLabels";
 
-class Settings extends React.Component {
+class Settings extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -29,4 +29,4 @@ class Settings extends React.Component {
     }
 }
 
-export default Settings;
+export default Settings = React.memo(Settings);

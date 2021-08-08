@@ -2,7 +2,7 @@ import React from 'react';
 //import GridItemContent from './GridItemContent';
 //const { ipcRenderer } = window.require('electron');
 
-class GridItem extends React.Component {
+class GridItem extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -19,4 +19,4 @@ class GridItem extends React.Component {
     }
 }
 
-export default GridItem;
+export default GridItem = React.memo(GridItem);

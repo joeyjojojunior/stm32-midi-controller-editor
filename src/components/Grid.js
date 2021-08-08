@@ -2,9 +2,8 @@ import React from 'react';
 import Muuri from 'muuri';
 import GridItem from './GridItem';
 import options from '../utils/muuriOptions';
-import { NUM_KNOBS } from '../utils/globals';
 
-class Grid extends React.Component {
+class Grid extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { grid: null, isDragging: false };
@@ -25,22 +24,6 @@ class Grid extends React.Component {
             );
             items.push(item);
         }
-
-        /*
-        for (let i = 0; i < NUM_KNOBS; i++) {
-            const id = this.props.content[i].id;
-            const value = this.props.content[i].value;
-            const item = (
-                <GridItem
-                    id={id}
-                    content={value}
-                    active={(id === this.props.activeID) ? "active" : ""}
-                    eventClick={(!this.state.isDragging) && this.props.eventClick}>
-                </GridItem>
-            );
-            items.push(item);
-        }
-*/
         return items;
     }
 
@@ -76,4 +59,4 @@ class Grid extends React.Component {
     }
 }
 
-export default Grid;
+export default Grid = React.memo(Grid);

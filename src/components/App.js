@@ -23,7 +23,7 @@ const { ipcRenderer } = window.require('electron');
 const Mode = { PRESETS: 0, SETTINGS: 1 };
 const ANIM_LENGTH = 250;
 
-class App extends React.Component {
+class App extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -187,8 +187,6 @@ class App extends React.Component {
         });
     }
 
-    // Updates the content to be displayed in 
-    // the grid based on the current preset
     updateAllContent() {
         setTimeout(() => {
             var content = new Map();
@@ -268,9 +266,6 @@ class App extends React.Component {
     eventClick(e) {
         switch (this.state.mode) {
             case Mode.PRESETS:
-                console.log("target");
-                console.log(e.target);
-                console.log("\n");
                 this.loadPreset(e.target.id);
                 this.setState({ activePresetItem: e.target, activePresetID: e.target.id });
                 break;
@@ -408,4 +403,4 @@ class App extends React.Component {
     }
 }
 
-export default App;
+export default App = React.memo(App);

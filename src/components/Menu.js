@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Menu extends React.PureComponent {
+class Menu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -12,10 +12,22 @@ class Menu extends React.PureComponent {
                 <div class="preset header">
                     <label class="label">Preset</label>
                     <div class="input-container">
-                        <input type="text" class="inputFieldLarge" id="inputPresetLabel" placeholder="Label" />
+                        <input
+                            type="text"
+                            class="inputFieldLarge"
+                            id="inputPresetLabel"
+                            placeholder="Label"
+                            value={this.props.presetLabel}
+                            onChange={this.props.eventInputChanged} />
                     </div>
                     <div class="input-container">
-                        <input type="text" class="inputFieldLarge" id="inputPresetSublabel" placeholder="Sub Label" />
+                        <input
+                            type="text"
+                            class="inputFieldLarge"
+                            id="inputPresetSubLabel"
+                            placeholder="Sub Label"
+                            value={this.props.presetSubLabel}
+                            onChange={this.props.eventInputChanged} />
                     </div>
                 </div>
                 <div class="buttons header">
@@ -33,4 +45,4 @@ class Menu extends React.PureComponent {
     }
 }
 
-export default Menu = React.memo(Menu);
+export default Menu;

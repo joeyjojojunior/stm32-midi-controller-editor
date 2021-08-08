@@ -116,7 +116,7 @@ class App extends React.Component {
         for (const [uuid, settings] of preset) {
             content.push({
                 id: uuid,
-                value: this.formatContent(settings)
+                value: ""
             });
         }
 
@@ -212,12 +212,34 @@ class App extends React.Component {
 
     // Formats content to be displayed in each Grid item
     formatContent(content) {
-        return (
-            <div>
-                {content.label}
+        let subLabel = "";
+        if (content.subLabels !== undefined && content.subLabels.size > 0) {
+            subLabel = content.subLabels.entries().next().value[1];
+        }
+        return (this.state.mode === Mode.PRESETS) ?
+            <div id="preset-content">
+                <div id="preset-content-label">
+                    {content.label}
+                </div>
+                <div id="preset-content-sublabel">
+                    {content.subLabel}
+                </div>
             </div>
-        );
-
+            :
+            <div id="settings-content">
+                <div id="settings-content-head">
+                    <div>
+                        CH: {content.channel}
+                    </div>
+                    <div>
+                        CC: {content.cc}
+                    </div>
+                </div>
+                <div id="settings-content-foot">
+                    {content.label}<br></br>
+                    {subLabel}
+                </div>
+            </div>
     }
 
     /*
@@ -243,7 +265,10 @@ class App extends React.Component {
     eventClick(e) {
         switch (this.state.mode) {
             case Mode.PRESETS:
-                //this.loadPreset(e.target.id);
+                console.log("target");
+                console.log(e.target);
+                console.log("\n");
+                this.loadPreset(e.target.id);
                 this.setState({ activePresetItem: e.target, activePresetID: e.target.id });
                 break;
             case Mode.SETTINGS:
@@ -260,22 +285,30 @@ class App extends React.Component {
         const id = this.state.activeSettingsItem.id;
         const value = e.target.value;
         const newPreset = new Map(this.state.preset);
+        const newPresets = new Map(this.state.presets);
         if (e.target.className === "sublabels-list-input") {
             let subLabels = newPreset.get(id).subLabels;
             subLabels.set(e.target.id, value);
             this.setState({ preset: newPreset });
+            this.updateContent();
+
         } else {
             switch (e.target.id) {
                 case "inputLabel":
                     newPreset.get(id).label = value;
                     this.setState({ preset: newPreset });
-                    this.updateContent();
                     break;
-                case "sublabels-list-input":
+                case "inputPresetLabel":
+                    newPresets.get(id).label = value;
+                    this.setState({ presets: newPresets })
+                    break;
+                case "inputPresetSubLabel":
                     break;
                 default:
                     break;
             }
+            this.updateContent();
+
         }
     }
 
@@ -301,9 +334,11 @@ class App extends React.Component {
     }
 
     eventDeleteSubLabel(e) {
+        console.log("delete");
         const id = this.state.activeSettingsItem.id;
         const newPreset = new Map(this.state.preset);
         const subLabels = newPreset.get(id).subLabels;
+        console.log(subLabels);
         subLabels.delete(e.target.id)
         this.setState({ preset: newPreset });
     }
@@ -343,11 +378,16 @@ class App extends React.Component {
                 eventOrderSubLabels={this.eventOrderSubLabels.bind(this)}
             ></Settings>
         ];
-
+        const currentPreset = this.state.presets.get(this.state.activePresetID);
         return (
             <div className="App">
                 <Titlebar></Titlebar>
-                <Menu eventChangeMode={this.eventChangeMode.bind(this)}></Menu>
+                <Menu
+                    presetLabel={(currentPreset !== undefined) ? currentPreset.label : ""}
+                    presetSubLabel={(currentPreset !== undefined) ? currentPreset.subLabel : ""}
+                    eventChangeMode={this.eventChangeMode.bind(this)}
+                    eventInputChanged={this.eventInputChanged.bind(this)}>
+                </Menu>
                 <FadeProps active={this.state.fade} animationLength={ANIM_LENGTH}>
                     {modeComponents[this.state.mode]}
                 </FadeProps>

@@ -2,6 +2,30 @@
     position: relative;
 }
 
+/*
+ * Prevent these from triggering onClick to ensure
+ * the event we receive is for the grid .item which
+ * contains the id needed to index our state.
+ */
+#settings-content,
+#preset-content,
+.item-content {
+    pointer-events: none
+}
+
+
+#settings-content-head {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid white;
+    font-size: 12px;
+}
+
+#settings-content-foot {
+    padding-top: 7px;
+    font-size: 12px;
+}
+
 .item {
     display: block;
     position: absolute;

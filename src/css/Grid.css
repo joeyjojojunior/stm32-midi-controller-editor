@@ -10,20 +10,27 @@
 #settings-content,
 #preset-content,
 .item-content {
-    pointer-events: none
+    pointer-events: none;
+    margin: 2px;
+    height: 100%;
 }
+
+#settings-content {}
 
 
 #settings-content-head {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid white;
-    font-size: 12px;
+    font-size: 0.85em;
 }
 
 #settings-content-foot {
-    padding-top: 7px;
-    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 70%;
+    font-size: 0.85em;
 }
 
 .item {

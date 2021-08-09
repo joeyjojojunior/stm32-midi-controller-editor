@@ -106,6 +106,7 @@ class App extends React.PureComponent {
                     subLabels: new Map()
                 }
             )
+            preset.get(id).subLabels.set(uuidv4(), "add");
 
             presets.set(
                 id,
@@ -190,6 +191,7 @@ class App extends React.PureComponent {
                 for (let j = 0; j < subLabelStrings.length; j++) {
                     newSubLabels.set(uuidv4(), subLabelStrings[j]);
                 }
+                newSubLabels.set(uuidv4(), "add");
                 settings.subLabels = newSubLabels;
                 i++;
             }
@@ -245,8 +247,12 @@ class App extends React.PureComponent {
                     </div>
                 </div>
                 <div id="settings-content-foot">
-                    {content.label}<br></br>
-                    {subLabel}
+                    <div>
+                        {content.label}
+                    </div>
+                    <div>
+                        {subLabel}
+                    </div>
                 </div>
             </div>
     }
@@ -353,7 +359,6 @@ class App extends React.PureComponent {
         const newPreset = new Map(this.state.preset);
         const newSubLabels = new Map();
         for (let i = 0; i < e.length; i++) {
-            if (e[i].content === "add") continue;
             newSubLabels.set(e[i].id, e[i].content);
         }
         newPreset.get(id).subLabels = newSubLabels;

@@ -109,7 +109,7 @@ window.onload = () => {
         e.dataTransfer.dropEffect = 'copy';
     });
 
-    window.addEventListener('resize', r_eventZoomChanged);
+    window.addEventListener('resize', eventZoomChanged);
 
 }
 

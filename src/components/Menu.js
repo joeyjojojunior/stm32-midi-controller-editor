@@ -32,8 +32,8 @@ class Menu extends React.PureComponent {
                 </div>
                 <div class="buttons header">
                     <button class="btn" id="btnPresets" onClick={this.props.eventChangeMode}>Presets</button>
-                    <button class="btn" id="btnZoomIn">Size +</button>
-                    <button class="btn" id="btnZoomOut">Size -</button>
+                    <button class="btn" id="btnZoomIn" onClick={this.props.eventIncreaseSize}>Size +</button>
+                    <button class="btn" id="btnZoomOut" onClick={this.props.eventDecreaseSize}>Size -</button>
                     &nbsp; &nbsp;
                     <button class="btn" id="btnSave">Save</button>
                     <button class="btn" id="btnSaveAs">Save As</button>

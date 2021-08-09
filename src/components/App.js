@@ -18,7 +18,7 @@ import Presets from "./Presets";
 import Grid from "./Grid";
 import { NUM_KNOBS } from '../utils/globals';
 
-const { ipcRenderer } = window.require('electron');
+const { ipcRenderer, webFrame } = window.require('electron');
 
 const Mode = { PRESETS: 0, SETTINGS: 1 };
 const ANIM_LENGTH = 250;
@@ -45,6 +45,7 @@ class App extends React.PureComponent {
             fade: false,
             presetsLoaded: false
         };
+        this.eventZoomChanged = this.eventZoomChanged.bind(this);
     }
 
     componentDidMount() {
@@ -63,12 +64,17 @@ class App extends React.PureComponent {
             }
         });
 
+        window.addEventListener('resize', this.eventZoomChanged);
     }
 
     componentDidUpdate() {
         if (!this.state.presetsLoaded && this.state.presetsPath) {
             this.setState({ presetsLoaded: true });
         }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.eventZoomChanged);
     }
 
 
@@ -324,7 +330,6 @@ class App extends React.PureComponent {
                 mode: (this.state.mode === Mode.PRESETS) ? Mode.SETTINGS : Mode.PRESETS
             });
         }
-        //this.loadPreset(this.state.activePresetID);
         this.updateAllContent();
     }
 
@@ -358,6 +363,18 @@ class App extends React.PureComponent {
         this.setState({ preset: newPreset });
     }
 
+    eventZoomChanged() {
+        ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
+    }
+
+    eventIncreaseSize() {
+
+    }
+
+    eventDecreaseSize() {
+
+    }
+
     // Call back used by the Grid in its componentDidUpdate.
     // Lets us know the transition between modes has completed
     // and we can disable fading in FadeProps. 
@@ -389,7 +406,9 @@ class App extends React.PureComponent {
                     presetLabel={(currentPreset !== undefined) ? currentPreset.label : ""}
                     presetSubLabel={(currentPreset !== undefined) ? currentPreset.subLabel : ""}
                     eventChangeMode={this.eventChangeMode.bind(this)}
-                    eventInputChanged={this.eventInputChanged.bind(this)}>
+                    eventInputChanged={this.eventInputChanged.bind(this)}
+                    eventIncreaseSize={this.eventIncreaseSize.bind(this)}
+                    eventDecreaseSize={this.eventDecreaseSize.bind(this)}>
                 </Menu>
                 <FadeProps active={this.state.fade} animationLength={ANIM_LENGTH}>
                     {modeComponents[this.state.mode]}

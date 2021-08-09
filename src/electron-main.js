@@ -47,6 +47,15 @@ function createWindow() {
 
     mainWindow.webContents.on('did-finish-load', () => {
         /*
+         * Zoom handling
+         */
+        ipcMain.on('zoom-changed', (event, zScale) => {
+            var newWidth = Math.trunc(BASE_WIDTH * zScale);
+            var newHeight = Math.trunc(BASE_HEIGHT * zScale);
+            mainWindow.setContentSize(newWidth, newHeight);
+        });
+
+        /*
          * Options loading
          */
         fs.readFile("./options.json", 'utf8', (err, options) => {

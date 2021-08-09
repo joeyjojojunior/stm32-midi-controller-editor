@@ -22,6 +22,7 @@ const { ipcRenderer, webFrame } = window.require('electron');
 
 const Mode = { PRESETS: 0, SETTINGS: 1 };
 const ANIM_LENGTH = 250;
+const MAX_ZOOM_LEVEL = 4;
 
 class App extends React.PureComponent {
     constructor(props) {
@@ -360,18 +361,23 @@ class App extends React.PureComponent {
     }
 
     eventZoomChanged() {
-        ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
-        this.setState({
-            zoomFactor: webFrame.getZoomFactor()
-        })
+        const currZoomLevel = webFrame.getZoomLevel();
+        if (currZoomLevel > MAX_ZOOM_LEVEL || currZoomLevel < -MAX_ZOOM_LEVEL) {
+            webFrame.setZoomFactor(this.state.zoomFactor);
+        } else {
+            ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
+            this.setState({
+                zoomFactor: webFrame.getZoomFactor()
+            })
+        }
     }
 
     eventIncreaseSize() {
-
+        webFrame.setZoomLevel(Math.min(webFrame.getZoomLevel() + 1, MAX_ZOOM_LEVEL));
     }
 
     eventDecreaseSize() {
-
+        webFrame.setZoomLevel(Math.max(webFrame.getZoomLevel() - 1, -MAX_ZOOM_LEVEL));
     }
 
     // Call back used by the Grid in its componentDidUpdate.

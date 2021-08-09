@@ -14,8 +14,8 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-const BASE_WIDTH = 1920;
-const BASE_HEIGHT = 875;
+const BASE_WIDTH = 1830;
+const BASE_HEIGHT = 850;
 
 let isDialogOpen = false;
 let isFetchingPresets = false;
@@ -53,6 +53,7 @@ function createWindow() {
             var newWidth = Math.trunc(BASE_WIDTH * zScale);
             var newHeight = Math.trunc(BASE_HEIGHT * zScale);
             mainWindow.setContentSize(newWidth, newHeight);
+            mainWindow.center();
         });
 
         /*

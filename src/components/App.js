@@ -41,20 +41,14 @@ class App extends React.PureComponent {
             activeSettingsID: initData.preset.keys().next().value,
             activePresetItem: null,
             activePresetID: initData.preset.keys().next().value,
-            isDragging: false,
             fade: false,
-            presetsLoaded: false
+            presetsLoaded: false,
+            zoomFactor: 1
         };
         this.eventZoomChanged = this.eventZoomChanged.bind(this);
     }
 
     componentDidMount() {
-        this.setState({
-            activePresetItem: document.getElementById(`${this.state.preset.keys().next().value}`),
-            activeSettingsItem: document.getElementById(`${this.state.preset.keys().next().value}`)
-        });
-
-
         // Check for an existing path in the options.json file
         ipcRenderer.on('options-loaded', (event, options) => {
             if (options != null && options !== undefined) {
@@ -63,8 +57,14 @@ class App extends React.PureComponent {
                 this.updateAllContent();
             }
         });
-
+        setTimeout(() => { ipcRenderer.send('zoom-changed', webFrame.getZoomFactor()) }, 100);
         window.addEventListener('resize', this.eventZoomChanged);
+
+        this.setState({
+            activePresetItem: document.getElementById(`${this.state.preset.keys().next().value}`),
+            activeSettingsItem: document.getElementById(`${this.state.preset.keys().next().value}`),
+            zoomFactor: webFrame.getZoomFactor()
+        });
     }
 
     componentDidUpdate() {
@@ -273,8 +273,6 @@ class App extends React.PureComponent {
 
     // Selects a Grid item to edit
     eventClick(e) {
-        console.log(e.target.id);
-
         switch (this.state.mode) {
             case Mode.PRESETS:
                 this.loadPreset(e.target.id);
@@ -342,11 +340,9 @@ class App extends React.PureComponent {
     }
 
     eventDeleteSubLabel(e) {
-        console.log("delete");
         const id = this.state.activeSettingsItem.id;
         const newPreset = new Map(this.state.preset);
         const subLabels = newPreset.get(id).subLabels;
-        console.log(subLabels);
         subLabels.delete(e.target.id)
         this.setState({ preset: newPreset });
     }
@@ -365,6 +361,9 @@ class App extends React.PureComponent {
 
     eventZoomChanged() {
         ipcRenderer.send('zoom-changed', webFrame.getZoomFactor());
+        this.setState({
+            zoomFactor: webFrame.getZoomFactor()
+        })
     }
 
     eventIncreaseSize() {
@@ -383,7 +382,6 @@ class App extends React.PureComponent {
     }
 
     render() {
-        console.log("render");
         const modeComponents = [
             <Presets
                 presetsPath={this.state.presetsPath}
@@ -418,6 +416,7 @@ class App extends React.PureComponent {
                         fade={this.state.fade}
                         content={this.state.content}
                         activeID={(this.state.mode === Mode.PRESETS) ? this.state.activePresetID : this.state.activeSettingsID}
+                        zoomFactor={this.state.zoomFactor}
                         modeRendered={this.modeRendered.bind(this)}
                         eventClick={this.eventClick.bind(this)}>
                     </Grid>

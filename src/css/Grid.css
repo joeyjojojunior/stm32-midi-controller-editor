@@ -29,8 +29,8 @@
 .item {
     display: block;
     position: absolute;
-    width: 108px;
-    height: 54px;
+    width: 102px;
+    height: 51px;
     margin: 4px;
     z-index: 1;
     background: black;

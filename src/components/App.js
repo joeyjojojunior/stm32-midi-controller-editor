@@ -106,7 +106,8 @@ class App extends React.PureComponent {
                     subLabels: new Map()
                 }
             )
-            preset.get(id).subLabels.set(uuidv4(), "add");
+            const slAddID = uuidv4();
+            preset.get(id).subLabels.set(slAddID, slAddID);
 
             presets.set(
                 id,
@@ -191,7 +192,8 @@ class App extends React.PureComponent {
                 for (let j = 0; j < subLabelStrings.length; j++) {
                     newSubLabels.set(uuidv4(), subLabelStrings[j]);
                 }
-                newSubLabels.set(uuidv4(), "add");
+                const slAddID = uuidv4();
+                newSubLabels.set(slAddID, slAddID);
                 settings.subLabels = newSubLabels;
                 i++;
             }
@@ -224,8 +226,18 @@ class App extends React.PureComponent {
     // Formats content to be displayed in each Grid item
     formatContent(content) {
         let subLabel = "";
-        if (content.subLabels !== undefined && content.subLabels.size > 0) {
-            subLabel = content.subLabels.entries().next().value[1];
+        if (content.subLabels !== undefined && content.subLabels.size > 1) {
+            let slIter = content.subLabels.entries();
+            let currSL = slIter.next();
+            let value = ""
+            while (!currSL.done) {
+                if (currSL.value && currSL.value[0] !== currSL.value[1]) {
+                    value = currSL.value[1];
+                    break;
+                }
+                currSL = slIter.next();
+            }
+            subLabel = value;
         }
         return (this.state.mode === Mode.PRESETS) ?
             <div id="preset-content">
@@ -352,6 +364,7 @@ class App extends React.PureComponent {
         const subLabels = newPreset.get(id).subLabels;
         subLabels.delete(e.target.id)
         this.setState({ preset: newPreset });
+        this.updateContent();
     }
 
     eventOrderSubLabels(e) {
@@ -363,6 +376,7 @@ class App extends React.PureComponent {
         }
         newPreset.get(id).subLabels = newSubLabels;
         this.setState({ preset: newPreset });
+        this.updateContent();
     }
 
     eventZoomChanged() {

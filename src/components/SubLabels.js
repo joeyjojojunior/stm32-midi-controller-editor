@@ -21,16 +21,7 @@ class SubLabels extends React.PureComponent {
         const preset = this.props.preset.get(this.props.activeSettingsID);
         if (preset === undefined) return
 
-        if (this.props.activeSettingsID !== this.state.activeSettingsID) {
-            console.log("1");
-        }
-
-        if (this.labelsChanged()) {
-            console.log("2");
-        }
         if (this.props.activeSettingsID !== this.state.activeSettingsID || this.labelsChanged()) {
-            //console.log(this.props.activeSettingsID);
-            //console.log(this.state.activeSettingsID);
             this.initItems();
         }
     }
@@ -41,16 +32,9 @@ class SubLabels extends React.PureComponent {
 
         const items = [];
         const subLabels = preset.subLabels;
-        let hasAdd = false;
-        if (subLabels.size === 0) {
-            //items.push({ id: uuidv4(), content: "" });
-        } else {
-            for (const [uuid, subLabel] of subLabels) {
-                items.push({ id: uuid, content: subLabel });
-                if (subLabel === "add") hasAdd = true;
-            }
+        for (const [uuid, subLabel] of subLabels) {
+            items.push({ id: uuid, content: subLabel });
         }
-        if (!hasAdd) items.push({ id: uuidv4(), content: "add" });
         this.setState({ items: items, activeSettingsID: this.props.activeSettingsID })
     }
 
@@ -63,15 +47,10 @@ class SubLabels extends React.PureComponent {
 
         let isLabelsChanged = false;
         for (let i = 0; i < this.state.items.length; i++) {
-            console.log("loop");
             if (subLabels.get(this.state.items[i].id) !== this.state.items[i].content) {
-                console.log(subLabels.get(this.state.items[i].id));
-                console.log(this.state.items[i].content)
-                console.log('\n')
                 isLabelsChanged = true;
             }
         }
-        console.log(`isLabelsChanged: ${isLabelsChanged}`);
         return isLabelsChanged;
     }
 
@@ -125,7 +104,7 @@ class SubLabels extends React.PureComponent {
         for (let i = startIndex; i < endIndex; i++) {
             const item = this.state.items[i];
             const subLabel =
-                item.content !== "add" ? (
+                item.content !== item.id ? (
                     <SubLabel
                         slID={item.id}
                         btnID={item.id}

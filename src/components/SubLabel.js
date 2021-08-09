@@ -20,14 +20,12 @@ class SubLabel extends React.PureComponent {
                     maxLength={MAX_LABEL_CHARS}
                     spellCheck="false"
                     value={this.props.content}
-                    onChange={this.props.eventInputChanged}
-                >
+                    onChange={this.props.eventInputChanged}>
                 </input>
                 <button
                     id={this.props.btnID}
                     className="sublabels-list-btn sublabels-list-btn-delete"
-                    onClick={this.props.eventDeleteSubLabel}
-                >
+                    onClick={this.props.eventDeleteSubLabel}>
                     &times;
                 </button>
             </div>

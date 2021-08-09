@@ -15,7 +15,7 @@ const url = require('url');
 let mainWindow;
 
 const BASE_WIDTH = 1920;
-const BASE_HEIGHT = 920;
+const BASE_HEIGHT = 875;
 
 let isDialogOpen = false;
 let isFetchingPresets = false;
@@ -117,7 +117,6 @@ function createWindow() {
                     return
                 }
                 event.reply('loadPreset-loaded', preset);
-
             })
 
         });

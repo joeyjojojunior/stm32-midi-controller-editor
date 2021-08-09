@@ -1,14 +1,10 @@
 .sublabels {
     cursor: default;
     padding-left: 10px;
-    height: 290px;
+    height: 245px;
     display: flex;
     flex-direction: column;
     padding-bottom: 10px;
-}
-
-.sublabels-container {
-    display: flex;
 }
 
 .sublabels-label {
@@ -20,14 +16,9 @@
     padding-bottom: 2px;
 }
 
-.sublabels-list {
-    display: inline-flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    list-style-type: none;
-    height: 290px;
-    padding: 0px;
-    margin: 0 auto;
+.sublabels-container {
+    display: flex;
+
 }
 
 .sublabels-list-item {
@@ -35,13 +26,14 @@
     padding-right: 5px;
 
     margin-top: 0px;
-    margin-bottom: 2px;
+    margin-bottom: 0px;
     margin-right: 4px;
     margin-left: 0px;
     white-space: nowrap;
 
     display: flex;
     flex-direction: row;
+
 }
 
 .sublabels-list-input {
@@ -63,6 +55,7 @@
     padding-left: 4px;
     padding-right: 4px;
     width: 8px;
+
 }
 
 .sublabels-drag-icon {

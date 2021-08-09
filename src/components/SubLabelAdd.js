@@ -19,14 +19,12 @@ class SubLabelAdd extends React.PureComponent {
                     maxLength={MAX_LABEL_CHARS}
                     spellCheck="false"
                     disabled="true"
-                    placeholder="Add Sub Label "
-                >
+                    placeholder="Add Sub Label ">
                 </input>
                 <button
                     id={this.props.btnID}
                     className="sublabels-list-btn sublabels-list-btn-add"
-                    onClick={this.props.eventAddSubLabel}
-                >
+                    onClick={this.props.eventAddSubLabel}>
                     &#43;
                 </button>
             </div>

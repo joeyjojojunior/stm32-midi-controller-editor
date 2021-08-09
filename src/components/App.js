@@ -145,7 +145,10 @@ class App extends React.PureComponent {
                 i++;
             }
             this.setState({ presets: newPresets });
+            this.loadPreset(this.state.activePresetID);
+
         });
+
     }
 
     loadPreset(id) {
@@ -264,6 +267,8 @@ class App extends React.PureComponent {
 
     // Selects a Grid item to edit
     eventClick(e) {
+        console.log(e.target.id);
+
         switch (this.state.mode) {
             case Mode.PRESETS:
                 this.loadPreset(e.target.id);
@@ -319,7 +324,7 @@ class App extends React.PureComponent {
                 mode: (this.state.mode === Mode.PRESETS) ? Mode.SETTINGS : Mode.PRESETS
             });
         }
-        this.loadPreset(this.state.activePresetID);
+        //this.loadPreset(this.state.activePresetID);
         this.updateAllContent();
     }
 
